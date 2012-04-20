@@ -1,6 +1,6 @@
-#include "index.h"
-
 #include <Rmath.h>
+
+#include "index.h"
 
 void matrix_to_vector_loc (const int *loc, const int *dim, const int n_dims, size_t *vector_loc)
 {

@@ -5,7 +5,7 @@
 #include "morph.h"
 #include "index.h"
 
-SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours, SEXP n_neighbours_not, SEXP is_brush)
+SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours, SEXP n_neighbours_not, SEXP is_brush, SEXP is_eraser)
 {
     R_len_t i;
     int j, n;
@@ -47,7 +47,7 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
         if (is_compatible_value(x, i, value, value_not, integer_x) && is_compatible_neighbourhood(x, x_dims, n_dims, neighbourhood_dims, i, n_neighbours, n_neighbours_not, integer_x))
         {
             vector_to_matrix_loc((size_t) i, x_dims, n_dims, loc);
-            apply_kernel(x, y, x_dims, n_dims, loc, kernel, kernel_dims, integer_x, INTEGER(is_brush)[0]);
+            apply_kernel(x, y, x_dims, n_dims, loc, kernel, kernel_dims, integer_x, INTEGER(is_brush)[0], INTEGER(is_eraser)[0]);
         }
     }
     
@@ -138,7 +138,7 @@ int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_di
     return TRUE;
 }
 
-void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, const int *x_loc, const SEXP kernel, const int *kernel_dims, const int is_integer, const int is_brush)
+void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, const int *x_loc, const SEXP kernel, const int *kernel_dims, const int is_integer, const int is_brush, const int is_eraser)
 {
     int kernel_centre = (kernel_dims[0] - 1) / 2;
     size_t i, l, kernel_length = n_dims * kernel_dims[0];
@@ -163,6 +163,8 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
                 {
                     if (INTEGER(kernel)[i] == NA_INTEGER)
                         INTEGER(y)[l] = INTEGER(x)[l];
+                    else if (is_eraser)
+                        INTEGER(y)[l] = INTEGER(kernel)[i] == 0 ? INTEGER(x)[l] : 0;
                     else
                         INTEGER(y)[l] = INTEGER(kernel)[i];
                 }
@@ -170,6 +172,8 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
                 {
                     if (ISNA(REAL(kernel)[i]))
                         REAL(y)[l] = REAL(x)[l];
+                    else if (is_eraser)
+                        REAL(y)[l] = REAL(kernel)[i] == 0.0 ? REAL(x)[l] : 0.0;
                     else
                         REAL(y)[l] = REAL(kernel)[i];
                 }
