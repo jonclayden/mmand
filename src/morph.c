@@ -1,6 +1,5 @@
 #include <R.h>
 #include <Rdefines.h>
-// #include <Rinternals.h>
 #include <Rmath.h>
 
 #include "morph.h"
@@ -33,9 +32,15 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
     int *loc = (int *) R_alloc(n_dims, sizeof(int));
     
     if (integer_x)
+    {
         PROTECT(y = NEW_INTEGER(len));
+        memcpy(INTEGER(y), INTEGER(x), ((size_t) len)*sizeof(int));
+    }
     else
+    {
         PROTECT(y = NEW_NUMERIC(len));
+        memcpy(REAL(y), REAL(x), ((size_t) len)*sizeof(double));
+    }
     
     for (i=0; i<len; i++)
     {
@@ -54,7 +59,7 @@ int is_compatible_value (const SEXP x, const R_len_t index, const SEXP include_l
 {
     R_len_t i;
     
-    if (!isNull(include_list))
+    if (LENGTH(include_list) > 0)
     {
         for (i=0; i<LENGTH(include_list); i++)
         {
@@ -66,7 +71,7 @@ int is_compatible_value (const SEXP x, const R_len_t index, const SEXP include_l
         return FALSE;
     }
     
-    if (!isNull(exclude_list))
+    if (LENGTH(exclude_list) > 0)
     {
         for (i=0; i<LENGTH(exclude_list); i++)
         {
@@ -83,7 +88,7 @@ int is_compatible_value (const SEXP x, const R_len_t index, const SEXP include_l
 
 int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_dims, const int *neighbourhood_dims, const R_len_t index, const SEXP include_list, const SEXP exclude_list, const int is_integer)
 {
-    if (isNull(include_list) && isNull(exclude_list))
+    if (LENGTH(include_list) == 0 && LENGTH(exclude_list) == 0)
         return TRUE;
     
     size_t i, l, neighbourhood_length = (size_t) R_pow_di(3.0, n_dims);
@@ -110,21 +115,21 @@ int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_di
         }
     }
     
-    if (!isNull(include_list))
+    if (LENGTH(include_list) > 0)
     {
         for (i=0; i<LENGTH(include_list); i++)
         {
-            if (n_neighbours == (int) REAL(include_list)[i])
+            if (n_neighbours == INTEGER(include_list)[i])
                 return TRUE;
         }
         return FALSE;
     }
     
-    if (!isNull(exclude_list))
+    if (LENGTH(exclude_list) > 0)
     {
         for (i=0; i<LENGTH(exclude_list); i++)
         {
-            if (n_neighbours == (int) REAL(exclude_list)[i])
+            if (n_neighbours == INTEGER(exclude_list)[i])
                 return FALSE;
         }
         return TRUE;
@@ -133,12 +138,14 @@ int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_di
     return TRUE;
 }
 
-void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, const int *x_loc, SEXP kernel, const int *kernel_dims, const int is_integer, const int is_brush)
+void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, const int *x_loc, const SEXP kernel, const int *kernel_dims, const int is_integer, const int is_brush)
 {
     int kernel_centre = (kernel_dims[0] - 1) / 2;
     size_t i, l, kernel_length = n_dims * kernel_dims[0];
     int *current_loc = (int *) R_alloc(n_dims, sizeof(int));
     int j;
+    
+    double value = 0;
     
     for (i=0; i<kernel_length; i++)
     {
@@ -153,18 +160,36 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
             if (is_brush)
             {
                 if (is_integer)
-                    INTEGER(y)[l] = INTEGER(kernel)[i];
+                {
+                    if (INTEGER(kernel)[i] == NA_INTEGER)
+                        INTEGER(y)[l] = INTEGER(x)[l];
+                    else
+                        INTEGER(y)[l] = INTEGER(kernel)[i];
+                }
                 else
-                    REAL(y)[l] = REAL(kernel)[i];
+                {
+                    if (ISNA(REAL(kernel)[i]))
+                        REAL(y)[l] = REAL(x)[l];
+                    else
+                        REAL(y)[l] = REAL(kernel)[i];
+                }
             }
             else
             {
                 if (is_integer)
-                    INTEGER(y)[l] = INTEGER(kernel)[i] * INTEGER(x)[l];
+                    value += (double) INTEGER(kernel)[i] * INTEGER(x)[l];
                 else
-                    REAL(y)[l] = REAL(kernel)[i] * REAL(x)[l];
+                    value += REAL(kernel)[i] * REAL(x)[l];
             }
         }
-        
+    }
+    
+    if (!is_brush)
+    {
+        matrix_to_vector_loc(x_loc, x_dims, n_dims, &l);
+        if (is_integer)
+            INTEGER(y)[l] = (int) round(value);
+        else
+            REAL(y)[l] = value;
     }
 }

@@ -7,6 +7,6 @@ int is_compatible_value (const SEXP x, const R_len_t index, const SEXP include_l
 
 int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_dims, const int *neighbourhood_dims, const R_len_t index, const SEXP include_list, const SEXP exclude_list, const int is_integer);
 
-void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, const int *x_loc, SEXP kernel, const int *kernel_dims, const int is_integer, const int is_brush);
+void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, const int *x_loc, const SEXP kernel, const int *kernel_dims, const int is_integer, const int is_brush);
 
 #endif
