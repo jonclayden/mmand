@@ -23,13 +23,16 @@ morph.default <- function (x, kernel, brush = TRUE, value = NULL, valueNot = NUL
     }
     
     returnValue <- .Call("morph_R", x, kernel, as.double(value), as.double(valueNot), as.integer(nNeighbours), as.integer(nNeighboursNot), as.logical(brush), PACKAGE="mmand")
+    dim(returnValue) <- dim(x)
     
     return (returnValue)
 }
 
 binarise <- function (x)
 {
-    return (morph(x, kernel=1, brush=TRUE, valueNot=0))
+    kernel <- 1
+    storage.mode(kernel) <- storage.mode(x)
+    return (morph(x, kernel=kernel, brush=TRUE, valueNot=0))
 }
 
 erode <- function (x, kernel)
