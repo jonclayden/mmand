@@ -32,7 +32,7 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
     for (j=0; j<n_dims; j++)
         neighbourhood_dims[j] = 3;
     
-    int *temp = (int *) R_alloc(n_dims, sizeof(int));
+    int *temp = (int *) R_alloc(2*n_dims, sizeof(int));
     
     int *kernel_matrix_locs = (int *) R_alloc(kernel_len*n_dims, sizeof(int));
     for (i=0; i<kernel_len; i++)
@@ -65,10 +65,10 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
     
     for (i=0; i<len; i++)
     {
-        if (is_compatible_value(x, i, value, value_not, integer_x) && is_compatible_neighbourhood(x, x_dims, n_dims, neighbourhood_len, neighbourhood_matrix_locs, i, n_neighbours, n_neighbours_not, integer_x))
+        if (is_compatible_value(x, i, value, value_not, integer_x) && is_compatible_neighbourhood(x, x_dims, n_dims, neighbourhood_len, neighbourhood_matrix_locs, i, n_neighbours, n_neighbours_not, integer_x, temp))
         {
             vector_to_matrix_loc((size_t) i, x_dims, n_dims, loc);
-            apply_kernel(x, y, x_dims, n_dims, loc, kernel, kernel_len, kernel_matrix_locs, integer_x, INTEGER(is_brush)[0], INTEGER(is_eraser)[0]);
+            apply_kernel(x, y, x_dims, n_dims, loc, kernel, kernel_len, kernel_matrix_locs, integer_x, INTEGER(is_brush)[0], INTEGER(is_eraser)[0], temp);
         }
     }
     
@@ -107,26 +107,24 @@ int is_compatible_value (const SEXP x, const R_len_t index, const SEXP include_l
     return TRUE;
 }
 
-int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_dims, const int neighbourhood_len, const int *neighbourhood_matrix_locs, const R_len_t index, const SEXP include_list, const SEXP exclude_list, const int is_integer)
+int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_dims, const int neighbourhood_len, const int *neighbourhood_matrix_locs, const R_len_t index, const SEXP include_list, const SEXP exclude_list, const int is_integer, int *temp)
 {
     if (LENGTH(include_list) == 0 && LENGTH(exclude_list) == 0)
         return TRUE;
     
     size_t i, l;
-    int *x_loc = (int *) R_alloc(n_dims, sizeof(int));
-    int *neighbourhood_loc = (int *) R_alloc(n_dims, sizeof(int));
     int j, n_neighbours = 0;
     
-    vector_to_matrix_loc((size_t) index, x_dims, n_dims, x_loc);
+    vector_to_matrix_loc((size_t) index, x_dims, n_dims, temp+3);
     
     for (i=0; i<neighbourhood_len; i++)
     {
         for (j=0; j<n_dims; j++)
-            neighbourhood_loc[j] = x_loc[j] + neighbourhood_matrix_locs[i + (j*neighbourhood_len)];
+            temp[j] = temp[j+3] + neighbourhood_matrix_locs[i + (j*neighbourhood_len)];
         
-        if (loc_in_bounds(neighbourhood_loc, x_dims, n_dims))
+        if (loc_in_bounds(temp, x_dims, n_dims))
         {
-            matrix_to_vector_loc(neighbourhood_loc, x_dims, n_dims, &l);
+            matrix_to_vector_loc(temp, x_dims, n_dims, &l);
         
             if (is_integer && INTEGER(x)[l] != 0)
                 n_neighbours++;
@@ -158,10 +156,9 @@ int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_di
     return TRUE;
 }
 
-void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, const int *x_loc, const SEXP kernel, const R_len_t kernel_len, const int *kernel_matrix_locs, const int is_integer, const int is_brush, const int is_eraser)
+void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, const int *x_loc, const SEXP kernel, const R_len_t kernel_len, const int *kernel_matrix_locs, const int is_integer, const int is_brush, const int is_eraser, int *temp)
 {
     size_t i, l;
-    int *current_loc = (int *) R_alloc(n_dims, sizeof(int));
     int j;
     
     double value = 0;
@@ -169,11 +166,11 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
     for (i=0; i<kernel_len; i++)
     {
         for (j=0; j<n_dims; j++)
-            current_loc[j] = x_loc[j] + kernel_matrix_locs[i + (j*kernel_len)];
+            temp[j] = x_loc[j] + kernel_matrix_locs[i + (j*kernel_len)];
         
-        if (loc_in_bounds(current_loc, x_dims, n_dims))
+        if (loc_in_bounds(temp, x_dims, n_dims))
         {
-            matrix_to_vector_loc(current_loc, x_dims, n_dims, &l);
+            matrix_to_vector_loc(temp, x_dims, n_dims, &l);
             
             if (is_brush)
             {
