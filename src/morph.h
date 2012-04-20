@@ -9,4 +9,9 @@ int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_di
 
 void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, const int *x_loc, const SEXP kernel, const R_len_t kernel_len, const int *kernel_matrix_locs, const int is_integer, const int is_brush, const int is_eraser, int *temp);
 
+typedef union {
+    int *i;
+    double *d;
+} int_or_double_ptr;
+
 #endif

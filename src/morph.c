@@ -115,12 +115,11 @@ int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_di
     size_t i, l;
     int j, n_neighbours = 0;
     
-    int *x_int;
-    double *x_double;
+    int_or_double_ptr x_p;
     if (is_integer)
-        x_int = INTEGER(x);
+        x_p.i = INTEGER(x);
     else
-        x_double = REAL(x);
+        x_p.d = REAL(x);
     
     vector_to_matrix_loc((size_t) index, x_dims, n_dims, temp+3);
     
@@ -133,9 +132,9 @@ int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_di
         {
             matrix_to_vector_loc(temp, x_dims, n_dims, &l);
         
-            if (is_integer && x_int[l] != 0)
+            if (is_integer && x_p.i[l] != 0)
                 n_neighbours++;
-            else if (!is_integer && x_double[l] != 0.0)
+            else if (!is_integer && x_p.d[l] != 0.0)
                 n_neighbours++;
         }
     }
@@ -168,19 +167,18 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
     size_t i, l;
     int j;
     
-    int *x_int, *y_int, *kernel_int;
-    double *x_double, *y_double, *kernel_double;
+    int_or_double_ptr x_p, y_p, kernel_p;
     if (is_integer)
     {
-        x_int = INTEGER(x);
-        y_int = INTEGER(y);
-        kernel_int = INTEGER(kernel);
+        x_p.i = INTEGER(x);
+        y_p.i = INTEGER(y);
+        kernel_p.i = INTEGER(kernel);
     }
     else
     {
-        x_double = REAL(x);
-        y_double = REAL(y);
-        kernel_double = REAL(kernel);
+        x_p.d = REAL(x);
+        y_p.d = REAL(y);
+        kernel_p.d = REAL(kernel);
     }
     
     double value = 0;
@@ -198,29 +196,29 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
             {
                 if (is_integer)
                 {
-                    if (kernel_int[i] == NA_INTEGER)
-                        y_int[l] = x_int[l];
+                    if (kernel_p.i[i] == NA_INTEGER)
+                        y_p.i[l] = x_p.i[l];
                     else if (is_eraser)
-                        y_int[l] = kernel_int[i] == 0 ? x_int[l] : 0;
+                        y_p.i[l] = kernel_p.i[i] == 0 ? x_p.i[l] : 0;
                     else
-                        y_int[l] = kernel_int[i];
+                        y_p.i[l] = kernel_p.i[i];
                 }
                 else
                 {
-                    if (ISNA(kernel_double[i]))
-                        y_double[l] = x_double[l];
+                    if (ISNA(kernel_p.d[i]))
+                        y_p.d[l] = x_p.d[l];
                     else if (is_eraser)
-                        y_double[l] = kernel_double[i] == 0.0 ? x_double[l] : 0.0;
+                        y_p.d[l] = kernel_p.d[i] == 0.0 ? x_p.d[l] : 0.0;
                     else
-                        y_double[l] = kernel_double[i];
+                        y_p.d[l] = kernel_p.d[i];
                 }
             }
             else
             {
                 if (is_integer)
-                    value += (double) kernel_int[i] * x_int[l];
+                    value += (double) kernel_p.i[i] * x_p.i[l];
                 else
-                    value += kernel_double[i] * x_double[l];
+                    value += kernel_p.d[i] * x_p.d[l];
             }
         }
     }
@@ -229,8 +227,8 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
     {
         matrix_to_vector_loc(x_loc, x_dims, n_dims, &l);
         if (is_integer)
-            y_int[l] = (int) round(value);
+            y_p.i[l] = (int) round(value);
         else
-            y_double[l] = value;
+            y_p.d[l] = value;
     }
 }
