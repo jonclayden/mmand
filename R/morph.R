@@ -39,12 +39,13 @@ binarise <- function (x)
 
 erode <- function (x, kernel)
 {
-    return (morph(x, kernel, brush=TRUE, eraser=TRUE, value=0))
+    return (morph(x, kernel, brush=TRUE, eraser=TRUE, value=0, nNeighboursNot=0))
 }
 
 dilate <- function (x, kernel)
 {
-    return (morph(x, kernel, brush=TRUE, valueNot=0))
+    neighbourCount <- 3^length(dim(x))
+    return (morph(x, kernel, brush=TRUE, valueNot=0, nNeighboursNot=neighbourCount))
 }
 
 opening <- function (x, kernel)
