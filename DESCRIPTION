@@ -6,6 +6,6 @@ Author: Jon Clayden
 Maintainer: Jon Clayden <jon.clayden+mmand@gmail.com>
 Depends: R (>= 2.9.0)
 Imports: reportr
-Description: This package provides tools for performing mathematical morphology operations such as erode and dilate on arrays of arbitrary dimensionality.
+Description: This package provides tools for performing mathematical morphology operations such as erosion and dilation on arrays of arbitrary dimensionality.
 License: GPL-2
 URL: https://github.com/jonclayden/mmand

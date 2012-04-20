@@ -1,0 +1,5 @@
+useDynLib("mmand")
+
+import(reportr)
+
+exportPattern("^[^\\.]")
