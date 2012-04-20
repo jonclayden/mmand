@@ -8,7 +8,7 @@
 SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours, SEXP n_neighbours_not, SEXP is_brush, SEXP is_eraser)
 {
     R_len_t i;
-    int j, n;
+    int j;
     SEXP y;
     
     SEXP dims = getAttrib(x, R_DimSymbol);
@@ -115,6 +115,13 @@ int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_di
     size_t i, l;
     int j, n_neighbours = 0;
     
+    int *x_int;
+    double *x_double;
+    if (is_integer)
+        x_int = INTEGER(x);
+    else
+        x_double = REAL(x);
+    
     vector_to_matrix_loc((size_t) index, x_dims, n_dims, temp+3);
     
     for (i=0; i<neighbourhood_len; i++)
@@ -126,9 +133,9 @@ int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_di
         {
             matrix_to_vector_loc(temp, x_dims, n_dims, &l);
         
-            if (is_integer && INTEGER(x)[l] != 0)
+            if (is_integer && x_int[l] != 0)
                 n_neighbours++;
-            else if (!is_integer && REAL(x)[l] != 0.0)
+            else if (!is_integer && x_double[l] != 0.0)
                 n_neighbours++;
         }
     }
@@ -161,6 +168,21 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
     size_t i, l;
     int j;
     
+    int *x_int, *y_int, *kernel_int;
+    double *x_double, *y_double, *kernel_double;
+    if (is_integer)
+    {
+        x_int = INTEGER(x);
+        y_int = INTEGER(y);
+        kernel_int = INTEGER(kernel);
+    }
+    else
+    {
+        x_double = REAL(x);
+        y_double = REAL(y);
+        kernel_double = REAL(kernel);
+    }
+    
     double value = 0;
     
     for (i=0; i<kernel_len; i++)
@@ -176,29 +198,29 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
             {
                 if (is_integer)
                 {
-                    if (INTEGER(kernel)[i] == NA_INTEGER)
-                        INTEGER(y)[l] = INTEGER(x)[l];
+                    if (kernel_int[i] == NA_INTEGER)
+                        y_int[l] = x_int[l];
                     else if (is_eraser)
-                        INTEGER(y)[l] = INTEGER(kernel)[i] == 0 ? INTEGER(x)[l] : 0;
+                        y_int[l] = kernel_int[i] == 0 ? x_int[l] : 0;
                     else
-                        INTEGER(y)[l] = INTEGER(kernel)[i];
+                        y_int[l] = kernel_int[i];
                 }
                 else
                 {
-                    if (ISNA(REAL(kernel)[i]))
-                        REAL(y)[l] = REAL(x)[l];
+                    if (ISNA(kernel_double[i]))
+                        y_double[l] = x_double[l];
                     else if (is_eraser)
-                        REAL(y)[l] = REAL(kernel)[i] == 0.0 ? REAL(x)[l] : 0.0;
+                        y_double[l] = kernel_double[i] == 0.0 ? x_double[l] : 0.0;
                     else
-                        REAL(y)[l] = REAL(kernel)[i];
+                        y_double[l] = kernel_double[i];
                 }
             }
             else
             {
                 if (is_integer)
-                    value += (double) INTEGER(kernel)[i] * INTEGER(x)[l];
+                    value += (double) kernel_int[i] * x_int[l];
                 else
-                    value += REAL(kernel)[i] * REAL(x)[l];
+                    value += kernel_double[i] * x_double[l];
             }
         }
     }
@@ -207,8 +229,8 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
     {
         matrix_to_vector_loc(x_loc, x_dims, n_dims, &l);
         if (is_integer)
-            INTEGER(y)[l] = (int) round(value);
+            y_int[l] = (int) round(value);
         else
-            REAL(y)[l] = value;
+            y_double[l] = value;
     }
 }
