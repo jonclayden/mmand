@@ -7,7 +7,7 @@
 
 SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours, SEXP n_neighbours_not, SEXP is_brush, SEXP is_eraser)
 {
-    R_len_t i;
+    R_len_t i, ii;
     int j;
     SEXP y;
     
@@ -18,7 +18,7 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
     int integer_x = (int) IS_INTEGER(x);
     R_len_t len = LENGTH(x);
     R_len_t kernel_len = LENGTH(kernel);
-    R_len_t neighbourhood_len = (R_len_t) R_pow_di(3.0, n_dims);
+    R_len_t neighbourhood_len = ((R_len_t) R_pow_di(3.0, n_dims)) - 1;
     
     int *x_dims = (int *) R_alloc(n_dims, sizeof(int));
     for (j=0; j<n_dims; j++)
@@ -45,7 +45,10 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
     int *neighbourhood_matrix_locs = (int *) R_alloc(neighbourhood_len*n_dims, sizeof(int));
     for (i=0; i<neighbourhood_len; i++)
     {
-        vector_to_matrix_loc(i, neighbourhood_dims, n_dims, temp);
+        // The neighbourhood does not include the centre point itself
+        ii = (i >= neighbourhood_len/2) ? i + 1 : i;
+        
+        vector_to_matrix_loc(ii, neighbourhood_dims, n_dims, temp);
         for (j=0; j<n_dims; j++)
             neighbourhood_matrix_locs[i + (j*neighbourhood_len)] = temp[j] - 1;
     }
