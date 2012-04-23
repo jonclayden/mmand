@@ -44,7 +44,7 @@ erode <- function (x, kernel)
 
 dilate <- function (x, kernel)
 {
-    neighbourCount <- 3^length(dim(x))
+    neighbourCount <- 3^length(dim(x)) - 1
     return (morph(x, kernel, brush=TRUE, valueNot=0, nNeighboursNot=neighbourCount))
 }
 
