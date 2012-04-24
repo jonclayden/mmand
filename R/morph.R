@@ -13,6 +13,9 @@ morph.default <- function (x, kernel, brush = TRUE, eraser = FALSE, value = NULL
     if (!is.numeric(kernel))
         report(OL$Error, "Kernel must be numeric")
     
+    if (!all(dim(kernel) == dim(kernel)[1]))
+        report(OL$Error, "Kernel must have the same size in all dimensions")
+    
     if (length(dim(kernel)) < length(dim(x)))
         dim(kernel) <- c(dim(kernel), rep(1,length(dim(x))-length(dim(kernel))))
     else if (length(dim(kernel)) > length(dim(x)))
@@ -39,13 +42,21 @@ binarise <- function (x)
 
 erode <- function (x, kernel)
 {
-    return (morph(x, kernel, brush=TRUE, eraser=TRUE, value=0, nNeighboursNot=0))
+    if (is.array(kernel) && all(dim(kernel) == 3))
+        return (morph(x, kernel, brush=TRUE, eraser=TRUE, value=0, nNeighboursNot=0))
+    else
+        return (morph(x, kernel, brush=TRUE, eraser=TRUE, value=0))
 }
 
 dilate <- function (x, kernel)
 {
-    neighbourCount <- 3^length(dim(x)) - 1
-    return (morph(x, kernel, brush=TRUE, valueNot=0, nNeighboursNot=neighbourCount))
+    if (is.array(kernel) && all(dim(kernel) == 3))
+    {
+        neighbourCount <- 3^length(dim(x)) - 1
+        return (morph(x, kernel, brush=TRUE, valueNot=0, nNeighboursNot=neighbourCount))
+    }
+    else
+        return (morph(x, kernel, brush=TRUE, valueNot=0))
 }
 
 opening <- function (x, kernel)
