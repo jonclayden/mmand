@@ -21,10 +21,27 @@ morph.default <- function (x, kernel, brush = TRUE, eraser = FALSE, value = NULL
     else if (length(dim(kernel)) > length(dim(x)))
         report(OL$Error, "Kernel has greater dimensionality than the target array")
     
-    if (storage.mode(kernel) != storage.mode(x))
+    if (storage.mode(kernel) == "integer" && storage.mode(x) == "double")
     {
-        report(OL$Info, "Converting kernel to \"", storage.mode(x), "\" mode to match target array")
-        storage.mode(kernel) <- storage.mode(x)
+        report(OL$Verbose, "Converting kernel to \"double\" mode to match target array")
+        storage.mode(kernel) <- "double"
+    }
+    else if (storage.mode(kernel) == "double" && storage.mode(x) == "integer")
+    {
+        kernelCopy <- kernel
+        storage.mode(kernelCopy) <- "integer"
+        if (isTRUE(all.equal(kernel, kernelCopy)))
+        {
+            report(OL$Verbose, "Converting kernel to \"integer\" mode to match target array")
+            storage.mode(kernel) <- "integer"
+        }
+        else
+        {
+            # Kernel cannot be accurately represented in integer mode, so result won't be able to either
+            # Hence, we need to modify the storage mode of the target array
+            report(OL$Verbose, "Converting target array to \"double\" mode to match kernel")
+            storage.mode(x) <- "double"
+        }
     }
     
     returnValue <- .Call("morph_R", x, kernel, as.double(value), as.double(valueNot), as.integer(nNeighbours), as.integer(nNeighboursNot), as.logical(brush), as.logical(eraser), PACKAGE="mmand")
