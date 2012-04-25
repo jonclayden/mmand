@@ -196,7 +196,7 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
         kernel_p.d = REAL(kernel);
     }
     
-    double value = 0, visited_kernel_sum = 0;
+    double value = 0.0, visited_kernel_sum = 0.0;
     
     for (i=0; i<kernel_len; i++)
     {
@@ -247,9 +247,10 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
     if (!is_brush)
     {
         matrix_to_vector_loc(x_loc, x_dims, n_dims, &l);
+        value *= (visited_kernel_sum == 0.0) ? 1.0 : (kernel_sum / visited_kernel_sum);
         if (is_integer)
-            y_p.i[l] = (int) round(value * kernel_sum / visited_kernel_sum);
+            y_p.i[l] = (int) round(value);
         else
-            y_p.d[l] = value * kernel_sum / visited_kernel_sum;
+            y_p.d[l] = value;
     }
 }
