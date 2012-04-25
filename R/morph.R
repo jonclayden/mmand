@@ -57,6 +57,12 @@ binarise <- function (x)
     return (morph(x, kernel=kernel, brush=TRUE, valueNot=0))
 }
 
+gaussianSmooth <- function (x, sigma)
+{
+    kernel <- gaussianKernel(sigma, normalised=TRUE)
+    return (morph(x, kernel, brush=FALSE))
+}
+
 erode <- function (x, kernel)
 {
     if (is.array(kernel) && all(dim(kernel) == 3))
