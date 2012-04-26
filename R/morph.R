@@ -65,7 +65,7 @@ gaussianSmooth <- function (x, sigma)
 
 erode <- function (x, kernel)
 {
-    if (is.array(kernel) && all(dim(kernel) == 3))
+    if (is.array(kernel) && all(dim(kernel) <= 3))
         return (morph(x, kernel, brush=TRUE, eraser=TRUE, value=0, nNeighboursNot=0))
     else
         return (morph(x, kernel, brush=TRUE, eraser=TRUE, value=0))
@@ -73,7 +73,7 @@ erode <- function (x, kernel)
 
 dilate <- function (x, kernel)
 {
-    if (is.array(x) && is.array(kernel) && all(dim(kernel) == 3))
+    if (is.array(x) && is.array(kernel) && all(dim(kernel) <= 3))
     {
         neighbourCount <- 3^length(dim(x)) - 1
         return (morph(x, kernel, brush=TRUE, valueNot=0, nNeighboursNot=neighbourCount))
