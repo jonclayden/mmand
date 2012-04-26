@@ -22,8 +22,16 @@ shapeKernel <- function (width, dim = length(width), type = c("box","disc","diam
                             disc=function(a,b) sqrt(a^2 + b^2),
                             diamond=function(a,b) (abs(a) + abs(b)))
     
-    minNorms <- Reduce(function(a,b) outer(a,b,FUN=normFun), nearEdges)
-    maxNorms <- Reduce(function(a,b) outer(a,b,FUN=normFun), farEdges)
+    if (dim == 1)
+    {
+        minNorms <- abs(nearEdges[[1]])
+        maxNorms <- abs(farEdges[[1]])
+    }
+    else
+    {
+        minNorms <- Reduce(function(a,b) outer(a,b,FUN=normFun), nearEdges)
+        maxNorms <- Reduce(function(a,b) outer(a,b,FUN=normFun), farEdges)
+    }
     
     maxDistance <- max(width) / 2
     indices <- minNorms < maxDistance
