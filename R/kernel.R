@@ -5,17 +5,18 @@ shapeKernel <- function (width, dim = length(width), type = c("box","disc","diam
     
     if (dim > length(width))
         width <- rep(width, length.out=dim)
+    else if (dim < length(width))
+        width
     
-    maxWidth <- ceiling(max(width))
+    widthCeiling <- ceiling(width)
     scaleFactors <- max(width) / width
     
-    # This corresponds to the smallest isotropic kernel of odd width to fit the shape
-    size <- ifelse(maxWidth %% 2 == 1, maxWidth, maxWidth+1)
-    kernel <- array(bg, dim=rep(size,dim))
+    size <- ifelse(widthCeiling %% 2 == 1, widthCeiling, widthCeiling+1)
+    kernel <- array(bg, dim=size)
     
-    x <- 1:size - (size+1)/2
-    nearEdges <- lapply(scaleFactors, "*", x - 0.5*sign(x))
-    farEdges <- lapply(scaleFactors, "*", x + 0.5*sign(x))
+    x <- lapply(1:dim, function(i) 1:size[i] - (size[i]+1)/2)
+    nearEdges <- lapply(1:dim, function(i) scaleFactors[i] * (x[[i]] - 0.5*sign(x[[i]])))
+    farEdges <- lapply(1:dim, function(i) scaleFactors[i] * (x[[i]] + 0.5*sign(x[[i]])))
     
     normFun <- switch(type, box=function(a,b) pmax(abs(a),abs(b)),
                             disc=function(a,b) sqrt(a^2 + b^2),
@@ -42,22 +43,22 @@ gaussianKernel <- function (sigma, dim = length(sigma), size = NULL, normalised 
         sigma <- rep(sigma, length.out=dim)
     
     if (is.null(size))
-        size <- ceiling(4 * max(sigma))
-    else if (length(size) > 1)
-        report(OL$Error, "The kernel size must be given as a single integer")
+        size <- ceiling(4 * sigma)
+    else if (dim > length(size))
+        size <- rep(ceiling(size), length.out=dim)
     else
         size <- ceiling(size)
     
     size <- ifelse(size %% 2 == 1, size, size+1)
     
     scaleFactors <- max(sigma) / sigma
-    x <- 1:size - (size+1)/2
-    centres <- lapply(scaleFactors, "*", x)
+    x <- lapply(1:dim, function(i) 1:size[i] - (size[i]+1)/2)
+    centres <- lapply(1:dim, function(i) scaleFactors[i] * x[[i]])
     
     normFun <- function(a,b) sqrt(a^2 + b^2)
     norms <- Reduce(function(a,b) outer(a,b,FUN=normFun), centres)
     
-    kernel <- array(dnorm(norms,sd=max(sigma)), dim=rep(size,dim))
+    kernel <- array(dnorm(norms,sd=max(sigma)), dim=size)
     
     if (normalised)
         kernel <- kernel / sum(kernel, na.rm=TRUE)
