@@ -12,22 +12,17 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
     int j;
     double kernel_sum = 0.0;
     
-    SEXP dims = getAttrib(x, R_DimSymbol);
-    int n_dims = (int) LENGTH(dims);
-    int kernel_width = INTEGER(getAttrib(kernel, R_DimSymbol))[0];
-    int kernel_centre = (kernel_width - 1) / 2;
+    int *x_dims = INTEGER(getAttrib(x, R_DimSymbol));
+    int *kernel_dims = INTEGER(getAttrib(kernel, R_DimSymbol));
+    int n_dims = (int) LENGTH(getAttrib(x, R_DimSymbol));
     int integer_x = (int) IS_INTEGER(x);
     R_len_t len = LENGTH(x);
     R_len_t kernel_len = LENGTH(kernel);
     R_len_t neighbourhood_len = ((R_len_t) R_pow_di(3.0, n_dims)) - 1;
     
-    int *x_dims = (int *) R_alloc(n_dims, sizeof(int));
+    int *kernel_centre = (int *) R_alloc(n_dims, sizeof(int));
     for (j=0; j<n_dims; j++)
-        x_dims[j] = INTEGER(dims)[j];
-    
-    int *kernel_dims = (int *) R_alloc(n_dims, sizeof(int));
-    for (j=0; j<n_dims; j++)
-        kernel_dims[j] = kernel_width;
+        kernel_centre[j] = (kernel_dims[j] - 1) / 2;
     
     int *neighbourhood_dims = (int *) R_alloc(n_dims, sizeof(int));
     for (j=0; j<n_dims; j++)
@@ -46,7 +41,7 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
     {
         vector_to_matrix_loc(i, kernel_dims, n_dims, temp);
         for (j=0; j<n_dims; j++)
-            kernel_matrix_locs[i + (j*kernel_len)] = temp[j] - kernel_centre;
+            kernel_matrix_locs[i + (j*kernel_len)] = temp[j] - kernel_centre[j];
         
         if (integer_x)
             kernel_sum += (double) kernel_p.i[i];

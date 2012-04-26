@@ -13,8 +13,8 @@ morph.default <- function (x, kernel, brush = TRUE, eraser = FALSE, value = NULL
     if (!is.numeric(kernel))
         report(OL$Error, "Kernel must be numeric")
     
-    if (!all(dim(kernel) == dim(kernel)[1]))
-        report(OL$Error, "Kernel must have the same size in all dimensions")
+    if (any(dim(kernel) %% 2 != 1))
+        report(OL$Error, "Kernel must have odd width in all dimensions")
     
     if (length(dim(kernel)) < length(dim(x)))
         dim(kernel) <- c(dim(kernel), rep(1,length(dim(x))-length(dim(kernel))))
