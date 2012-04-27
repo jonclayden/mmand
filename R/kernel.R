@@ -45,14 +45,12 @@ shapeKernel <- function (width, dim = length(width), type = c("box","disc","diam
     return (kernel)
 }
 
-gaussianKernel <- function (sigma, dim = length(sigma), size = NULL, normalised = TRUE)
+gaussianKernel <- function (sigma, dim = length(sigma), size = 4*sigma, normalised = TRUE)
 {
     if (dim > length(sigma))
         sigma <- rep(sigma, length.out=dim)
     
-    if (is.null(size))
-        size <- ceiling(4 * sigma)
-    else if (dim > length(size))
+    if (dim > length(size))
         size <- rep(ceiling(size), length.out=dim)
     else
         size <- ceiling(size)
