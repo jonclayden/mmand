@@ -1,9 +1,9 @@
-morph <- function (x, ...)
+morph <- function (x, kernel, ...)
 {
     UseMethod("morph")
 }
 
-morph.default <- function (x, kernel, brush = TRUE, eraser = FALSE, value = NULL, valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL)
+morph.default <- function (x, kernel, brush = TRUE, eraser = FALSE, value = NULL, valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, ...)
 {
     x <- as.array(x)
     if (!is.numeric(x))

@@ -8,10 +8,10 @@ The \code{morph} function applies a kernel, literally or multiplicatively, to a 
 }
 
 \usage{
-morph(x, ...)
+morph(x, kernel, \dots)
 
 \method{morph}{default}(x, kernel, brush = TRUE, eraser = FALSE, value = NULL,
-      valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL)
+      valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, \dots)
 }
 
 \arguments{
@@ -23,6 +23,7 @@ morph(x, ...)
   \item{valueNot}{An optional vector of values in the target array for which not to apply the kernel.}
   \item{nNeighbours}{An optional numeric vector giving allowable numbers of nonzero neighbours (including diagonal neighbours) for array elements where the kernel will be applied. Takes priority over \code{nNeighboursNot} if both are specified.}
   \item{nNeighboursNot}{An optional numeric vector giving nonallowable numbers of nonzero neighbours (including diagonal neighbours) for array elements where the kernel will be applied.}
+  \item{\dots}{Additional arguments to methods.}
 }
 
 \value{

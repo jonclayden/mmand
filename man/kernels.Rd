@@ -5,7 +5,7 @@
 
 \title{Kernel-generating functions}
 \description{
-These functions can be used for generating kernels for morphological or smoothing operations.
+These functions can be used to generate kernels for morphological or smoothing operations.
 }
 
 \usage{
@@ -20,7 +20,7 @@ gaussianKernel(sigma, dim = length(sigma), size = 4*sigma, normalised = TRUE)
   \item{sigma}{A numeric vector giving the standard deviation of the underlying Gaussian distribution in each dimension, in array elements. Does not need to be equal for all dimensions. Will be recycled to length \code{dim} if that parameter is also specified.}
   \item{dim}{An integer value giving the dimensionality of the kernel. Defaults to the length of \code{width} or \code{sigma}.}
   \item{size}{A numeric vector giving the width of the kernel in each dimension, which will be rounded up to the nearest odd integer. Defaults to four times the corresponding \code{sigma} value.}
-  \item{type}{A string giving the type of shape to produced. In one dimension, these shapes are all equivalent.}
+  \item{type}{A string giving the type of shape to produce. In one dimension, these shapes are all equivalent.}
   \item{brush}{If \code{TRUE}, elements of the kernel which are outside the shape will be set to \code{NA}, otherwise they will have zero value. This is to ensure appropriate behaviour in \code{\link{morph}}.}
   \item{binary}{If \code{FALSE}, the value of the kernel at each point represents the proportion of the array element within the shape. If \code{TRUE}, these values are binarised to be 1 if at least half of the element is within the shape, and 0 otherwise.}
   \item{normalised}{If \code{TRUE}, the sum of non-missing elements of the kernel will be unity. Note that this is the default for \code{gaussianKernel}, but not for \code{shapeKernel}.}

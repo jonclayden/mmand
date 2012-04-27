@@ -44,7 +44,7 @@ gameOfLife <- function (init, size, density = 0.3, steps = 200, viz = FALSE, tic
         stateWithBorder <- stateWithBorder + rule1Diff + rule3Diff + rule4Diff
         state <- stateWithBorder[(1:nrow(state))+2,(1:ncol(state))+2]
         
-        if (equivalent(prevState, state))
+        if (isTRUE(all.equal(prevState, state)))
         {
             report(OL$Info, "State is stable after ", i-1, " steps")
             break
