@@ -33,3 +33,10 @@ A morphed array with the same dimensions as the original array.
 \author{Jon Clayden <jon.clayden+mmand@gmail.com>}
 
 \seealso{\code{\link{morph}} for the function underlying all of these operations, \code{\link{kernels}} for kernel-generating functions, \code{\link{binarise}} for binarising an array, and \code{\link{gaussianSmooth}} for smoothing. The \code{EBImage} Bioconductor package also supplies functions to perform these operations, and may be slightly faster, but only works in two dimensions.}
+
+\examples{
+x <- c(0,0,1,0,0,0,1,1,1,0,0)
+k <- c(1,1,1)
+erode(x,k)
+dilate(x,k)
+}
