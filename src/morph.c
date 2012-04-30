@@ -131,12 +131,12 @@ int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_di
     else
         x_p.d = REAL(x);
     
-    vector_to_matrix_loc((size_t) index, x_dims, n_dims, temp+3);
+    vector_to_matrix_loc((size_t) index, x_dims, n_dims, temp+n_dims);
     
     for (i=0; i<neighbourhood_len; i++)
     {
         for (j=0; j<n_dims; j++)
-            temp[j] = temp[j+3] + neighbourhood_matrix_locs[i + (j*neighbourhood_len)];
+            temp[j] = temp[j+n_dims] + neighbourhood_matrix_locs[i + (j*neighbourhood_len)];
         
         if (loc_in_bounds(temp, x_dims, n_dims))
         {
