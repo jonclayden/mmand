@@ -2,6 +2,13 @@ Significant changes to the mmand package are laid out below for each release.
 
 =================================================================================
 
+VERSION 0.1.1
+
+- A mistake in internal memory management which could lead to a segmentation
+  fault has been corrected.
+
+=================================================================================
+
 VERSION 0.1.0
 
 - First public release.

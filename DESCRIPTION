@@ -1,6 +1,6 @@
 Package: mmand
-Version: 0.1.0
-Date: 2012-04-27
+Version: 0.1.1
+Date: 2012-04-30
 Title: Mathematical Morphology in Any Number of Dimensions
 Author: Jon Clayden
 Maintainer: Jon Clayden <jon.clayden+mmand@gmail.com>
