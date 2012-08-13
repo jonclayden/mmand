@@ -46,5 +46,5 @@ A binary matrix representing the final state of the system after \code{steps} ge
 \seealso{The \code{\link{morph}} function, which powers this simulation.}
 
 \examples{
-gameOfLife(init=gosperGliderGun(), size=c(40,40), steps=50)
+\dontrun{gameOfLife(init=gosperGliderGun(), size=c(40,40), steps=50, viz=TRUE)}
 }
