@@ -206,21 +206,20 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
             {
                 if (is_integer)
                 {
-                    if (kernel_p.i[i] == NA_INTEGER)
-                        y_p.i[l] = x_p.i[l];
-                    else if (is_eraser)
-                        y_p.i[l] = kernel_p.i[i] == 0 ? x_p.i[l] : 0;
-                    else
+                    if (is_eraser && kernel_p.i[i] != 0)
+                        y_p.i[l] = 0;
+                    else if (kernel_p.i[i] != NA_INTEGER)
                         y_p.i[l] = kernel_p.i[i];
                 }
                 else
                 {
-                    if (ISNA(kernel_p.d[i]))
-                        y_p.d[l] = x_p.d[l];
-                    else if (is_eraser)
-                        y_p.d[l] = kernel_p.d[i] == 0.0 ? x_p.d[l] : 0.0;
-                    else
-                        y_p.d[l] = kernel_p.d[i];
+                    if (!ISNA(kernel_p.d[i]))
+                    {
+                        if (is_eraser && kernel_p.d[i] != 0.0)
+                            y_p.d[l] = 0.0;
+                        else
+                            y_p.d[l] = kernel_p.d[i];
+                    }
                 }
             }
             else
