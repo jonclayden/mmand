@@ -2,6 +2,14 @@ Significant changes to the mmand package are laid out below for each release.
 
 =================================================================================
 
+VERSION 0.1.2
+
+- Brush kernels which include NAs, notably diamond-shaped kernels, are now
+  properly handled by the C code. The value of the output array was sometimes
+  overwritten by that of the input array when it should not have been.
+  
+=================================================================================
+
 VERSION 0.1.1
 
 - A mistake in internal memory management which could lead to a segmentation
