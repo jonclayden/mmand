@@ -7,7 +7,7 @@
 
 \title{Standard mathematical morphology operations}
 \description{
-These functions provide standard mathematical morphology operations, which can be applied to array data with any number of dimensions.
+These functions provide standard mathematical morphology operations, which can be applied to array data with any number of dimensions. At present only binary morphology operations can be performed.
 }
 
 \usage{
