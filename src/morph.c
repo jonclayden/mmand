@@ -60,8 +60,6 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
             neighbourhood_matrix_locs[i + (j*neighbourhood_len)] = temp[j] - 1;
     }
     
-    int *loc = (int *) R_alloc(n_dims, sizeof(int));
-    
     if (integer_x)
     {
         PROTECT(y = NEW_INTEGER(len));
@@ -73,13 +71,27 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
         memcpy(REAL(y), REAL(x), ((size_t) len)*sizeof(double));
     }
     
-    for (i=0; i<len; i++)
+    int *loc;
+    
+#ifdef _OPENMP
+    #pragma omp parallel private(loc)
+#endif
     {
-        if (is_compatible_value(x, i, value, value_not, integer_x) && is_compatible_neighbourhood(x, x_dims, n_dims, neighbourhood_len, neighbourhood_matrix_locs, i, n_neighbours, n_neighbours_not, integer_x, temp))
+        loc = (int *) Calloc(n_dims, int);
+
+#ifdef _OPENMP        
+        #pragma omp for
+#endif
+        for (i=0; i<len; i++)
         {
-            vector_to_matrix_loc((size_t) i, x_dims, n_dims, loc);
-            apply_kernel(x, y, x_dims, n_dims, loc, kernel, kernel_len, kernel_matrix_locs, kernel_sum, integer_x, INTEGER(is_brush)[0], INTEGER(is_eraser)[0], temp);
+            if (is_compatible_value(x, i, value, value_not, integer_x) && is_compatible_neighbourhood(x, x_dims, n_dims, neighbourhood_len, neighbourhood_matrix_locs, i, n_neighbours, n_neighbours_not, integer_x, temp))
+            {
+                vector_to_matrix_loc((size_t) i, x_dims, n_dims, loc);
+                apply_kernel(x, y, x_dims, n_dims, loc, kernel, kernel_len, kernel_matrix_locs, kernel_sum, integer_x, INTEGER(is_brush)[0], INTEGER(is_eraser)[0], temp);
+            }
         }
+        
+        free(loc);
     }
     
     UNPROTECT(1);
