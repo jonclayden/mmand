@@ -91,7 +91,7 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
             }
         }
         
-        free(loc);
+        Free(loc);
     }
     
     UNPROTECT(1);
