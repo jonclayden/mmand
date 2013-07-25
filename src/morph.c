@@ -71,22 +71,26 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
         memcpy(REAL(y), REAL(x), ((size_t) len)*sizeof(double));
     }
     
+    int l;
+    int last_dim = x_dims[n_dims-1];
     int *loc;
+    R_len_t partial_len = len / last_dim;
     
 #ifdef _OPENMP
-    #pragma omp parallel private(loc)
+    #pragma omp parallel for private(loc)
 #endif
+    for (l=0; l<last_dim; l++)
     {
         loc = (int *) Calloc(n_dims, int);
+        loc[n_dims-1] = l;
 
-#ifdef _OPENMP        
-        #pragma omp for
-#endif
-        for (i=0; i<len; i++)
+        for (i=0; i<partial_len; i++)
         {
-            if (is_compatible_value(x, i, value, value_not, integer_x) && is_compatible_neighbourhood(x, x_dims, n_dims, neighbourhood_len, neighbourhood_matrix_locs, i, n_neighbours, n_neighbours_not, integer_x, temp))
+            ii = i + l*partial_len;
+            if (is_compatible_value(x, ii, value, value_not, integer_x) && is_compatible_neighbourhood(x, x_dims, n_dims, neighbourhood_len, neighbourhood_matrix_locs, ii, n_neighbours, n_neighbours_not, integer_x, temp))
             {
-                vector_to_matrix_loc((size_t) i, x_dims, n_dims, loc);
+                // NB: This first call sets only elements 1 to N-1
+                vector_to_matrix_loc((size_t) i, x_dims, n_dims-1, loc);
                 apply_kernel(x, y, x_dims, n_dims, loc, kernel, kernel_len, kernel_matrix_locs, kernel_sum, integer_x, INTEGER(is_brush)[0], INTEGER(is_eraser)[0], temp);
             }
         }
