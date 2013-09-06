@@ -36,9 +36,9 @@ gameOfLife <- function (init, size, density = 0.3, steps = 200, viz = FALSE, tic
     for (i in seq_len(steps))
     {
         # Rule 2 is a survival rule, so nothing changes
-        rule1Diff <- morph(stateWithBorder, kernel=0L, brush=TRUE, value=1, nNeighbours=0:1) - stateWithBorder
-        rule3Diff <- morph(stateWithBorder, kernel=0L, brush=TRUE, value=1, nNeighbours=4:8) - stateWithBorder
-        rule4Diff <- morph(stateWithBorder, kernel=1L, brush=TRUE, value=0, nNeighbours=3L) - stateWithBorder
+        rule1Diff <- morph(stateWithBorder, kernel=1L, operator="0", value=1, nNeighbours=0:1) - stateWithBorder
+        rule3Diff <- morph(stateWithBorder, kernel=1L, operator="0", value=1, nNeighbours=4:8) - stateWithBorder
+        rule4Diff <- morph(stateWithBorder, kernel=1L, operator="1", value=0, nNeighbours=3L) - stateWithBorder
         
         prevState <- state
         stateWithBorder <- stateWithBorder + rule1Diff + rule3Diff + rule4Diff

@@ -5,7 +5,7 @@
 #include "morph.h"
 #include "index.h"
 
-SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours, SEXP n_neighbours_not, SEXP is_brush, SEXP is_eraser)
+SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours, SEXP n_neighbours_not, SEXP operator, SEXP merge)
 {
     R_len_t i, ii;
     SEXP y;
@@ -29,6 +29,7 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
         neighbourhood_dims[j] = 3;
     
     int *temp = (int *) R_alloc(2*n_dims, sizeof(int));
+    double *values = (double *) R_alloc(kernel_len, sizeof(double));
     
     int_or_double_ptr kernel_p;
     if (integer_x)
@@ -78,7 +79,7 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
         if (is_compatible_value(x, i, value, value_not, integer_x) && is_compatible_neighbourhood(x, x_dims, n_dims, neighbourhood_len, neighbourhood_matrix_locs, i, n_neighbours, n_neighbours_not, integer_x, temp))
         {
             vector_to_matrix_loc((size_t) i, x_dims, n_dims, loc);
-            apply_kernel(x, y, x_dims, n_dims, loc, kernel, kernel_len, kernel_matrix_locs, kernel_sum, integer_x, INTEGER(is_brush)[0], INTEGER(is_eraser)[0], temp);
+            apply_kernel(x, y, x_dims, n_dims, loc, kernel, kernel_len, kernel_matrix_locs, kernel_sum, integer_x, CHAR(STRING_ELT(operator,0)), CHAR(STRING_ELT(merge,0)), temp, values);
         }
     }
     
@@ -172,10 +173,12 @@ int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_di
     return TRUE;
 }
 
-void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, const int *x_loc, const SEXP kernel, const R_len_t kernel_len, const int *kernel_matrix_locs, const double kernel_sum, const int is_integer, const int is_brush, const int is_eraser, int *temp)
+void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, const int *x_loc, const SEXP kernel, const R_len_t kernel_len, const int *kernel_matrix_locs, const double kernel_sum, const int is_integer, const char *operator, const char *merge, int *temp, double *values)
 {
-    size_t i, l;
-    int j;
+    R_len_t i;
+    int j, values_present, kernel_valid, element;
+    size_t l;
+    double final_value;
     
     int_or_double_ptr x_p, y_p, kernel_p;
     if (is_integer)
@@ -191,60 +194,99 @@ void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, co
         kernel_p.d = REAL(kernel);
     }
     
-    double value = 0.0, visited_kernel_sum = 0.0;
-    
+    values_present = 0;
     for (i=0; i<kernel_len; i++)
     {
-        for (j=0; j<n_dims; j++)
-            temp[j] = x_loc[j] + kernel_matrix_locs[i + (j*kernel_len)];
-        
-        if (loc_in_bounds(temp, x_dims, n_dims))
-        {
-            matrix_to_vector_loc(temp, x_dims, n_dims, &l);
+        if (is_integer && !ISNA(kernel_p.i[i]))
+            kernel_valid = TRUE;
+        else if (!is_integer && !ISNA(kernel_p.d[i]))
+            kernel_valid = TRUE;
+        else
+            kernel_valid = FALSE;
             
-            if (is_brush)
+        if (kernel_valid)
+        {
+            for (j=0; j<n_dims; j++)
+                temp[j] = x_loc[j] + kernel_matrix_locs[i + (j*kernel_len)];
+        
+            if (loc_in_bounds(temp, x_dims, n_dims))
             {
+                matrix_to_vector_loc(temp, x_dims, n_dims, &l);
+            
                 if (is_integer)
                 {
-                    if (is_eraser && kernel_p.i[i] != 0)
-                        y_p.i[l] = 0;
-                    else if (kernel_p.i[i] != NA_INTEGER)
-                        y_p.i[l] = kernel_p.i[i];
+                    if (strcmp(operator,"+") == 0)
+                        values[i] = (double) x_p.i[l] + kernel_p.i[i];
+                    else if (strcmp(operator,"-") == 0)
+                        values[i] = (double) x_p.i[l] - kernel_p.i[i];
+                    else if (strcmp(operator,"*") == 0)
+                        values[i] = (double) x_p.i[l] * kernel_p.i[i];
+                    else if (strcmp(operator,"i") == 0)
+                        values[i] = (double) (kernel_p.i[i] != 0 ? x_p.i[l] : NA_REAL);
+                    else if (strcmp(operator,"1") == 0)
+                        values[i] = (kernel_p.i[i] != 0 ? 1 : 0);
+                    else if (strcmp(operator,"0") == 0)
+                        values[i] = (kernel_p.i[i] != 0 ? 0 : 1);
                 }
                 else
                 {
-                    if (!ISNA(kernel_p.d[i]))
-                    {
-                        if (is_eraser && kernel_p.d[i] != 0.0)
-                            y_p.d[l] = 0.0;
-                        else
-                            y_p.d[l] = kernel_p.d[i];
-                    }
-                }
-            }
-            else
-            {
-                if (is_integer)
-                {
-                    value += (double) kernel_p.i[i] * x_p.i[l];
-                    visited_kernel_sum += (double) kernel_p.i[i];
-                }
-                else
-                {
-                    value += kernel_p.d[i] * x_p.d[l];
-                    visited_kernel_sum += kernel_p.d[i];
+                    if (strcmp(operator,"+") == 0)
+                        values[i] = x_p.d[l] + kernel_p.d[i];
+                    else if (strcmp(operator,"-") == 0)
+                        values[i] = x_p.d[l] - kernel_p.d[i];
+                    else if (strcmp(operator,"*") == 0)
+                        values[i] = x_p.d[l] * kernel_p.d[i];
+                    else if (strcmp(operator,"i") == 0)
+                        values[i] = (kernel_p.d[i] != 0.0 ? x_p.d[l] : NA_REAL);
+                    else if (strcmp(operator,"1") == 0)
+                        values[i] = (kernel_p.i[i] != 0.0 ? 1.0 : 0.0);
+                    else if (strcmp(operator,"0") == 0)
+                        values[i] = (kernel_p.i[i] != 0.0 ? 0.0 : 1.0);
                 }
             }
         }
+        else
+            values[i] = NA_REAL;
+        
+        if (!ISNA(values[i]))
+            values_present++;
     }
     
-    if (!is_brush)
+    if (values_present == 0)
+        final_value = NA_REAL;
+    else if (kernel_len == 1)
+        final_value = values[0];
+    else if (strcmp(merge,"sum") == 0 || strcmp(merge,"mean") == 0)
     {
-        matrix_to_vector_loc(x_loc, x_dims, n_dims, &l);
-        value *= (visited_kernel_sum == 0.0) ? 1.0 : (kernel_sum / visited_kernel_sum);
-        if (is_integer)
-            y_p.i[l] = (int) round(value);
-        else
-            y_p.d[l] = value;
+        final_value = 0.0;
+        for (i=0; i<kernel_len; i++)
+            final_value += (ISNA(values[i]) ? 0.0 : values[i]);
+        
+        if (strcmp(merge,"mean") == 0)
+            final_value /= (double) values_present;
     }
+    else if (strcmp(merge,"min") == 0)
+    {
+        // Partial sort: ensure that element 0 is in the right place
+        rPsort(values, (int) kernel_len, 0);
+        final_value = values[0];
+    }
+    else if (strcmp(merge,"max") == 0)
+    {
+        element = values_present - 1;
+        rPsort(values, (int) kernel_len, element);
+        final_value = values[element];
+    }
+    else if (strcmp(merge,"median") == 0)
+    {
+        element = (int) floor((double) values_present / 2.0);
+        rPsort(values, (int) kernel_len, element);
+        final_value = values[element];
+    }
+    
+    matrix_to_vector_loc(x_loc, x_dims, n_dims, &l);
+    if (is_integer)
+        y_p.i[l] = (ISNA(final_value) ? NA_INTEGER : ((int) round(final_value)));
+    else
+        y_p.d[l] = final_value;
 }

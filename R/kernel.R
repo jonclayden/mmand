@@ -1,7 +1,6 @@
-shapeKernel <- function (width, dim = length(width), type = c("box","disc","diamond"), brush = TRUE, binary = TRUE, normalised = FALSE)
+shapeKernel <- function (width, dim = length(width), type = c("box","disc","diamond"), binary = TRUE, normalised = FALSE)
 {
     type <- match.arg(type)
-    bg <- ifelse(brush, NA, 0)
     
     if (dim > length(width))
         width <- rep(width, length.out=dim)
@@ -12,7 +11,7 @@ shapeKernel <- function (width, dim = length(width), type = c("box","disc","diam
     scaleFactors <- max(width) / width
     
     size <- ifelse(widthCeiling %% 2 == 1, widthCeiling, widthCeiling+1)
-    kernel <- array(bg, dim=size)
+    kernel <- array(0, dim=size)
     
     x <- lapply(1:dim, function(i) 1:size[i] - (size[i]+1)/2)
     nearEdges <- lapply(1:dim, function(i) scaleFactors[i] * (x[[i]] - 0.5*sign(x[[i]])))
@@ -38,7 +37,7 @@ shapeKernel <- function (width, dim = length(width), type = c("box","disc","diam
     kernel[indices] <- pmin(1, (maxDistance - minNorms[indices]) / (maxNorms[indices] - minNorms[indices]))
     
     if (binary)
-        kernel <- ifelse(kernel < 0.5, as.integer(bg), 1L)
+        kernel <- ifelse(kernel < 0.5, 0L, 1L)
     else if (normalised)
         kernel <- kernel / sum(kernel, na.rm=TRUE)
     
