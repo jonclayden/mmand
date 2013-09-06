@@ -31,11 +31,17 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
     int *temp = (int *) R_alloc(2*n_dims, sizeof(int));
     double *values = (double *) R_alloc(kernel_len, sizeof(double));
     
-    int_or_double_ptr kernel_p;
+    int_or_double_ptr x_p, y_p, kernel_p;
     if (integer_x)
+    {
+        x_p.i = INTEGER(x);
         kernel_p.i = INTEGER(kernel);
+    }
     else
+    {
+        x_p.d = REAL(x);
         kernel_p.d = REAL(kernel);
+    }
     
     int *kernel_matrix_locs = (int *) R_alloc(kernel_len*n_dims, sizeof(int));
     for (i=0; i<kernel_len; i++)
@@ -66,20 +72,22 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
     if (integer_x)
     {
         PROTECT(y = NEW_INTEGER(len));
-        memcpy(INTEGER(y), INTEGER(x), ((size_t) len)*sizeof(int));
+        y_p.i = INTEGER(y);
+        memcpy(y_p.i, x_p.i, ((size_t) len)*sizeof(int));
     }
     else
     {
         PROTECT(y = NEW_NUMERIC(len));
-        memcpy(REAL(y), REAL(x), ((size_t) len)*sizeof(double));
+        y_p.d = REAL(y);
+        memcpy(y_p.d, x_p.d, ((size_t) len)*sizeof(double));
     }
     
     for (i=0; i<len; i++)
     {
-        if (is_compatible_value(x, i, value, value_not, integer_x) && is_compatible_neighbourhood(x, x_dims, n_dims, neighbourhood_len, neighbourhood_matrix_locs, i, n_neighbours, n_neighbours_not, integer_x, temp))
+        if (is_compatible_value(x_p, i, value, value_not, integer_x) && is_compatible_neighbourhood(x_p, x_dims, n_dims, neighbourhood_len, neighbourhood_matrix_locs, i, n_neighbours, n_neighbours_not, integer_x, temp))
         {
             vector_to_matrix_loc((size_t) i, x_dims, n_dims, loc);
-            apply_kernel(x, y, x_dims, n_dims, loc, kernel, kernel_len, kernel_matrix_locs, kernel_sum, integer_x, CHAR(STRING_ELT(operator,0)), CHAR(STRING_ELT(merge,0)), temp, values);
+            apply_kernel(x_p, y_p, x_dims, n_dims, loc, kernel_p, kernel_len, kernel_matrix_locs, kernel_sum, integer_x, CHAR(STRING_ELT(operator,0)), CHAR(STRING_ELT(merge,0)), temp, values);
         }
     }
     
@@ -87,7 +95,7 @@ SEXP morph_R (SEXP x, SEXP kernel, SEXP value, SEXP value_not, SEXP n_neighbours
     return y;
 }
 
-int is_compatible_value (const SEXP x, const R_len_t index, const SEXP include_list, const SEXP exclude_list, const int is_integer)
+int is_compatible_value (const int_or_double_ptr x_p, const R_len_t index, const SEXP include_list, const SEXP exclude_list, const int is_integer)
 {
     R_len_t i;
     
@@ -95,9 +103,9 @@ int is_compatible_value (const SEXP x, const R_len_t index, const SEXP include_l
     {
         for (i=0; i<LENGTH(include_list); i++)
         {
-            if (is_integer && INTEGER(x)[index] == (int) REAL(include_list)[i])
+            if (is_integer && x_p.i[index] == (int) REAL(include_list)[i])
                 return TRUE;
-            else if (!is_integer && REAL(x)[index] == REAL(include_list)[i])
+            else if (!is_integer && x_p.d[index] == REAL(include_list)[i])
                 return TRUE;
         }
         return FALSE;
@@ -107,9 +115,9 @@ int is_compatible_value (const SEXP x, const R_len_t index, const SEXP include_l
     {
         for (i=0; i<LENGTH(exclude_list); i++)
         {
-            if (is_integer && INTEGER(x)[index] == (int) REAL(exclude_list)[i])
+            if (is_integer && x_p.i[index] == (int) REAL(exclude_list)[i])
                 return FALSE;
-            else if (!is_integer && REAL(x)[index] == REAL(exclude_list)[i])
+            else if (!is_integer && x_p.d[index] == REAL(exclude_list)[i])
                 return FALSE;
         }
         return TRUE;
@@ -118,19 +126,13 @@ int is_compatible_value (const SEXP x, const R_len_t index, const SEXP include_l
     return TRUE;
 }
 
-int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_dims, const int neighbourhood_len, const int *neighbourhood_matrix_locs, const R_len_t index, const SEXP include_list, const SEXP exclude_list, const int is_integer, int *temp)
+int is_compatible_neighbourhood (const int_or_double_ptr x_p, const int *x_dims, const int n_dims, const int neighbourhood_len, const int *neighbourhood_matrix_locs, const R_len_t index, const SEXP include_list, const SEXP exclude_list, const int is_integer, int *temp)
 {
     if (LENGTH(include_list) == 0 && LENGTH(exclude_list) == 0)
         return TRUE;
     
     size_t i, l;
     int j, n_neighbours = 0;
-    
-    int_or_double_ptr x_p;
-    if (is_integer)
-        x_p.i = INTEGER(x);
-    else
-        x_p.d = REAL(x);
     
     vector_to_matrix_loc((size_t) index, x_dims, n_dims, temp+n_dims);
     
@@ -173,26 +175,12 @@ int is_compatible_neighbourhood (const SEXP x, const int *x_dims, const int n_di
     return TRUE;
 }
 
-void apply_kernel (const SEXP x, SEXP y, const int *x_dims, const int n_dims, const int *x_loc, const SEXP kernel, const R_len_t kernel_len, const int *kernel_matrix_locs, const double kernel_sum, const int is_integer, const char *operator, const char *merge, int *temp, double *values)
+void apply_kernel (const int_or_double_ptr x_p, int_or_double_ptr y_p, const int *x_dims, const int n_dims, const int *x_loc, const int_or_double_ptr kernel_p, const R_len_t kernel_len, const int *kernel_matrix_locs, const double kernel_sum, const int is_integer, const char *operator, const char *merge, int *temp, double *values)
 {
     R_len_t i;
     int j, values_present, kernel_valid, element;
     size_t l;
     double final_value;
-    
-    int_or_double_ptr x_p, y_p, kernel_p;
-    if (is_integer)
-    {
-        x_p.i = INTEGER(x);
-        y_p.i = INTEGER(y);
-        kernel_p.i = INTEGER(kernel);
-    }
-    else
-    {
-        x_p.d = REAL(x);
-        y_p.d = REAL(y);
-        kernel_p.d = REAL(kernel);
-    }
     
     values_present = 0;
     for (i=0; i<kernel_len; i++)
