@@ -203,33 +203,61 @@ void apply_kernel (const int_or_double_ptr x_p, int_or_double_ptr y_p, const int
             
                 if (is_integer)
                 {
-                    if (strcmp(operator,"+") == 0)
+                    switch (operator[0])
+                    {
+                        case '+':
                         values[i] = (double) x_p.i[l] + kernel_p.i[i];
-                    else if (strcmp(operator,"-") == 0)
+                        break;
+                        
+                        case '-':
                         values[i] = (double) x_p.i[l] - kernel_p.i[i];
-                    else if (strcmp(operator,"*") == 0)
+                        break;
+                        
+                        case '*':
                         values[i] = (double) x_p.i[l] * kernel_p.i[i];
-                    else if (strcmp(operator,"i") == 0)
+                        break;
+                        
+                        case 'i':
                         values[i] = (double) (kernel_p.i[i] != 0 ? x_p.i[l] : NA_REAL);
-                    else if (strcmp(operator,"1") == 0)
+                        break;
+                        
+                        case '1':
                         values[i] = (kernel_p.i[i] != 0 ? 1 : 0);
-                    else if (strcmp(operator,"0") == 0)
+                        break;
+                        
+                        case '0':
                         values[i] = (kernel_p.i[i] != 0 ? 0 : 1);
+                        break;
+                    }
                 }
                 else
                 {
-                    if (strcmp(operator,"+") == 0)
+                    switch (operator[0])
+                    {
+                        case '+':
                         values[i] = x_p.d[l] + kernel_p.d[i];
-                    else if (strcmp(operator,"-") == 0)
+                        break;
+                        
+                        case '-':
                         values[i] = x_p.d[l] - kernel_p.d[i];
-                    else if (strcmp(operator,"*") == 0)
+                        break;
+                        
+                        case '*':
                         values[i] = x_p.d[l] * kernel_p.d[i];
-                    else if (strcmp(operator,"i") == 0)
+                        break;
+                        
+                        case 'i':
                         values[i] = (kernel_p.d[i] != 0.0 ? x_p.d[l] : NA_REAL);
-                    else if (strcmp(operator,"1") == 0)
+                        break;
+                        
+                        case '1':
                         values[i] = (kernel_p.i[i] != 0.0 ? 1.0 : 0.0);
-                    else if (strcmp(operator,"0") == 0)
+                        break;
+                        
+                        case '0':
                         values[i] = (kernel_p.i[i] != 0.0 ? 0.0 : 1.0);
+                        break;
+                    }
                 }
             }
         }

@@ -4,17 +4,36 @@
 
 void matrix_to_vector_loc (const int *loc, const int *dim, const int n_dims, size_t *vector_loc)
 {
-    int i, j;
-    size_t temp;
-    
-    *vector_loc = loc[0];
-    
-    for (i=1; i<n_dims; i++)
+    // Dimensionalities 1-3 are most common so treat them as special cases for speed
+    switch (n_dims)
     {
-        temp = loc[i];
-        for (j=0; j<i; j++)
-            temp *= dim[j];
-        *vector_loc += temp;
+        case 1:
+        *vector_loc = loc[0];
+        break;
+        
+        case 2:
+        *vector_loc = loc[0] + loc[1] * dim[0];
+        break;
+        
+        case 3:
+        *vector_loc = loc[0] + loc[1] * dim[0] + loc[2] * dim[0] * dim[1];
+        break;
+        
+        default:
+        {
+            int i, j;
+            size_t temp;
+    
+            *vector_loc = loc[0];
+    
+            for (i=1; i<n_dims; i++)
+            {
+                temp = loc[i];
+                for (j=0; j<i; j++)
+                    temp *= dim[j];
+                *vector_loc += temp;
+            }
+        }
     }
 }
 
@@ -64,16 +83,11 @@ double index_double_array (const double *array, const int *loc, const int *dim, 
 
 int loc_in_bounds (const int *loc, const int *dim, const int n_dims)
 {
-    int in_bounds = 1;
-    
     for (int i=0; i<n_dims; i++)
     {
         if (loc[i] < 0 || loc[i] > (dim[i]-1))
-        {
-            in_bounds = 0;
-            break;
-        }
+            return FALSE;
     }
     
-    return in_bounds;
+    return TRUE;
 }
