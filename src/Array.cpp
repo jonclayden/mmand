@@ -5,15 +5,18 @@
 Neighbourhood Array::getNeighbourhood (const int width)
 {
     Neighbourhood neighbourhood;
+    
     neighbourhood.width = width;
-    int extreme = (width - 1) / 2;
+    if (neighbourhood.width % 2 == 0)
+        neighbourhood.width++;
+    int extreme = (neighbourhood.width - 1) / 2;
     
     neighbourhood.size = 1;
     std::vector<size_type> steps(nDims+1);
     steps[0] = 1;
     for (int i=0; i<nDims; i++)
     {
-        neighbourhood.size *= width;
+        neighbourhood.size *= neighbourhood.width;
         steps[i+1] = steps[i] * dims[i];
     }
     
