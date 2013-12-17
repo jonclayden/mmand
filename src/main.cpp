@@ -5,13 +5,29 @@
 using namespace Rcpp;
 using namespace std;
 
+Array * arrayFromData (SEXP data_)
+{
+    NumericVector data(data_);
+    
+    int_vector dim;
+    if (data.hasAttribute("dim"))
+        dim = as<int_vector>(data.attr("dim"));
+    else
+    {
+        dim = int_vector(1);
+        dim[0] = data.length();
+    }
+        
+    Array *array = new Array(as<dbl_vector>(data), dim);
+    return (array);
+}
+
 RcppExport SEXP get_neighbourhood (SEXP data_, SEXP width_)
 {
 BEGIN_RCPP
-    NumericVector data(data_);
-    Array *array = new Array(as<dbl_vector>(data), as<int_vector>(data.attr("dim")));
+    Array *array = arrayFromData(data_);
     
-    const Neighbourhood &neighbourhood = array->getNeighbourhood(as<int>(width_));
+    Neighbourhood neighbourhood = array->getNeighbourhood(as<int>(width_));
     
     return List::create(Named("width")=neighbourhood.width, Named("size")=neighbourhood.size, Named("locs")=neighbourhood.locs, Named("offsets")=neighbourhood.offsets);
 END_RCPP
@@ -20,8 +36,7 @@ END_RCPP
 RcppExport SEXP resample (SEXP data_, SEXP kernel_, SEXP samplingLocations_)
 {
 BEGIN_RCPP
-    NumericVector data(data_);
-    Array *array = new Array(as<dbl_vector>(data), as<int_vector>(data.attr("dim")));
+    Array *array = arrayFromData(data_);
     
     List kernelElements(kernel_);
     string kernelName = as<string>(kernelElements["name"]);
