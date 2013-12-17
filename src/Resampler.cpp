@@ -16,8 +16,8 @@ std::vector<double> & Resampler::run ()
     {
         for (int j=0; j<nDims; j++)
         {
-            nearestNeighbour[j] = static_cast<int>(round(samplingLocations[i][j]));
-            nearestNeighbourOffset[j] = static_cast<double>(nearestNeighbour[j]) - samplingLocations[i][j];
+            nearestNeighbour[j] = static_cast<int>(round(samplingLocations[j][i]));
+            nearestNeighbourOffset[j] = static_cast<double>(nearestNeighbour[j]) - samplingLocations[j][i];
         }
         original->flattenIndex(nearestNeighbour, nearestNeighbourIndex);
         
