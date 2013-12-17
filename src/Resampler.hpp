@@ -13,7 +13,7 @@ private:
     Array *original;
     Kernel *kernel;
     
-    std::vector<int_vector> samplingLocations;
+    std::vector<dbl_vector> samplingLocations;
     std::vector<double> samples;
     
     int nDims;
@@ -31,7 +31,7 @@ public:
         delete kernel;
     }
     
-    void setSamplingLocations (const std::vector<int_vector> &samplingLocations)
+    void setSamplingLocations (const std::vector<dbl_vector> &samplingLocations)
     {
         this->samplingLocations = samplingLocations;
         nDims = samplingLocations.size();

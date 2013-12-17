@@ -52,9 +52,9 @@ BEGIN_RCPP
     Resampler resampler(array, kernel);
     
     List samplingLocations(samplingLocations_);
-    vector<int_vector> samplingVector(samplingLocations.length());
+    vector<dbl_vector> samplingVector(samplingLocations.length());
     for (int i=0; i<samplingLocations.length(); i++)
-        samplingVector[i] = as<int_vector>(samplingLocations[i]);
+        samplingVector[i] = as<dbl_vector>(samplingLocations[i]);
     resampler.setSamplingLocations(samplingVector);
     
     vector<double> &samples = resampler.run();
