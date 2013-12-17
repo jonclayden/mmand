@@ -4,13 +4,16 @@
 #include "Array.hpp"
 #include "Kernel.hpp"
 
+typedef std::vector<double> dbl_vector;
+typedef std::vector<int>    int_vector;
+
 class Resampler
 {
 private:
     Array *original;
     Kernel *kernel;
     
-    std::vector< std::vector<int> > samplingLocations;
+    std::vector<int_vector> samplingLocations;
     std::vector<double> samples;
     
     int nDims;
@@ -28,7 +31,7 @@ public:
         delete kernel;
     }
     
-    void setSamplingLocations (const std::vector< std::vector<int> > &samplingLocations)
+    void setSamplingLocations (const std::vector<int_vector> &samplingLocations)
     {
         this->samplingLocations = samplingLocations;
         nDims = samplingLocations.size();

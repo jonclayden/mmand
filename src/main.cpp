@@ -9,7 +9,7 @@ RcppExport SEXP get_neighbourhood (SEXP data_, SEXP width_)
 {
 BEGIN_RCPP
     NumericVector data(data_);
-    Array *array = new Array(as< vector<double> >(data), as< vector<int> >(data.attr("dim")));
+    Array *array = new Array(as<dbl_vector>(data), as<int_vector>(data.attr("dim")));
     
     const Neighbourhood &neighbourhood = array->getNeighbourhood(as<int>(width_));
     
@@ -21,7 +21,7 @@ RcppExport SEXP resample (SEXP data_, SEXP kernel_, SEXP samplingLocations_)
 {
 BEGIN_RCPP
     NumericVector data(data_);
-    Array *array = new Array(as< vector<double> >(data), as< vector<int> >(data.attr("dim")));
+    Array *array = new Array(as<dbl_vector>(data), as<int_vector>(data.attr("dim")));
     
     List kernelElements(kernel_);
     string kernelName = as<string>(kernelElements["name"]);
@@ -37,9 +37,9 @@ BEGIN_RCPP
     Resampler resampler(array, kernel);
     
     List samplingLocations(samplingLocations_);
-    vector< vector<int> > samplingVector(samplingLocations.length());
+    vector<int_vector> samplingVector(samplingLocations.length());
     for (int i=0; i<samplingLocations.length(); i++)
-        samplingVector[i] = as< vector<int> >(samplingLocations[i]);
+        samplingVector[i] = as<int_vector>(samplingLocations[i]);
     resampler.setSamplingLocations(samplingVector);
     
     vector<double> &samples = resampler.run();
