@@ -14,7 +14,7 @@ public:
     Kernel (const double supportMin, const double supportMax)
         : supportMin(supportMin), supportMax(supportMax) {}
     
-    double evaluate (const double x) { return 0.0; }
+    virtual double evaluate (const double x) { return 0.0; }
     
     double getSupportMin () { return supportMin; }
     
