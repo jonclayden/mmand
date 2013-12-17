@@ -6,6 +6,7 @@ Neighbourhood Array::getNeighbourhood (const int width)
 {
     Neighbourhood neighbourhood;
     neighbourhood.width = width;
+    int extreme = (width - 1) / 2;
     
     neighbourhood.size = 1;
     std::vector<size_type> steps(nDims+1);
@@ -16,34 +17,34 @@ Neighbourhood Array::getNeighbourhood (const int width)
         steps[i+1] = steps[i] * dims[i];
     }
     
-    neighbourhood.locs = arma::imat(neighbourhood.size, nDims);
-    neighbourhood.offsets = std::vector<size_type>(neighbourhood.size);
+    neighbourhood.locs = arma::Mat<int>(neighbourhood.size, nDims);
+    neighbourhood.offsets = std::vector<long>(neighbourhood.size);
     
     for (int j=0; j<neighbourhood.size; j++)
     {
         if (j==0)
         {
             for (int i=0; i<nDims; i++)
-                neighbourhood.locs[0,i] = -width;
+                neighbourhood.locs(j,i) = -extreme;
         }
         else
         {
-            neighbourhood.locs[j,0] = neighbourhood.locs[j-1,0] + 1;
+            neighbourhood.locs(j,0) = neighbourhood.locs(j-1,0) + 1;
             for (int i=0; i<nDims; i++)
             {
-                if (neighbourhood.locs[j,i] > width)
+                if (neighbourhood.locs(j,i) > extreme)
                 {
-                    neighbourhood.locs[j,i] = -width;
-                    neighbourhood.locs[j,i+1] = neighbourhood.locs[j-1,i+1] + 1;
+                    neighbourhood.locs(j,i) = -extreme;
+                    neighbourhood.locs(j,i+1) = neighbourhood.locs(j-1,i+1) + 1;
                 }
-                else
-                    break;
+                else if (i < (nDims-1))
+                    neighbourhood.locs(j,i+1) = neighbourhood.locs(j-1,i+1);
             }
         }
         
         neighbourhood.offsets[j] = 0;
         for (int i=0; i<nDims; i++)
-            neighbourhood.offsets[j] += neighbourhood.locs[j,i] * steps[i];
+            neighbourhood.offsets[j] += neighbourhood.locs(j,i) * steps[i];
     }
     
     return neighbourhood;

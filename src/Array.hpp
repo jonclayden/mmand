@@ -7,8 +7,8 @@ struct Neighbourhood
 {
     int width;
     int size;
-    arma::imat locs;
-    std::vector<size_type> offsets;
+    arma::Mat<int> locs;
+    std::vector<long> offsets;
 };
 
 class Array
