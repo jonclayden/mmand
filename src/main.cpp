@@ -33,7 +33,7 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP resample (SEXP data_, SEXP kernel_, SEXP samplingLocations_)
+RcppExport SEXP resample (SEXP data_, SEXP kernel_, SEXP samplingScheme_)
 {
 BEGIN_RCPP
     Array *array = arrayFromData(data_);
@@ -51,12 +51,22 @@ BEGIN_RCPP
     
     Resampler resampler(array, kernel);
     
-    List samplingLocations(samplingLocations_);
-    vector<dbl_vector> samplingVector(samplingLocations.length());
-    for (int i=0; i<samplingLocations.length(); i++)
-        samplingVector[i] = as<dbl_vector>(samplingLocations[i]);
-    resampler.setSamplingLocations(samplingVector);
+    List samplingScheme(samplingScheme_);
+    string schemeType = as<string>(samplingScheme["type"]);
+    SamplingScheme *sampler;
     
+    if (schemeType.compare("general") == 0)
+        sampler = new GeneralSamplingScheme(as<arma::mat>(samplingScheme["points"]));
+    else if (schemeType.compare("grid") == 0)
+    {
+        List points = samplingScheme["points"];
+        vector<dbl_vector> samplingVector(points.length());
+        for (int i=0; i<points.length(); i++)
+            samplingVector[i] = as<dbl_vector>(points[i]);
+        sampler = new GriddedSamplingScheme(samplingVector);
+    }
+    
+    resampler.setSamplingScheme(sampler);
     vector<double> &samples = resampler.run();
     return wrap(samples);
 END_RCPP

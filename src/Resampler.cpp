@@ -8,16 +8,20 @@ std::vector<double> & Resampler::run ()
     int neighbourhoodWidth = static_cast<int>(floor(2.0*kernel->getSupportMax()));
     Neighbourhood neighbourhood = original->getNeighbourhood(neighbourhoodWidth);
     
+    int nDims = sampler->getNDims();
+    int nSamples = sampler->getNSamples();
+    samples.resize(nSamples);
+    
     std::vector<int> nearestNeighbour(nDims);
     std::vector<double> nearestNeighbourOffset(nDims);
     size_type nearestNeighbourIndex;
     
-    for (size_type i=0; i<nSamples; i++)
+    for (int i=0; i<nSamples; i++)
     {
         for (int j=0; j<nDims; j++)
         {
-            nearestNeighbour[j] = static_cast<int>(round(samplingLocations[j][i]));
-            nearestNeighbourOffset[j] = static_cast<double>(nearestNeighbour[j]) - samplingLocations[j][i];
+            nearestNeighbour[j] = static_cast<int>(round(sampler->at(i,j)));
+            nearestNeighbourOffset[j] = static_cast<double>(nearestNeighbour[j]) - sampler->at(i,j);
         }
         original->flattenIndex(nearestNeighbour, nearestNeighbourIndex);
         
