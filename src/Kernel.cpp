@@ -22,17 +22,16 @@ double PolynomialKernel::evaluate (const double x)
 
 double CompositeKernel::evaluate (const double x)
 {
-    double absX = fabs(x);
     if (kernels.size() == 0)
         return 0.0;
     else if (!isWithinSupport(x))
         return 0.0;
     else
     {
-        for (std::vector<Kernel>::iterator i = kernels.begin(); i != kernels.end(); i++)
+        for (std::vector<Kernel*>::iterator i = kernels.begin(); i != kernels.end(); i++)
         {
-            if (i->isWithinSupport(x))
-                return i->evaluate(x);
+            if ((*i)->isWithinSupport(x))
+                return (*i)->evaluate(x);
         }
         
         return 0.0;
@@ -65,16 +64,16 @@ CompositeKernel * KernelGenerator::mitchellNetravali (const double B, const doub
     coefficients1[0] = 1.0 - B/3.0;
     coefficients1[2] = -3.0 + 2.0*B + C;
     coefficients1[3] = 2.0 - 1.5*B - C;
-    PolynomialKernel kernel1 = PolynomialKernel(coefficients1, 0.0, 1.0);
+    PolynomialKernel *kernel1 = new PolynomialKernel(coefficients1, 0.0, 1.0);
     
     arma::vec coefficients2 = arma::vec(4);
     coefficients2[0] = 4.0*B/3.0 + 4.0*C;
     coefficients2[1] = -2.0*B - 8.0*C;
     coefficients2[2] = B + 5.0*C;
     coefficients2[3] = -B/6.0 - C;
-    PolynomialKernel kernel2 = PolynomialKernel(coefficients2, 1.0, 2.0);
+    PolynomialKernel *kernel2 = new PolynomialKernel(coefficients2, 1.0, 2.0);
     
-    std::vector<Kernel> kernels;
+    std::vector<Kernel*> kernels;
     kernels.push_back(kernel1);
     kernels.push_back(kernel2);
     return new CompositeKernel(kernels);

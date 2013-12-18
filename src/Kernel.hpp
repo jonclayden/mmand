@@ -53,22 +53,28 @@ public:
 class CompositeKernel : public Kernel
 {
 protected:
-    std::vector<Kernel> kernels;
+    std::vector<Kernel*> kernels;
     
 public:
-    CompositeKernel (const std::vector<Kernel> &kernels)
+    CompositeKernel (const std::vector<Kernel*> &kernels)
         : kernels(kernels)
     {
         supportMin = R_PosInf;
         supportMax = R_NegInf;
         
-        for (std::vector<Kernel>::iterator i = this->kernels.begin(); i != this->kernels.end(); i++)
+        for (std::vector<Kernel*>::iterator i = this->kernels.begin(); i != this->kernels.end(); i++)
         {
-            if (i->getSupportMin() < supportMin)
-                supportMin = i->getSupportMin();
-            if (i->getSupportMax() > supportMax)
-                supportMax = i->getSupportMax();
+            if ((*i)->getSupportMin() < supportMin)
+                supportMin = (*i)->getSupportMin();
+            if ((*i)->getSupportMax() > supportMax)
+                supportMax = (*i)->getSupportMax();
         }
+    }
+    
+    ~CompositeKernel ()
+    {
+        for (std::vector<Kernel*>::iterator i = this->kernels.begin(); i != this->kernels.end(); i++)
+            delete *i;
     }
     
     double evaluate (const double x);
