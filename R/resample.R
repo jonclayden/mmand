@@ -45,6 +45,25 @@ resample.default <- function (x, points, kernel, pointType = c("auto","general",
     return (result)
 }
 
+rescale <- function (x, factor, kernel, ...)
+{
+    x <- as.array(x)
+    dims <- dim(x)
+    nDims <- length(dims)
+    
+    if (length(factor) < nDims)
+        factor <- rep(factor, length.out=nDims)
+    
+    points <- lapply(seq_len(nDims), function(i) {
+        newLength <- ceiling(dims[i] * factor[i])
+        locs <- seq(0.5, dims[i]+0.5, length.out=newLength+1)
+        locs <- locs + diff(locs[1:2]) / 2
+        locs <- locs[1:newLength]
+    })
+    
+    resample(x, points, kernel, ...)
+}
+
 neighbourhood <- function (x, width)
 {
     return (.Call("get_neighbourhood", as.array(x), as.integer(width[1]), PACKAGE="irk"))
