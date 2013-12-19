@@ -34,8 +34,8 @@ std::vector<double> & Resampler::run ()
             for (int j=0; j<nDims; j++)
             {
                 double delta = nearestNeighbourOffset[j] + static_cast<double>(neighbourhood.locs(k,j));
-                double currentDimLoc = delta + static_cast<double>(nearestNeighbour[j]);
-                if (currentDimLoc < 0 || currentDimLoc > (dims[j]-1))
+                int currentDimIndex = nearestNeighbour[j] + neighbourhood.locs(k,j);
+                if (currentDimIndex < 0 || currentDimIndex >= dims[j])
                 {
                     kernelValue = 0.0;
                     break;
