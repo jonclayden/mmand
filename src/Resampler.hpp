@@ -39,7 +39,7 @@ class GriddedSamplingScheme: public SamplingScheme
 {
 private:
     std::vector<dbl_vector> locations;
-    std::vector<size_type> steps;
+    std::vector<long> steps;
     int_vector dims;
     int nSamples;
     
@@ -49,7 +49,7 @@ public:
     {
         int nDims = locations.size();
         dims = int_vector(nDims);
-        steps = std::vector<size_type>(nDims+1);
+        steps = std::vector<long>(nDims+1);
         steps[0] = 1;
         nSamples = 1;
         

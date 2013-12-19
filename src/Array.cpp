@@ -12,7 +12,7 @@ Neighbourhood Array::getNeighbourhood (const int width)
     int extreme = (neighbourhood.width - 1) / 2;
     
     neighbourhood.size = 1;
-    std::vector<size_type> steps(nDims+1);
+    std::vector<long> steps(nDims+1);
     steps[0] = 1;
     for (int i=0; i<nDims; i++)
     {
@@ -53,7 +53,7 @@ Neighbourhood Array::getNeighbourhood (const int width)
     return neighbourhood;
 }
 
-void Array::flattenIndex (const std::vector<int> &loc, size_type &result)
+void Array::flattenIndex (const std::vector<int> &loc, long &result)
 {
     // Dimensionalities 1-3 are most common so treat them as special cases for speed
     switch (nDims)
@@ -72,7 +72,7 @@ void Array::flattenIndex (const std::vector<int> &loc, size_type &result)
         
         default:
         {
-            size_type temp;
+            long temp;
             result = loc[0];
             
             for (int i=1; i<nDims; i++)
@@ -86,9 +86,9 @@ void Array::flattenIndex (const std::vector<int> &loc, size_type &result)
     }
 }
 
-void Array::expandIndex (const size_type &loc, std::vector<int> &result)
+void Array::expandIndex (const long &loc, std::vector<int> &result)
 {
-    size_type temp;
+    long temp;
     result[0] = loc % dims[0];
     
     for (int i=1; i<nDims; i++)

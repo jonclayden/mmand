@@ -1,8 +1,6 @@
 #ifndef _ARRAY_HPP_
 #define _ARRAY_HPP_
 
-typedef std::vector<double>::size_type size_type;
-
 struct Neighbourhood
 {
     int width;
@@ -27,17 +25,17 @@ public:
         nDims = dims.size();
     }
     
-    // double & at (size_type n) { data.at(n); }
+    const double & at (long n) { return data.at(n); }
     
-    const double & at (size_type n) { return data.at(n); }
+    long size () { return data.size(); }
     
-    size_type size () { return data.size(); }
+    std::vector<int> & getDims () { return dims; }
     
     Neighbourhood getNeighbourhood (const int width);
     
-    void flattenIndex (const std::vector<int> &loc, size_type &result);
+    void flattenIndex (const std::vector<int> &loc, long &result);
     
-    void expandIndex (const size_type &loc, std::vector<int> &result);
+    void expandIndex (const long &loc, std::vector<int> &result);
 };
 
 #endif
