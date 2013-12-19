@@ -8,13 +8,14 @@ std::vector<double> & Resampler::run ()
     int neighbourhoodWidth = static_cast<int>(floor(2.0*kernel->getSupportMax()));
     Neighbourhood neighbourhood = original->getNeighbourhood(neighbourhoodWidth);
     
+    std::vector<int> &dims = original->getDims();
     int nDims = sampler->getNDims();
     int nSamples = sampler->getNSamples();
     samples.resize(nSamples);
     
     std::vector<int> nearestNeighbour(nDims);
     std::vector<double> nearestNeighbourOffset(nDims);
-    size_type nearestNeighbourIndex;
+    long nearestNeighbourIndex;
     
     for (int i=0; i<nSamples; i++)
     {
@@ -26,20 +27,33 @@ std::vector<double> & Resampler::run ()
         original->flattenIndex(nearestNeighbour, nearestNeighbourIndex);
         
         samples[i] = 0.0;
+        double kernelTotal = 0.0;
         for (int k=0; k<neighbourhood.size; k++)
         {
-            size_type currentIndex = nearestNeighbourIndex + neighbourhood.offsets[k];
-            if (currentIndex >= 0 && currentIndex < original->size())
+            double kernelValue = 1.0;
+            for (int j=0; j<nDims; j++)
             {
-                double sampleContribution = original->at(currentIndex);
-                for (int j=0; j<nDims; j++)
+                double delta = nearestNeighbourOffset[j] + static_cast<double>(neighbourhood.locs(k,j));
+                double currentDimLoc = delta + static_cast<double>(nearestNeighbour[j]);
+                if (currentDimLoc < 0 || currentDimLoc > (dims[j]-1))
                 {
-                    double delta = nearestNeighbourOffset[j] + static_cast<double>(neighbourhood.locs(k,j));
-                    sampleContribution *= kernel->evaluate(delta);
+                    kernelValue = 0.0;
+                    break;
                 }
-                samples[i] += sampleContribution;
+                else
+                    kernelValue *= kernel->evaluate(delta);
+            }
+            
+            if (kernelValue != 0.0)
+            {
+                long currentIndex = nearestNeighbourIndex + neighbourhood.offsets[k];
+                samples[i] += kernelValue * original->at(currentIndex);
+                kernelTotal += kernelValue;
             }
         }
+        
+        if (kernelTotal != 1.0)
+            samples[i] /= kernelTotal;
     }
     
     return samples;
