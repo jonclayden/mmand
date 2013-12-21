@@ -2,21 +2,38 @@
 
 #include "Array.hpp"
 
+Neighbourhood Array::getNeighbourhood ()
+{
+    return this->getNeighbourhood(dims);
+}
+
 Neighbourhood Array::getNeighbourhood (const int width)
+{
+    std::vector<int> widths(nDims);
+    for (int i=0; i<nDims; i++)
+        widths[i] = width;
+    return this->getNeighbourhood(widths);
+}
+
+Neighbourhood Array::getNeighbourhood (const std::vector<int> &widths)
 {
     Neighbourhood neighbourhood;
     
-    neighbourhood.width = width;
-    if (neighbourhood.width % 2 == 0)
-        neighbourhood.width++;
-    int extreme = (neighbourhood.width - 1) / 2;
+    neighbourhood.widths = widths;
+    std::vector<int> extremes(nDims);
+    for (int i=0; i<nDims; i++)
+    {
+        if (neighbourhood.widths[i] % 2 == 0)
+            neighbourhood.widths[i]++;
+        extremes[i] = (neighbourhood.widths[i] - 1) / 2;
+    }
     
     neighbourhood.size = 1;
     std::vector<long> steps(nDims+1);
     steps[0] = 1;
     for (int i=0; i<nDims; i++)
     {
-        neighbourhood.size *= neighbourhood.width;
+        neighbourhood.size *= neighbourhood.widths[i];
         steps[i+1] = steps[i] * dims[i];
     }
     
@@ -28,16 +45,16 @@ Neighbourhood Array::getNeighbourhood (const int width)
         if (j==0)
         {
             for (int i=0; i<nDims; i++)
-                neighbourhood.locs(j,i) = -extreme;
+                neighbourhood.locs(j,i) = -extremes[i];
         }
         else
         {
             neighbourhood.locs(j,0) = neighbourhood.locs(j-1,0) + 1;
             for (int i=0; i<nDims; i++)
             {
-                if (neighbourhood.locs(j,i) > extreme)
+                if (neighbourhood.locs(j,i) > extremes[i])
                 {
-                    neighbourhood.locs(j,i) = -extreme;
+                    neighbourhood.locs(j,i) = -extremes[i];
                     neighbourhood.locs(j,i+1) = neighbourhood.locs(j-1,i+1) + 1;
                 }
                 else if (i < (nDims-1))

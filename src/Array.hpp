@@ -3,8 +3,8 @@
 
 struct Neighbourhood
 {
-    int width;
-    int size;
+    long size;
+    std::vector<int> widths;
     arma::Mat<int> locs;
     std::vector<long> offsets;
 };
@@ -31,7 +31,11 @@ public:
     
     std::vector<int> & getDims () { return dims; }
     
+    Neighbourhood getNeighbourhood ();
+    
     Neighbourhood getNeighbourhood (const int width);
+    
+    Neighbourhood getNeighbourhood (const std::vector<int> &widths);
     
     void flattenIndex (const std::vector<int> &loc, long &result);
     

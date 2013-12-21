@@ -47,7 +47,7 @@ BEGIN_RCPP
     
     delete array;
     
-    return List::create(Named("width")=neighbourhood.width, Named("size")=neighbourhood.size, Named("locs")=neighbourhood.locs, Named("offsets")=neighbourhood.offsets);
+    return List::create(Named("widths")=neighbourhood.widths, Named("size")=neighbourhood.size, Named("locs")=neighbourhood.locs, Named("offsets")=neighbourhood.offsets);
 END_RCPP
 }
 
