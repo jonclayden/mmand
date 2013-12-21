@@ -7,12 +7,32 @@ class Kernel
 {
 protected:
     double supportMin, supportMax;
+    bool usingCache;
+    std::map<double,double> cache;
+    
+    std::pair<bool,double> checkCache (const double key)
+    {
+        if (!usingCache || cache.count(key) == 0)
+            return std::pair<bool,double>(false, 0.0);
+        else
+            return std::pair<bool,double>(true, cache[key]);
+    }
+    
+    void updateCache (const double key, const double value)
+    {
+        if (usingCache && cache.count(key) == 0)
+            cache.insert(std::pair<double,double>(key,value));
+    }
     
 public:
     Kernel ()
-        : supportMin(0.0), supportMax(0.0) {}
+        : supportMin(0.0), supportMax(0.0), usingCache(false) {}
+    Kernel (const bool usingCache)
+        : supportMin(0.0), supportMax(0.0), usingCache(usingCache) {}
     Kernel (const double supportMin, const double supportMax)
-        : supportMin(supportMin), supportMax(supportMax) {}
+        : supportMin(supportMin), supportMax(supportMax), usingCache(false) {}
+    Kernel (const double supportMin, const double supportMax, const bool usingCache)
+        : supportMin(supportMin), supportMax(supportMax), usingCache(usingCache) {}
     
     virtual double evaluate (const double x) { return 0.0; }
     
@@ -57,7 +77,7 @@ protected:
     
 public:
     CompositeKernel (const std::vector<Kernel*> &kernels)
-        : kernels(kernels)
+        : Kernel(true), kernels(kernels)
     {
         supportMin = R_PosInf;
         supportMax = R_NegInf;

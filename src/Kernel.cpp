@@ -17,7 +17,17 @@ double PolynomialKernel::evaluate (const double x)
     else if (degree < 0)
         return 0.0;
     else
-        return term(fabs(x), 0);
+    {
+        const std::pair<bool,double> &cachedValue = checkCache(x);
+        if (cachedValue.first)
+            return cachedValue.second;
+        else
+        {
+            double value = term(fabs(x), 0);
+            updateCache(x, value);
+            return value;
+        }
+    }
 }
 
 double CompositeKernel::evaluate (const double x)
@@ -28,13 +38,20 @@ double CompositeKernel::evaluate (const double x)
         return 0.0;
     else
     {
-        for (std::vector<Kernel*>::iterator i = kernels.begin(); i != kernels.end(); i++)
+        const std::pair<bool,double> &cachedValue = checkCache(x);
+        if (cachedValue.first)
+            return cachedValue.second;
+        else
         {
-            if ((*i)->isWithinSupport(x))
-                return (*i)->evaluate(x);
+            double value = 0.0;
+            for (std::vector<Kernel*>::iterator i = kernels.begin(); i != kernels.end(); i++)
+            {
+                if ((*i)->isWithinSupport(x))
+                    value = (*i)->evaluate(x);
+            }
+            updateCache(x, value);
+            return value;
         }
-        
-        return 0.0;
     }
 }
 
