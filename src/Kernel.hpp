@@ -1,6 +1,8 @@
 #ifndef _KERNEL_HPP_
 #define _KERNEL_HPP_
 
+#include "Array.hpp"
+
 // Base class for all kernels
 // Defines support but will always evaluate to zero
 class Kernel
@@ -25,6 +27,38 @@ public:
         double absX = fabs(x);
         return (absX >= supportMin && absX <= supportMax);
     }
+};
+
+// Discrete kernel
+// This kernel is defined only at integral locations in a grid
+// It is used when the image dimensions aren't changing
+class DiscreteKernel : public Kernel
+{
+protected:
+    Array *values;
+    
+public:
+    DiscreteKernel (Array * const values)
+        : values(values)
+    {
+        supportMin = 0.0;
+        supportMax = 0.0;
+        
+        std::vector<int> &dims = values->getDims();
+        for (std::vector<int>::iterator i = dims.begin(); i != dims.end(); i++)
+        {
+            double currentSupportMax = floor(static_cast<double>(*i) / 2.0);
+            if (currentSupportMax > supportMax)
+                supportMax = currentSupportMax;
+        }
+    }
+    
+    ~DiscreteKernel ()
+    {
+        delete values;
+    }
+    
+    Array * getArray () { return values; }
 };
 
 // General polynomial kernel
