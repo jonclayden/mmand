@@ -37,7 +37,7 @@ resample.default <- function (x, points, kernel, pointType = c("auto","general",
     if (!is.list(kernel) || !("kernel" %in% class(kernel)))
         output(OL$Error, "Specified kernel is invalid")
     
-    result <- .Call("resample", x, kernel, list(type=pointType,points=points), PACKAGE="irk")
+    result <- .Call("resample", x, kernel, list(type=pointType,points=points), PACKAGE="mmand")
     
     if (is.list(points) && nDims > 1)
         dim(result) <- sapply(points, length)
@@ -66,5 +66,5 @@ rescale <- function (x, factor, kernel, ...)
 
 neighbourhood <- function (x, width)
 {
-    return (.Call("get_neighbourhood", as.array(x), as.integer(width[1]), PACKAGE="irk"))
+    return (.Call("get_neighbourhood", as.array(x), as.integer(width[1]), PACKAGE="mmand"))
 }

@@ -18,5 +18,5 @@ sampleKernel <- function (kernel, values)
     if (!is.list(kernel) || !("kernel" %in% class(kernel)))
         output(OL$Error, "Specified kernel is invalid")
     
-    return (.Call("sample_kernel", kernel, as.numeric(values), PACKAGE="irk"))
+    return (.Call("sample_kernel", kernel, as.numeric(values), PACKAGE="mmand"))
 }
