@@ -1,6 +1,7 @@
 #include <RcppArmadillo.h>
 
 #include "Resampler.hpp"
+#include "Morpher.hpp"
 
 using namespace Rcpp;
 using namespace std;
@@ -34,6 +35,11 @@ Kernel * kernelFromElements (SEXP kernel_)
         kernel = KernelGenerator::triangle();
     else if (kernelName.compare("mitchell-netravali") == 0)
         kernel = KernelGenerator::mitchellNetravali(as<double>(kernelElements["B"]), as<double>(kernelElements["C"]));
+    else if (kernelName.compare("discrete") == 0)
+    {
+        Array *kernelArray = arrayFromData(kernelElements["values"]);
+        kernel = new DiscreteKernel(kernelArray, as<bool>(kernelElements["brush"]), as<bool>(kernelElements["eraser"]));
+    }
     
     return kernel;
 }
@@ -42,7 +48,6 @@ RcppExport SEXP get_neighbourhood (SEXP data_, SEXP width_)
 {
 BEGIN_RCPP
     Array *array = arrayFromData(data_);
-    
     Neighbourhood neighbourhood = array->getNeighbourhood(as<int>(width_));
     
     delete array;
@@ -91,6 +96,25 @@ BEGIN_RCPP
     
     resampler.setSamplingScheme(sampler);
     vector<double> &samples = resampler.run();
+    return wrap(samples);
+END_RCPP
+}
+
+RcppExport SEXP morph (SEXP data_, SEXP kernel_, SEXP restrictions_)
+{
+BEGIN_RCPP
+    Array *array = arrayFromData(data_);
+    
+    List kernelElements(kernel_);
+    Array *kernelArray = arrayFromData(kernelElements["values"]);
+    DiscreteKernel *kernel = new DiscreteKernel(kernelArray, as<bool>(kernelElements["brush"]), as<bool>(kernelElements["eraser"]));
+    
+    Morpher morpher(array, kernel);
+    
+    List restrictions(restrictions_);
+    morpher.setValidNeighbourhoods(as<int_vector>(restrictions["nNeighbours"]), as<int_vector>(restrictions["nNeighboursNot"]));
+    morpher.setValidValues(as<dbl_vector>(restrictions["value"]), as<dbl_vector>(restrictions["valueNot"]));
+    vector<double> &samples = morpher.run();
     return wrap(samples);
 END_RCPP
 }
