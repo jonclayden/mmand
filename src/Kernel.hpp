@@ -38,8 +38,10 @@ protected:
     Array *values;
     
 public:
-    DiscreteKernel (Array * const values)
-        : values(values)
+    const bool isBrush, isEraser;
+    
+    DiscreteKernel (Array * const values, const bool isBrush, const bool isEraser)
+        : values(values), isBrush(isBrush), isEraser(isEraser)
     {
         supportMin = 0.0;
         supportMax = 0.0;

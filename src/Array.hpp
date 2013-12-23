@@ -31,6 +31,8 @@ public:
     
     std::vector<int> & getDims () { return dims; }
     
+    int getNDims () { return nDims; }
+    
     Neighbourhood getNeighbourhood ();
     
     Neighbourhood getNeighbourhood (const int width);
