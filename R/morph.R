@@ -3,83 +3,67 @@ morph <- function (x, kernel, ...)
     UseMethod("morph")
 }
 
-morph.default <- function (x, kernel, brush = TRUE, eraser = FALSE, value = NULL, valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, ...)
+morph.default <- function (x, kernel, value = NULL, valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, ...)
 {
     x <- as.array(x)
     if (!is.numeric(x))
         report(OL$Error, "Target array must be numeric")
     
-    kernel <- as.array(kernel)
-    if (!is.numeric(kernel))
-        report(OL$Error, "Kernel must be numeric")
+    if (is.array(kernel))
+        kernel <- discreteKernel(kernel)
+    else if (!isKernel(kernel))
+        output(OL$Error, "Specified kernel is invalid")
     
-    if (any(dim(kernel) %% 2 != 1))
+    if (any(dim(kernel$values) %% 2 != 1))
         report(OL$Error, "Kernel must have odd width in all dimensions")
     
-    if (length(dim(kernel)) < length(dim(x)))
-        dim(kernel) <- c(dim(kernel), rep(1,length(dim(x))-length(dim(kernel))))
-    else if (length(dim(kernel)) > length(dim(x)))
+    if (length(dim(kernel$values)) < length(dim(x)))
+        dim(kernel$values) <- c(dim(kernel$values), rep(1,length(dim(x))-length(dim(kernel$values))))
+    else if (length(dim(kernel$values)) > length(dim(x)))
         report(OL$Error, "Kernel has greater dimensionality than the target array")
     
-    if (storage.mode(kernel) == "integer" && storage.mode(x) == "double")
-    {
-        report(OL$Verbose, "Converting kernel to \"double\" mode to match target array")
-        storage.mode(kernel) <- "double"
-    }
-    else if (storage.mode(kernel) == "double" && storage.mode(x) == "integer")
-    {
-        kernelCopy <- kernel
-        storage.mode(kernelCopy) <- "integer"
-        if (isTRUE(all.equal(kernel, kernelCopy)))
-        {
-            report(OL$Verbose, "Converting kernel to \"integer\" mode to match target array")
-            storage.mode(kernel) <- "integer"
-        }
-        else
-        {
-            # Kernel cannot be accurately represented in integer mode, so result won't be able to either
-            # Hence, we need to modify the storage mode of the target array
-            report(OL$Verbose, "Converting target array to \"double\" mode to match kernel")
-            storage.mode(x) <- "double"
-        }
-    }
+    storage.mode(x) <- "double"
     
-    returnValue <- .Call("morph_R", x, kernel, as.double(value), as.double(valueNot), as.integer(nNeighbours), as.integer(nNeighboursNot), as.logical(brush), as.logical(eraser), PACKAGE="mmand")
+    restrictions = list(value=as.double(value), valueNot=as.double(valueNot), nNeighbours=as.integer(nNeighbours), nNeighboursNot=as.integer(nNeighboursNot))
+    
+    returnValue <- .Call("morph", x, kernel, restrictions, PACKAGE="mmand")
     dim(returnValue) <- dim(x)
-    
     return (returnValue)
 }
 
 binarise <- function (x)
 {
-    kernel <- 1
-    storage.mode(kernel) <- storage.mode(x)
-    return (morph(x, kernel=kernel, brush=TRUE, valueNot=0))
+    kernel <- discreteKernel(1, brush=TRUE)
+    return (morph(x, kernel=kernel, valueNot=0))
 }
 
 gaussianSmooth <- function (x, sigma)
 {
     kernel <- gaussianKernel(sigma, normalised=TRUE)
-    return (morph(x, kernel, brush=FALSE))
+    return (morph(x, kernel))
 }
 
 erode <- function (x, kernel)
 {
-    if (is.array(kernel) && all(dim(kernel) <= 3))
-        return (morph(x, kernel, brush=TRUE, eraser=TRUE, value=0, nNeighboursNot=0))
+    kernel <- discreteKernel(kernel, brush=TRUE, eraser=TRUE)
+    
+    if (all(dim(kernel$values) <= 3))
+        return (morph(x, kernel, value=0, nNeighboursNot=0))
     else
-        return (morph(x, kernel, brush=TRUE, eraser=TRUE, value=0))
+        return (morph(x, kernel, value=0))
 }
 
 dilate <- function (x, kernel)
 {
-    if (is.array(x) && is.array(kernel) && all(dim(kernel) <= 3))
+    kernel <- discreteKernel(kernel, brush=TRUE, eraser=FALSE)
+    
+    if (all(dim(kernel$values) <= 3))
     {
         neighbourCount <- 3^length(dim(x)) - 1
-        return (morph(x, kernel, brush=TRUE, valueNot=0, nNeighboursNot=neighbourCount))
+        return (morph(x, kernel, valueNot=0, nNeighboursNot=neighbourCount))
     }
     else
-        return (morph(x, kernel, brush=TRUE, valueNot=0))
+        return (morph(x, kernel, valueNot=0))
 }
 
 opening <- function (x, kernel)

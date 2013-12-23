@@ -34,7 +34,7 @@ resample.default <- function (x, points, kernel, pointType = c("auto","general",
     else if (is.list(points))
         points <- lapply(points, "-", 1)
     
-    if (!is.list(kernel) || !("kernel" %in% class(kernel)))
+    if (!isKernel(kernel))
         output(OL$Error, "Specified kernel is invalid")
     
     result <- .Call("resample", x, kernel, list(type=pointType,points=points), PACKAGE="mmand")
