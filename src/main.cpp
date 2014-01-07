@@ -38,7 +38,7 @@ Kernel * kernelFromElements (SEXP kernel_)
     else if (kernelName.compare("discrete") == 0)
     {
         Array *kernelArray = arrayFromData(kernelElements["values"]);
-        kernel = new DiscreteKernel(kernelArray, as<bool>(kernelElements["brush"]), as<bool>(kernelElements["eraser"]));
+        kernel = new DiscreteKernel(kernelArray);
     }
     
     return kernel;
@@ -100,16 +100,48 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP morph (SEXP data_, SEXP kernel_, SEXP restrictions_)
+RcppExport SEXP morph (SEXP data_, SEXP kernel_, SEXP elementOp_, SEXP mergeOp_, SEXP restrictions_)
 {
 BEGIN_RCPP
     Array *array = arrayFromData(data_);
     
     List kernelElements(kernel_);
     Array *kernelArray = arrayFromData(kernelElements["values"]);
-    DiscreteKernel *kernel = new DiscreteKernel(kernelArray, as<bool>(kernelElements["brush"]), as<bool>(kernelElements["eraser"]));
+    DiscreteKernel *kernel = new DiscreteKernel(kernelArray);
     
-    Morpher morpher(array, kernel);
+    const string elementOpString = as<string>(elementOp_);
+    ElementOp elementOp;
+    if (elementOpString.compare("+") == 0)
+        elementOp = PlusOp;
+    else if (elementOpString.compare("-") == 0)
+        elementOp = MinusOp;
+    else if (elementOpString.compare("*") == 0)
+        elementOp = MultiplyOp;
+    else if (elementOpString.compare("i") == 0)
+        elementOp = IdentityOp;
+    else if (elementOpString.compare("1") == 0)
+        elementOp = OneOp;
+    else if (elementOpString.compare("0") == 0)
+        elementOp = ZeroOp;
+    else
+        throw new runtime_error("Unsupported element operation specified");
+    
+    const string mergeOpString = as<string>(mergeOp_);
+    MergeOp mergeOp;
+    if (mergeOpString.compare("sum") == 0)
+        mergeOp = SumOp;
+    else if (mergeOpString.compare("min") == 0)
+        mergeOp = MinOp;
+    else if (mergeOpString.compare("max") == 0)
+        mergeOp = MaxOp;
+    else if (mergeOpString.compare("mean") == 0)
+        mergeOp = MeanOp;
+    else if (mergeOpString.compare("median") == 0)
+        mergeOp = MedianOp;
+    else
+        throw new runtime_error("Unsupported merge operation specified");
+    
+    Morpher morpher(array, kernel, elementOp, mergeOp);
     
     List restrictions(restrictions_);
     morpher.setValidNeighbourhoods(as<int_vector>(restrictions["nNeighbours"]), as<int_vector>(restrictions["nNeighboursNot"]));

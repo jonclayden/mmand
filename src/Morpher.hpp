@@ -7,11 +7,17 @@
 typedef std::vector<double> dbl_vector;
 typedef std::vector<int>    int_vector;
 
+enum ElementOp { PlusOp, MinusOp, MultiplyOp, IdentityOp, OneOp, ZeroOp };
+enum MergeOp { SumOp, MinOp, MaxOp, MeanOp, MedianOp };
+
 class Morpher
 {
 private:
     Array *original;
     DiscreteKernel *kernel;
+    
+    ElementOp elementOp;
+    MergeOp mergeOp;
     
     Neighbourhood immediateNeighbourhood;
     
@@ -23,8 +29,8 @@ private:
     bool meetsRestrictions (const long n);
     
 public:
-    Morpher (Array * const original, DiscreteKernel * const kernel)
-        : original(original), kernel(kernel)
+    Morpher (Array * const original, DiscreteKernel * const kernel, const ElementOp elementOp, const MergeOp mergeOp)
+        : original(original), kernel(kernel), elementOp(elementOp), mergeOp(mergeOp)
     {
         this->immediateNeighbourhood = original->getNeighbourhood(3);
     }

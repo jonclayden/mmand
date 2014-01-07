@@ -83,14 +83,15 @@ std::vector<double> & Morpher::run ()
     Array * kernelArray = kernel->getArray();
     const Neighbourhood &kernelNeighbourhood = kernelArray->getNeighbourhood();
     const Neighbourhood &sourceNeighbourhood = original->getNeighbourhood(kernelArray->getDims());
+    const long neighbourhoodSize = kernelNeighbourhood.size;
     
-    const std::vector<int> &dims = original->getDims();
+    const int_vector &dims = original->getDims();
     int nDims = original->getNDims();
     long nSamples = original->size();
     samples.resize(nSamples);
     
     double kernelSum = 0.0;
-    for (int k=0; k<kernelNeighbourhood.size; k++)
+    for (long k=0; k<neighbourhoodSize; k++)
         kernelSum += kernelArray->at(k);
     
     int_vector currentLoc(nDims);
@@ -102,12 +103,10 @@ std::vector<double> & Morpher::run ()
             continue;
         }
         
-        samples[i] = 0.0;
-        double visitedKernelSum = 0.0;
-        
         original->expandIndex(i, currentLoc);
         
-        for (int k=0; k<sourceNeighbourhood.size; k++)
+        dbl_vector values;
+        for (long k=0; k<neighbourhoodSize; k++)
         {
             bool validLoc = true;
             for (int j=0; j<nDims; j++)
@@ -117,25 +116,86 @@ std::vector<double> & Morpher::run ()
                     validLoc = false;
             }
             
-            if (validLoc)
+            if (validLoc && !R_IsNA(kernelArray->at(k)))
             {
-                if (kernel->isBrush && kernelArray->at(k) != NA_REAL)
+                switch (elementOp)
                 {
-                    if (kernel->isEraser && kernelArray->at(k) != 0.0)
-                        samples[i+sourceNeighbourhood.offsets[k]] = 0.0;
-                    else if (!kernel->isEraser)
-                        samples[i+sourceNeighbourhood.offsets[k]] = kernelArray->at(k);
-                }
-                else if (!kernel->isBrush)
-                {
-                    samples[i] += kernelArray->at(k) * original->at(i+sourceNeighbourhood.offsets[k]);
-                    visitedKernelSum += kernelArray->at(k);
+                    case PlusOp:
+                    values.push_back(kernelArray->at(k) + original->at(i+sourceNeighbourhood.offsets[k]));
+                    break;
+                    
+                    case MinusOp:
+                    values.push_back(kernelArray->at(k) - original->at(i+sourceNeighbourhood.offsets[k]));
+                    break;
+                    
+                    case MultiplyOp:
+                    values.push_back(kernelArray->at(k) * original->at(i+sourceNeighbourhood.offsets[k]));
+                    break;
+                    
+                    case IdentityOp:
+                    if (kernelArray->at(k) != 0.0)
+                        values.push_back(original->at(i+sourceNeighbourhood.offsets[k]));
+                    break;
+                    
+                    case OneOp:
+                    if (kernelArray->at(k) != 0.0)
+                        values.push_back(1.0);
+                    break;
+                    
+                    case ZeroOp:
+                    if (kernelArray->at(k) != 0.0)
+                        values.push_back(0.0);
+                    break;
                 }
             }
         }
         
-        if (!kernel->isBrush)
-            samples[i] *= (visitedKernelSum == 0.0) ? 1.0 : (kernelSum / visitedKernelSum);
+        if (values.size() == 0)
+            samples[i] = NA_REAL;
+        else if (neighbourhoodSize == 1)
+            samples[i] = values[0];
+        else
+        {
+            switch (mergeOp)
+            {
+                case SumOp:
+                {
+                    double sum = 0.0;
+                    for (int l=0; l<values.size(); l++)
+                        sum += values[l];
+                    samples[i] = sum;
+                    break;
+                }
+                
+                case MinOp:
+                samples[i] = *(std::min_element(values.begin(), values.end()));
+                break;
+                
+                case MaxOp:
+                samples[i] = *(std::max_element(values.begin(), values.end()));
+                break;
+                
+                case MeanOp:
+                {
+                    double sum = 0.0;
+                    for (int l=0; l<values.size(); l++)
+                        sum += values[l];
+                    samples[i] = sum / static_cast<double>(values.size());
+                    break;
+                }
+                
+                case MedianOp:
+                {
+                    int middleIndex = values.size() / 2;
+                    std::partial_sort(values.begin(), values.begin()+middleIndex, values.end());
+                    if (values.size() % 2 == 0)
+                        samples[i] = (values[middleIndex-1] + values[middleIndex]) / 2.0;
+                    else
+                        samples[i] = values[middleIndex];
+                    break;
+                }
+            }
+        }
     }
     
     return samples;
