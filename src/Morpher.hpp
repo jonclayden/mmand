@@ -20,6 +20,7 @@ private:
     MergeOp mergeOp;
     
     Neighbourhood immediateNeighbourhood;
+    int_vector currentLoc;
     
     dbl_vector includedValues, excludedValues;
     int_vector includedNeighbourhoods, excludedNeighbourhoods;

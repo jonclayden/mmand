@@ -30,7 +30,6 @@ bool Morpher::meetsRestrictions (const long n)
     if (includedNeighbourhoods.size() > 0 || excludedNeighbourhoods.size() > 0)
     {
         int nDims = original->getNDims();
-        int_vector currentLoc(nDims);
         original->expandIndex(n, currentLoc);
         const std::vector<int> &dims = original->getDims();
         
@@ -159,10 +158,10 @@ std::vector<double> & Morpher::run ()
     int nDims = original->getNDims();
     long nSamples = original->size();
     samples.resize(nSamples);
+    currentLoc.resize(nDims);
     
     calculateBound();
     
-    int_vector currentLoc(nDims);
     for (long i=0; i<nSamples; i++)
     {
         if (!meetsRestrictions(i))
