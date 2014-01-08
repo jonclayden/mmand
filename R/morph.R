@@ -3,16 +3,14 @@ morph <- function (x, kernel, ...)
     UseMethod("morph")
 }
 
-morph.default <- function (x, kernel, value = NULL, valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, ...)
+morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0"), merge = c("sum","min","max","mean","median"), value = NULL, valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, ...)
 {
     x <- as.array(x)
     if (!is.numeric(x))
         report(OL$Error, "Target array must be numeric")
     
-    if (is.array(kernel))
+    if (!isKernel(kernel))
         kernel <- discreteKernel(kernel)
-    else if (!isKernel(kernel))
-        output(OL$Error, "Specified kernel is invalid")
     
     if (any(dim(kernel$values) %% 2 != 1))
         report(OL$Error, "Kernel must have odd width in all dimensions")
@@ -22,56 +20,70 @@ morph.default <- function (x, kernel, value = NULL, valueNot = NULL, nNeighbours
     else if (length(dim(kernel$values)) > length(dim(x)))
         report(OL$Error, "Kernel has greater dimensionality than the target array")
     
+    operator <- match.arg(operator)
+    merge <- match.arg(merge)
+    
     storage.mode(x) <- "double"
     
     restrictions = list(value=as.double(value), valueNot=as.double(valueNot), nNeighbours=as.integer(nNeighbours), nNeighboursNot=as.integer(nNeighboursNot))
     
-    returnValue <- .Call("morph", x, kernel, restrictions, PACKAGE="mmand")
+    returnValue <- .Call("morph", x, kernel, operator, merge, restrictions, PACKAGE="mmand")
     dim(returnValue) <- dim(x)
     return (returnValue)
 }
 
 binarise <- function (x)
 {
-    kernel <- discreteKernel(1, brush=TRUE)
-    return (morph(x, kernel=kernel, valueNot=0))
+    return (morph(x, kernel=1, operator="1", valueNot=0))
 }
 
 gaussianSmooth <- function (x, sigma)
 {
     kernel <- gaussianKernel(sigma, normalised=TRUE)
-    return (morph(x, kernel))
+    return (morph(x, kernel, operator="*", merge="sum"))
 }
 
-erode <- function (x, kernel)
+meanFilter <- function (x, kernel)
 {
-    kernel <- discreteKernel(kernel, brush=TRUE, eraser=TRUE)
-    
-    if (all(dim(kernel$values) <= 3))
-        return (morph(x, kernel, value=0, nNeighboursNot=0))
-    else
-        return (morph(x, kernel, value=0))
+    return (morph(x, kernel, operator="i", merge="mean"))
 }
 
-dilate <- function (x, kernel)
+medianFilter <- function (x, kernel)
 {
-    kernel <- discreteKernel(kernel, brush=TRUE, eraser=FALSE)
+    return (morph(x, kernel, operator="i", merge="median"))
+}
+
+erode <- function (x, kernel, greyscale = FALSE)
+{
+    operator <- ifelse(greyscale, "-", "i")
+    valueNot <- (if (greyscale) NULL else 0)
     
-    if (all(dim(kernel$values) <= 3))
+    if (is.array(x) && is.array(kernel) && all(dim(kernel) <= 3))
     {
-        neighbourCount <- 3^length(dim(x)) - 1
-        return (morph(x, kernel, valueNot=0, nNeighboursNot=neighbourCount))
+        nNeighboursNot <- (if (greyscale) NULL else 3^length(dim(x))-1)
+        return (morph(x, kernel, operator=operator, merge="min", valueNot=valueNot, nNeighboursNot=nNeighboursNot))
     }
     else
-        return (morph(x, kernel, valueNot=0))
+        return (morph(x, kernel, operator=operator, merge="min", valueNot=valueNot))
 }
 
-opening <- function (x, kernel)
+dilate <- function (x, kernel, greyscale = FALSE)
 {
-    return (dilate(erode(x, kernel), kernel))
+    operator <- ifelse(greyscale, "+", "i")
+    value <- nNeighboursNot <- (if (greyscale) NULL else 0)
+    
+    if (is.array(kernel) && all(dim(kernel) <= 3))
+        return (morph(x, kernel, operator=operator, merge="max", value=value, nNeighboursNot=nNeighboursNot))
+    else
+        return (morph(x, kernel, operator=operator, merge="max", value=value))
 }
 
-closing <- function (x, kernel)
+opening <- function (x, kernel, greyscale = FALSE)
 {
-    return (erode(dilate(x, kernel), kernel))
+    return (dilate(erode(x, kernel, greyscale), kernel, greyscale))
+}
+
+closing <- function (x, kernel, greyscale = FALSE)
+{
+    return (erode(dilate(x, kernel, greyscale), kernel, greyscale))
 }
