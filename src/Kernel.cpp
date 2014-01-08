@@ -2,7 +2,7 @@
 
 #include "Kernel.hpp"
 
-double PolynomialKernel::term (const double x, const int i)
+double PolynomialKernel::term (const double x, const int i) const
 {
     if (i == degree)
         return coefficients[i];
@@ -10,7 +10,7 @@ double PolynomialKernel::term (const double x, const int i)
         return coefficients[i] + x * term(x, i+1);
 }
 
-double PolynomialKernel::evaluate (const double x)
+double PolynomialKernel::evaluate (const double x) const
 {
     if (!isWithinSupport(x))
         return 0.0;
@@ -20,7 +20,7 @@ double PolynomialKernel::evaluate (const double x)
         return term(fabs(x), 0);
 }
 
-double CompositeKernel::evaluate (const double x)
+double CompositeKernel::evaluate (const double x) const
 {
     if (kernels.size() == 0)
         return 0.0;
@@ -28,7 +28,7 @@ double CompositeKernel::evaluate (const double x)
         return 0.0;
     else
     {
-        for (std::vector<Kernel*>::iterator i = kernels.begin(); i != kernels.end(); i++)
+        for (std::vector<Kernel*>::const_iterator i = kernels.begin(); i != kernels.end(); i++)
         {
             if ((*i)->isWithinSupport(x))
                 return (*i)->evaluate(x);

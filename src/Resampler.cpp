@@ -8,7 +8,7 @@ std::vector<double> & Resampler::run ()
     int neighbourhoodWidth = static_cast<int>(floor(2.0*kernel->getSupportMax()));
     Neighbourhood neighbourhood = original->getNeighbourhood(neighbourhoodWidth);
     
-    std::vector<int> &dims = original->getDims();
+    const std::vector<int> &dims = original->getDims();
     int nDims = sampler->getNDims();
     int nSamples = sampler->getNSamples();
     samples.resize(nSamples);

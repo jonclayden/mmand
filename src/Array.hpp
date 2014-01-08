@@ -25,23 +25,23 @@ public:
         nDims = dims.size();
     }
     
-    const double & at (long n) { return data[n]; }
+    const double & at (long n) const { return data[n]; }
     
-    long size () { return data.size(); }
+    long size () const { return data.size(); }
     
-    std::vector<int> & getDims () { return dims; }
+    const std::vector<int> & getDims () const { return dims; }
     
-    int getNDims () { return nDims; }
+    int getNDims () const { return nDims; }
     
-    Neighbourhood getNeighbourhood ();
+    Neighbourhood getNeighbourhood () const;
     
-    Neighbourhood getNeighbourhood (const int width);
+    Neighbourhood getNeighbourhood (const int width) const;
     
-    Neighbourhood getNeighbourhood (const std::vector<int> &widths);
+    Neighbourhood getNeighbourhood (const std::vector<int> &widths) const;
     
-    void flattenIndex (const std::vector<int> &loc, long &result);
+    void flattenIndex (const std::vector<int> &loc, long &result) const;
     
-    void expandIndex (const long &loc, std::vector<int> &result);
+    void expandIndex (const long &loc, std::vector<int> &result) const;
 };
 
 #endif

@@ -16,13 +16,13 @@ public:
     Kernel (const double supportMin, const double supportMax)
         : supportMin(supportMin), supportMax(supportMax) {}
     
-    virtual double evaluate (const double x) { return 0.0; }
+    virtual double evaluate (const double x) const { return 0.0; }
     
-    double getSupportMin () { return supportMin; }
+    double getSupportMin () const { return supportMin; }
     
-    double getSupportMax () { return supportMax; }
+    double getSupportMax () const { return supportMax; }
     
-    bool isWithinSupport (const double x)
+    bool isWithinSupport (const double x) const
     {
         double absX = fabs(x);
         return (absX >= supportMin && absX <= supportMax);
@@ -44,8 +44,8 @@ public:
         supportMin = 0.0;
         supportMax = 0.0;
         
-        std::vector<int> &dims = values->getDims();
-        for (std::vector<int>::iterator i = dims.begin(); i != dims.end(); i++)
+        const std::vector<int> &dims = values->getDims();
+        for (std::vector<int>::const_iterator i = dims.begin(); i != dims.end(); i++)
         {
             double currentSupportMax = floor(static_cast<double>(*i) / 2.0);
             if (currentSupportMax > supportMax)
@@ -58,7 +58,7 @@ public:
         delete values;
     }
     
-    Array * getArray () { return values; }
+    Array * getArray () const { return values; }
 };
 
 // General polynomial kernel
@@ -66,7 +66,7 @@ public:
 class PolynomialKernel : public Kernel
 {
 private:
-    double term (const double x, const int i);
+    double term (const double x, const int i) const;
     
 protected:
     int degree;
@@ -79,7 +79,7 @@ public:
         this->degree = coefficients.n_elem - 1;
     }
     
-    double evaluate (const double x);
+    double evaluate (const double x) const;
 };
 
 // Composite kernel
@@ -111,7 +111,7 @@ public:
             delete *i;
     }
     
-    double evaluate (const double x);
+    double evaluate (const double x) const;
 };
 
 // Kernel generator

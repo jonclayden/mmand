@@ -2,12 +2,12 @@
 
 #include "Array.hpp"
 
-Neighbourhood Array::getNeighbourhood ()
+Neighbourhood Array::getNeighbourhood () const
 {
     return this->getNeighbourhood(dims);
 }
 
-Neighbourhood Array::getNeighbourhood (const int width)
+Neighbourhood Array::getNeighbourhood (const int width) const
 {
     std::vector<int> widths(nDims);
     for (int i=0; i<nDims; i++)
@@ -15,7 +15,7 @@ Neighbourhood Array::getNeighbourhood (const int width)
     return this->getNeighbourhood(widths);
 }
 
-Neighbourhood Array::getNeighbourhood (const std::vector<int> &widths)
+Neighbourhood Array::getNeighbourhood (const std::vector<int> &widths) const
 {
     Neighbourhood neighbourhood;
     
@@ -70,7 +70,7 @@ Neighbourhood Array::getNeighbourhood (const std::vector<int> &widths)
     return neighbourhood;
 }
 
-void Array::flattenIndex (const std::vector<int> &loc, long &result)
+void Array::flattenIndex (const std::vector<int> &loc, long &result) const
 {
     // Dimensionalities 1-3 are most common so treat them as special cases for speed
     switch (nDims)
@@ -103,7 +103,7 @@ void Array::flattenIndex (const std::vector<int> &loc, long &result)
     }
 }
 
-void Array::expandIndex (const long &loc, std::vector<int> &result)
+void Array::expandIndex (const long &loc, std::vector<int> &result) const
 {
     long temp;
     result[0] = loc % dims[0];

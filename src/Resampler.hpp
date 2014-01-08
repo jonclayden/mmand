@@ -12,11 +12,11 @@ class SamplingScheme
 public:
     SamplingScheme () {}
     
-    virtual const double at (int sample, int dim) { return NA_REAL; }
+    virtual const double at (int sample, int dim) const { return NA_REAL; }
     
-    virtual int getNDims () { return NA_INTEGER; }
+    virtual int getNDims () const { return NA_INTEGER; }
     
-    virtual int getNSamples () { return NA_INTEGER; }
+    virtual int getNSamples () const { return NA_INTEGER; }
 };
 
 class GeneralSamplingScheme: public SamplingScheme
@@ -28,11 +28,11 @@ public:
     GeneralSamplingScheme (const arma::mat &locations)
         : locations(locations) {}
     
-    const double at (int sample, int dim) { return locations(sample,dim); }
+    const double at (int sample, int dim) const { return locations(sample,dim); }
     
-    int getNDims () { return locations.n_cols; }
+    int getNDims () const { return locations.n_cols; }
     
-    int getNSamples () { return locations.n_rows; }
+    int getNSamples () const { return locations.n_rows; }
 };
 
 class GriddedSamplingScheme: public SamplingScheme
@@ -61,15 +61,15 @@ public:
         }
     }
     
-    const double at (int sample, int dim)
+    const double at (int sample, int dim) const
     {
         int index = (sample / steps[dim]) % dims[dim];
         return locations[dim][index];
     }
     
-    int getNDims () { return locations.size(); }
+    int getNDims () const { return locations.size(); }
     
-    int getNSamples () { return this->nSamples; }
+    int getNSamples () const { return this->nSamples; }
 };
 
 class Resampler
