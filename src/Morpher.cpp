@@ -22,7 +22,7 @@ bool Morpher::meetsRestrictions (const long n)
     {
         for (int i=0; i<excludedValues.size(); i++)
         {
-            if (value == includedValues[i])
+            if (value == excludedValues[i])
                 return false;
         }
     }
