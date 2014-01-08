@@ -33,7 +33,7 @@ discreteKernel <- function (values)
     }
 }
 
-shapeKernel <- function (width, dim = length(width), type = c("box","disc","diamond"), brush = TRUE, normalised = FALSE)
+shapeKernel <- function (width, dim = length(width), type = c("box","disc","diamond"), binary = TRUE, normalised = FALSE)
 {
     type <- match.arg(type)
     
