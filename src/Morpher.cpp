@@ -78,6 +78,69 @@ bool Morpher::meetsRestrictions (const long n)
     return true;
 }
 
+void Morpher::resetValues ()
+{
+    values.clear();
+    if (mergeOp == MinOp)
+        values.push_back(R_PosInf);
+    else if (mergeOp == MaxOp)
+        values.push_back(R_NegInf);
+}
+
+void Morpher::accumulateValue (double value)
+{
+    if (R_IsNA(value))
+        return;
+    
+    if (mergeOp == MinOp && value < values[0])
+        values[0] = value;
+    else if (mergeOp == MaxOp && value > values[0])
+        values[0] = value;
+    else if (mergeOp != MinOp && mergeOp != MaxOp)
+        values.push_back(value);
+}
+
+double Morpher::mergeValues ()
+{
+    if (values.size() == 0)
+        return NA_REAL;
+    else if (values.size() == 1)
+        return values[0];
+    else
+    {
+        switch (mergeOp)
+        {
+            case SumOp:
+            {
+                double sum = 0.0;
+                for (int l=0; l<values.size(); l++)
+                    sum += values[l];
+                return sum;
+            }
+            
+            case MeanOp:
+            {
+                double sum = 0.0;
+                for (int l=0; l<values.size(); l++)
+                    sum += values[l];
+                return (sum / static_cast<double>(values.size()));
+            }
+            
+            case MedianOp:
+            {
+                int middleIndex = values.size() / 2;
+                std::partial_sort(values.begin(), values.begin()+middleIndex, values.end());
+                if (values.size() % 2 == 0)
+                    return ((values[middleIndex-1] + values[middleIndex]) / 2.0);
+                else
+                    return values[middleIndex];
+            }
+        }
+    }
+    
+    return NA_REAL;
+}
+
 std::vector<double> & Morpher::run ()
 {
     Array * kernelArray = kernel->getArray();
@@ -103,9 +166,9 @@ std::vector<double> & Morpher::run ()
             continue;
         }
         
+        resetValues();
         original->expandIndex(i, currentLoc);
         
-        dbl_vector values;
         for (long k=0; k<neighbourhoodSize; k++)
         {
             bool validLoc = true;
@@ -121,81 +184,36 @@ std::vector<double> & Morpher::run ()
                 switch (elementOp)
                 {
                     case PlusOp:
-                    values.push_back(kernelArray->at(k) + original->at(i+sourceNeighbourhood.offsets[k]));
+                    accumulateValue(kernelArray->at(k) + original->at(i+sourceNeighbourhood.offsets[k]));
                     break;
                     
                     case MinusOp:
-                    values.push_back(kernelArray->at(k) - original->at(i+sourceNeighbourhood.offsets[k]));
+                    accumulateValue(kernelArray->at(k) - original->at(i+sourceNeighbourhood.offsets[k]));
                     break;
                     
                     case MultiplyOp:
-                    values.push_back(kernelArray->at(k) * original->at(i+sourceNeighbourhood.offsets[k]));
+                    accumulateValue(kernelArray->at(k) * original->at(i+sourceNeighbourhood.offsets[k]));
                     break;
                     
                     case IdentityOp:
                     if (kernelArray->at(k) != 0.0)
-                        values.push_back(original->at(i+sourceNeighbourhood.offsets[k]));
+                        accumulateValue(original->at(i+sourceNeighbourhood.offsets[k]));
                     break;
                     
                     case OneOp:
                     if (kernelArray->at(k) != 0.0)
-                        values.push_back(1.0);
+                        accumulateValue(1.0);
                     break;
                     
                     case ZeroOp:
                     if (kernelArray->at(k) != 0.0)
-                        values.push_back(0.0);
+                        accumulateValue(0.0);
                     break;
                 }
             }
         }
         
-        if (values.size() == 0)
-            samples[i] = NA_REAL;
-        else if (neighbourhoodSize == 1)
-            samples[i] = values[0];
-        else
-        {
-            switch (mergeOp)
-            {
-                case SumOp:
-                {
-                    double sum = 0.0;
-                    for (int l=0; l<values.size(); l++)
-                        sum += values[l];
-                    samples[i] = sum;
-                    break;
-                }
-                
-                case MinOp:
-                samples[i] = *(std::min_element(values.begin(), values.end()));
-                break;
-                
-                case MaxOp:
-                samples[i] = *(std::max_element(values.begin(), values.end()));
-                break;
-                
-                case MeanOp:
-                {
-                    double sum = 0.0;
-                    for (int l=0; l<values.size(); l++)
-                        sum += values[l];
-                    samples[i] = sum / static_cast<double>(values.size());
-                    break;
-                }
-                
-                case MedianOp:
-                {
-                    int middleIndex = values.size() / 2;
-                    std::partial_sort(values.begin(), values.begin()+middleIndex, values.end());
-                    if (values.size() % 2 == 0)
-                        samples[i] = (values[middleIndex-1] + values[middleIndex]) / 2.0;
-                    else
-                        samples[i] = values[middleIndex];
-                    break;
-                }
-            }
-        }
+        samples[i] = mergeValues();
     }
     
     return samples;

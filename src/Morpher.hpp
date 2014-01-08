@@ -24,9 +24,14 @@ private:
     dbl_vector includedValues, excludedValues;
     int_vector includedNeighbourhoods, excludedNeighbourhoods;
     
+    dbl_vector values;
     dbl_vector samples;
     
     bool meetsRestrictions (const long n);
+    
+    void resetValues ();
+    void accumulateValue (double value);
+    double mergeValues ();
     
 public:
     Morpher (Array * const original, DiscreteKernel * const kernel, const ElementOp elementOp, const MergeOp mergeOp)
