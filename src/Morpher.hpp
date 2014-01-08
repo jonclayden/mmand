@@ -25,13 +25,11 @@ private:
     dbl_vector includedValues, excludedValues;
     int_vector includedNeighbourhoods, excludedNeighbourhoods;
     
-    double bound;
     dbl_vector values;
     dbl_vector samples;
     
     bool meetsRestrictions (const long n);
     
-    void calculateBound ();
     void resetValues ();
     void accumulateValue (double value);
     double mergeValues ();

@@ -29,10 +29,6 @@ public:
     
     long size () { return data.size(); }
     
-    std::vector<double>::iterator begin () { return data.begin(); }
-    
-    std::vector<double>::iterator end () { return data.end(); }
-    
     std::vector<int> & getDims () { return dims; }
     
     int getNDims () { return nDims; }

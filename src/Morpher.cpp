@@ -77,16 +77,6 @@ bool Morpher::meetsRestrictions (const long n)
     return true;
 }
 
-void Morpher::calculateBound ()
-{
-    if (elementOp != IdentityOp || (mergeOp != MinOp && mergeOp != MaxOp))
-        bound = NA_REAL;
-    else if (mergeOp == MinOp)
-        bound = *(std::min_element(original->begin(), original->end()));
-    else if (mergeOp == MaxOp)
-        bound = *(std::max_element(original->begin(), original->end()));
-}
-
 void Morpher::resetValues ()
 {
     values.clear();
@@ -98,6 +88,9 @@ void Morpher::resetValues ()
 
 void Morpher::accumulateValue (double value)
 {
+    if (R_IsNA(value))
+        return;
+    
     if (mergeOp == MinOp && value < values[0])
         values[0] = value;
     else if (mergeOp == MaxOp && value > values[0])
@@ -160,7 +153,9 @@ std::vector<double> & Morpher::run ()
     samples.resize(nSamples);
     currentLoc.resize(nDims);
     
-    calculateBound();
+    double kernelSum = 0.0;
+    for (long k=0; k<neighbourhoodSize; k++)
+        kernelSum += kernelArray->at(k);
     
     for (long i=0; i<nSamples; i++)
     {
@@ -185,42 +180,34 @@ std::vector<double> & Morpher::run ()
             
             if (validLoc && !R_IsNA(kernelArray->at(k)))
             {
-                double value = NA_REAL;
                 switch (elementOp)
                 {
                     case PlusOp:
-                    value = kernelArray->at(k) + original->at(i+sourceNeighbourhood.offsets[k]);
+                    accumulateValue(kernelArray->at(k) + original->at(i+sourceNeighbourhood.offsets[k]));
                     break;
                     
                     case MinusOp:
-                    value = kernelArray->at(k) - original->at(i+sourceNeighbourhood.offsets[k]);
+                    accumulateValue(kernelArray->at(k) - original->at(i+sourceNeighbourhood.offsets[k]));
                     break;
                     
                     case MultiplyOp:
-                    value = kernelArray->at(k) * original->at(i+sourceNeighbourhood.offsets[k]);
+                    accumulateValue(kernelArray->at(k) * original->at(i+sourceNeighbourhood.offsets[k]));
                     break;
                     
                     case IdentityOp:
                     if (kernelArray->at(k) != 0.0)
-                        value = original->at(i+sourceNeighbourhood.offsets[k]);
+                        accumulateValue(original->at(i+sourceNeighbourhood.offsets[k]));
                     break;
                     
                     case OneOp:
                     if (kernelArray->at(k) != 0.0)
-                        value = 1.0;
+                        accumulateValue(1.0);
                     break;
                     
                     case ZeroOp:
                     if (kernelArray->at(k) != 0.0)
-                        value = 0.0;
+                        accumulateValue(0.0);
                     break;
-                }
-                
-                if (!R_IsNA(value))
-                {
-                    accumulateValue(value);
-                    if (!R_IsNA(bound) && value == bound)
-                        break;
                 }
             }
         }
