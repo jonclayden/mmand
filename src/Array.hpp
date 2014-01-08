@@ -25,7 +25,7 @@ public:
         nDims = dims.size();
     }
     
-    const double & at (long n) { return data.at(n); }
+    const double & at (long n) { return data[n]; }
     
     long size () { return data.size(); }
     
