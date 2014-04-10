@@ -6,9 +6,9 @@ isKernel <- function (object)
 sampleKernel <- function (kernel, values)
 {
     if (!isKernel(kernel))
-        output(OL$Error, "Specified kernel is invalid")
+        report(OL$Error, "Specified kernel is invalid")
     if (kernel$name == "discrete")
-        output(OL$Warning, "The \"sampleKernel\" function does not produce useful output for discrete kernels")
+        report(OL$Warning, "The \"sampleKernel\" function does not produce useful output for discrete kernels")
     
     return (.Call("sample_kernel", kernel, as.numeric(values), PACKAGE="mmand"))
 }

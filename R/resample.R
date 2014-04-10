@@ -16,9 +16,9 @@ resample.default <- function (x, points, kernel, pointType = c("auto","general",
     
     pointType <- match.arg(pointType)
     if (pointType == "general" && (!is.matrix(points) || ncol(points) != nDims))
-        output(OL$Error, "Points must be specified as a matrix with #{nDims} columns")
+        report(OL$Error, "Points must be specified as a matrix with #{nDims} columns")
     else if (pointType == "grid" && (!is.list(points) || length(points) != nDims))
-        output(OL$Error, "Points must be specified as a list of length #{nDims}")
+        report(OL$Error, "Points must be specified as a list of length #{nDims}")
     else if (pointType == "auto")
     {
         if (is.matrix(points) && ncol(points) == nDims)
@@ -26,7 +26,7 @@ resample.default <- function (x, points, kernel, pointType = c("auto","general",
         else if (is.list(points) && length(points) == nDims)
             pointType <- "grid"
         else
-            output(OL$Error, "Point specification is not valid")
+            report(OL$Error, "Point specification is not valid")
     }
     
     if (is.matrix(points))
@@ -35,7 +35,7 @@ resample.default <- function (x, points, kernel, pointType = c("auto","general",
         points <- lapply(points, "-", 1)
     
     if (!isKernel(kernel))
-        output(OL$Error, "Specified kernel is invalid")
+        report(OL$Error, "Specified kernel is invalid")
     
     result <- .Call("resample", x, kernel, list(type=pointType,points=points), PACKAGE="mmand")
     
