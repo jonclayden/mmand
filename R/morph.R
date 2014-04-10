@@ -25,11 +25,20 @@ morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0"), mer
     
     storage.mode(x) <- "double"
     
-    restrictions = list(value=as.double(value), valueNot=as.double(valueNot), nNeighbours=as.integer(nNeighbours), nNeighboursNot=as.integer(nNeighboursNot))
+    restrictions <- list(value=as.double(value), valueNot=as.double(valueNot), nNeighbours=as.integer(nNeighbours), nNeighboursNot=as.integer(nNeighboursNot))
     
     returnValue <- .Call("morph", x, kernel, operator, merge, restrictions, PACKAGE="mmand")
     dim(returnValue) <- dim(x)
     return (returnValue)
+}
+
+binary <- function (x)
+{
+    x <- as.array(x)
+    if (!is.numeric(x))
+        report(OL$Error, "Array must be numeric")
+    
+    return (.Call("is_binary", x, PACKAGE="mmand"))
 }
 
 binarise <- function (x)

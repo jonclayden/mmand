@@ -44,6 +44,31 @@ Kernel * kernelFromElements (SEXP kernel_)
     return kernel;
 }
 
+RcppExport SEXP is_binary (SEXP data_)
+{
+BEGIN_RCPP
+    NumericVector data(data_);
+    bool isBinary = true;
+    double nonzeroValue = NA_REAL;
+    
+    for (int i=0; i<data.length(); i++)
+    {
+        if (data[i] != 0.0)
+        {
+            if (R_IsNA(nonzeroValue))
+                nonzeroValue = data[i];
+            else if (nonzeroValue != data[i])
+            {
+                isBinary = false;
+                break;
+            }
+        }
+    }
+    
+    return wrap(isBinary);
+END_RCPP
+}
+
 RcppExport SEXP get_neighbourhood (SEXP data_, SEXP width_)
 {
 BEGIN_RCPP
