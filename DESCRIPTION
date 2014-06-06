@@ -1,13 +1,13 @@
 Package: mmand
 Version: 0.2.0
 Date: 2012-12-21
-Title: Mathematical morphology and image resampling in any number of dimensions
+Title: Mathematical morphology in any number of dimensions
 Author: Jon Clayden
 Maintainer: Jon Clayden <code@clayden.org>
 Depends: R (>= 2.12.1), Rcpp, RcppArmadillo
 Imports: reportr
 LinkingTo: Rcpp, RcppArmadillo
-Description: This package provides tools for performing mathematical morphology operations, such as erosion and dilation, on data of arbitrary dimensionality. It can also be used for resampling, smoothing and other image processing-style operations.
+Description: This package provides tools for performing mathematical morphology operations, such as erosion and dilation, on data of arbitrary dimensionality. It can also be used for resampling, filtering, smoothing and other image processing-style operations.
 Encoding: UTF-8
 License: GPL-2
 URL: https://github.com/jonclayden/mmand
