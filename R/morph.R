@@ -62,14 +62,25 @@ medianFilter <- function (x, kernel)
     return (morph(x, kernel, operator="i", merge="median"))
 }
 
-erode <- function (x, kernel, greyscale = FALSE)
+erode <- function (x, kernel)
 {
-    operator <- ifelse(greyscale, "-", "i")
-    valueNot <- (if (greyscale) NULL else 0)
+    greyscaleImage <- !binary(x)
+    if (greyscaleImage)
+    {
+        flatKernel <- binary(kernel)
+        operator <- ifelse(!flatKernel, "-", "i")
+        valueNot <- NULL
+    }
+    else
+    {
+        flatKernel <- TRUE
+        operator <- "i"
+        valueNot <- 0
+    }
     
     if (is.array(x) && is.array(kernel) && all(dim(kernel) <= 3))
     {
-        nNeighboursNot <- (if (greyscale) NULL else 3^length(dim(x))-1)
+        nNeighboursNot <- (if (greyscaleImage) NULL else 3^length(dim(x))-1)
         return (morph(x, kernel, operator=operator, merge="min", valueNot=valueNot, nNeighboursNot=nNeighboursNot))
     }
     else
@@ -87,12 +98,12 @@ dilate <- function (x, kernel, greyscale = FALSE)
         return (morph(x, kernel, operator=operator, merge="max", value=value))
 }
 
-opening <- function (x, kernel, greyscale = FALSE)
+opening <- function (x, kernel)
 {
-    return (dilate(erode(x, kernel, greyscale), kernel, greyscale))
+    return (dilate(erode(x, kernel), kernel))
 }
 
-closing <- function (x, kernel, greyscale = FALSE)
+closing <- function (x, kernel)
 {
-    return (erode(dilate(x, kernel, greyscale), kernel, greyscale))
+    return (erode(dilate(x, kernel), kernel))
 }
