@@ -35,11 +35,6 @@ Kernel * kernelFromElements (SEXP kernel_)
         kernel = KernelGenerator::triangle();
     else if (kernelName.compare("mitchell-netravali") == 0)
         kernel = KernelGenerator::mitchellNetravali(as<double>(kernelElements["B"]), as<double>(kernelElements["C"]));
-    else if (kernelName.compare("discrete") == 0)
-    {
-        Array *kernelArray = arrayFromData(kernelElements["values"]);
-        kernel = new DiscreteKernel(kernelArray);
-    }
     
     return kernel;
 }
@@ -130,8 +125,7 @@ RcppExport SEXP morph (SEXP data_, SEXP kernel_, SEXP elementOp_, SEXP mergeOp_,
 BEGIN_RCPP
     Array *array = arrayFromData(data_);
     
-    List kernelElements(kernel_);
-    Array *kernelArray = arrayFromData(kernelElements["values"]);
+    Array *kernelArray = arrayFromData(kernel_);
     DiscreteKernel *kernel = new DiscreteKernel(kernelArray);
     
     const string elementOpString = as<string>(elementOp_);

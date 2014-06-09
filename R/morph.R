@@ -9,15 +9,15 @@ morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0"), mer
     if (!is.numeric(x))
         report(OL$Error, "Target array must be numeric")
     
-    if (!isKernel(kernel))
-        kernel <- discreteKernel(kernel)
+    if (!isKernelArray(kernel))
+        kernel <- kernelArray(kernel)
     
-    if (any(dim(kernel$values) %% 2 != 1))
+    if (any(dim(kernel) %% 2 != 1))
         report(OL$Error, "Kernel must have odd width in all dimensions")
     
-    if (length(dim(kernel$values)) < length(dim(x)))
-        dim(kernel$values) <- c(dim(kernel$values), rep(1,length(dim(x))-length(dim(kernel$values))))
-    else if (length(dim(kernel$values)) > length(dim(x)))
+    if (length(dim(kernel)) < length(dim(x)))
+        dim(kernel) <- c(dim(kernel), rep(1,length(dim(x))-length(dim(kernel))))
+    else if (length(dim(kernel)) > length(dim(x)))
         report(OL$Error, "Kernel has greater dimensionality than the target array")
     
     operator <- match.arg(operator)
@@ -64,6 +64,9 @@ medianFilter <- function (x, kernel)
 
 erode <- function (x, kernel)
 {
+    if (!isKernelArray(kernel))
+        kernel <- kernelArray(kernel)
+    
     greyscaleImage <- !binary(x)
     nNeighboursNot <- NULL
     
@@ -74,7 +77,7 @@ erode <- function (x, kernel)
     }
     else
     {
-        if (is.array(x) && is.array(kernel) && all(dim(kernel) <= 3))
+        if (all(dim(kernel) <= 3))
             nNeighboursNot <- 3^length(dim(x)) - 1
         operator <- "i"
         valueNot <- 0
@@ -85,6 +88,9 @@ erode <- function (x, kernel)
 
 dilate <- function (x, kernel)
 {
+    if (!isKernelArray(kernel))
+        kernel <- kernelArray(kernel)
+    
     greyscaleImage <- !binary(x)
     nNeighboursNot <- NULL
     
@@ -95,7 +101,7 @@ dilate <- function (x, kernel)
     }
     else
     {
-        if (is.array(x) && is.array(kernel) && all(dim(kernel) <= 3))
+        if (all(dim(kernel) <= 3))
             nNeighboursNot <- 0
         operator <- "i"
         value <- 0

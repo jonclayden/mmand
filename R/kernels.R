@@ -1,35 +1,63 @@
 isKernel <- function (object)
 {
-    return (is.list(object) && "kernel" %in% class(object))
+    return ("kernel" %in% class(object))
 }
 
-sampleKernel <- function (kernel, values)
+isKernelArray <- function (object)
 {
-    if (!isKernel(kernel))
-        report(OL$Error, "Specified kernel is invalid")
-    if (kernel$name == "discrete")
-        report(OL$Warning, "The \"sampleKernel\" function does not produce useful output for discrete kernels")
+    return ("kernelArray" %in% class(object))
+}
+
+isKernelFunction <- function (object)
+{
+    return ("kernelFunction" %in% class(object))
+}
+
+plot.kernelArray <- function (x, y, axis = 1, lwd = 2, col = "red", ...)
+{
+    indices <- as.list(ceiling(dim(x) / 2))
+    indices[[axis]] <- 1:(dim(x)[axis])
+    line <- do.call("[", c(list(x),indices))
+    
+    limit <- dim(x)[axis] / 2
+    xlim <- limit * c(-1,1)
+    xloc <- rep(seq(xlim[1],xlim[2],1), each=2)
+    yloc <- c(0, rep(line, each=2), 0)
+    
+    plot(xloc, yloc, xlab="x", ylab="k(x)", type="l", lwd=lwd, col=col, xlim=xlim, ...)
+    abline(v=0, lty=2, col="grey60")
+    abline(h=0, lty=2, col="grey60")
+}
+
+sampleKernelFunction <- function (kernel, values)
+{
+    if (!isKernelFunction(kernel))
+        report(OL$Error, "Specified kernel is not a valid kernel function")
     
     return (.Call("sample_kernel", kernel, as.numeric(values), PACKAGE="mmand"))
 }
 
-plot.kernel <- function (x, y, xlim = c(-2,2), ...)
+plot.kernelFunction <- function (x, y, xlim = c(-2,2), lwd = 2, col = "red", ...)
 {
     values <- seq(xlim[1], xlim[2], length.out=101)
-    plot(values, sampleKernel(x,values), xlab="x", ylab="k(x)", xlim=xlim, ...)
+    plot(values, sampleKernelFunction(x,values), xlab="x", ylab="k(x)", type="l", lwd=lwd, col=col, xlim=xlim, ...)
+    abline(v=0, lty=2, col="grey60")
+    abline(h=0, lty=2, col="grey60")
 }
 
-discreteKernel <- function (values)
+kernelArray <- function (values)
 {
-    if (isKernel(values))
+    if (isKernelArray(values))
         return (values)
+    else if (isKernelFunction(values))
+        report(OL$Error, "Kernel function cannot be converted to a kernel array")
     else
     {
         values <- as.array(values)
         if (!is.numeric(values))
             report(OL$Error, "Kernel must be numeric")
         storage.mode(values) <- "double"
-        return (structure(list(name="discrete", values=values), class="kernel"))
+        return (structure(values, class=c("kernelArray","kernel")))
     }
 }
 
@@ -76,7 +104,7 @@ shapeKernel <- function (width, dim = length(width), type = c("box","disc","diam
     else if (normalised)
         kernel <- kernel / sum(kernel, na.rm=TRUE)
     
-    return (discreteKernel(kernel))
+    return (kernelArray(kernel))
 }
 
 gaussianKernel <- function (sigma, dim = length(sigma), size = 6*sigma, normalised = TRUE)
@@ -103,20 +131,34 @@ gaussianKernel <- function (sigma, dim = length(sigma), size = 6*sigma, normalis
     if (normalised)
         kernel <- kernel / sum(kernel, na.rm=TRUE)
     
-    return (discreteKernel(kernel))
+    return (kernelArray(kernel))
+}
+
+kernelFunction <- function (name = c("box","triangle","mitchell-netravali"), ...)
+{
+    if (is.character(name))
+        name <- match.arg(name)
+    else if (isKernelFunction(name))
+        return (name)
+    else if (isKernelArray(name))
+        report(OL$Error, "Kernel array cannot be converted to a kernel function")
+    else
+        report(OL$Error, "Kernel function specification is not valid")
+    
+    return (structure(list(name=name, ...), class=c("kernelFunction","kernel")))
 }
 
 boxKernel <- function ()
 {
-    return (structure(list(name="box"), class="kernel"))
+    return (kernelFunction("box"))
 }
 
 triangleKernel <- function ()
 {
-    return (structure(list(name="triangle"), class="kernel"))
+    return (kernelFunction("triangle"))
 }
 
 mitchellNetravaliKernel <- mnKernel <- function (B = 1/3, C = 1/3)
 {
-    return (structure(list(name="mitchell-netravali", B=B, C=C), class="kernel"))
+    return (kernelFunction("mitchell-netravali", B=B, C=C))
 }
