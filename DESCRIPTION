@@ -5,7 +5,7 @@ Title: Mathematical morphology in any number of dimensions
 Author: Jon Clayden
 Maintainer: Jon Clayden <code@clayden.org>
 Depends: R (>= 2.12.1), Rcpp, RcppArmadillo
-Suggests: png
+Suggests: png, testthat
 Imports: reportr
 LinkingTo: Rcpp, RcppArmadillo
 Description: This package provides tools for performing mathematical morphology operations, such as erosion and dilation, on data of arbitrary dimensionality. It can also be used for resampling, filtering, smoothing and other image processing-style operations.
