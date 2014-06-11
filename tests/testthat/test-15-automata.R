@@ -1,4 +1,4 @@
-source(system.file("tests", "testthat", "matches_file.R", package="mmand"))
+source("matches_file.R")
 
 context("Running cellular automaton simulations")
 
