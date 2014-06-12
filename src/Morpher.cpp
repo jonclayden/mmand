@@ -128,7 +128,7 @@ double Morpher::mergeValues ()
             case MedianOp:
             {
                 int middleIndex = values.size() / 2;
-                std::partial_sort(values.begin(), values.begin()+middleIndex, values.end());
+                std::partial_sort(values.begin(), values.begin()+middleIndex+1, values.end());
                 if (values.size() % 2 == 0)
                     return ((values[middleIndex-1] + values[middleIndex]) / 2.0);
                 else
@@ -183,15 +183,15 @@ std::vector<double> & Morpher::run ()
                 switch (elementOp)
                 {
                     case PlusOp:
-                    accumulateValue(kernelArray->at(k) + original->at(i+sourceNeighbourhood.offsets[k]));
+                    accumulateValue(original->at(i+sourceNeighbourhood.offsets[k]) + kernelArray->at(k));
                     break;
                     
                     case MinusOp:
-                    accumulateValue(kernelArray->at(k) - original->at(i+sourceNeighbourhood.offsets[k]));
+                    accumulateValue(original->at(i+sourceNeighbourhood.offsets[k]) - kernelArray->at(k));
                     break;
                     
                     case MultiplyOp:
-                    accumulateValue(kernelArray->at(k) * original->at(i+sourceNeighbourhood.offsets[k]));
+                    accumulateValue(original->at(i+sourceNeighbourhood.offsets[k]) * kernelArray->at(k));
                     break;
                     
                     case IdentityOp:
