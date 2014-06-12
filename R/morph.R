@@ -64,6 +64,7 @@ medianFilter <- function (x, kernel)
 
 erode <- function (x, kernel)
 {
+    x <- as.array(x)
     if (!isKernelArray(kernel))
         kernel <- kernelArray(kernel)
     
@@ -88,6 +89,7 @@ erode <- function (x, kernel)
 
 dilate <- function (x, kernel)
 {
+    x <- as.array(x)
     if (!isKernelArray(kernel))
         kernel <- kernelArray(kernel)
     
@@ -112,10 +114,18 @@ dilate <- function (x, kernel)
 
 opening <- function (x, kernel)
 {
+    x <- as.array(x)
+    if (!isKernelArray(kernel))
+        kernel <- kernelArray(kernel)
+    
     return (dilate(erode(x, kernel), kernel))
 }
 
 closing <- function (x, kernel)
 {
+    x <- as.array(x)
+    if (!isKernelArray(kernel))
+        kernel <- kernelArray(kernel)
+    
     return (erode(dilate(x, kernel), kernel))
 }
