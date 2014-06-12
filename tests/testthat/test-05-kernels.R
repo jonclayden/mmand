@@ -10,6 +10,7 @@ test_that("standard kernel arrays can be created", {
     
     expect_that(gaussianKernel(0.5), matches_file("gaussian_kernel_1d.rds"))
     expect_that(gaussianKernel(c(0.5,0.5)), matches_file("gaussian_kernel_2d.rds"))
+    expect_that(gaussianKernel(c(0.5,0.5),normalised=FALSE), matches_file("gaussian_kernel_2d_unnorm.rds"))
     expect_that(gaussianKernel(c(0.5,0.3)), matches_file("gaussian_kernel_2d_anis.rds"))
 })
 

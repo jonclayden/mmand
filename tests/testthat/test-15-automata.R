@@ -1,6 +1,6 @@
 source("matches_file.R")
 
-context("Running cellular automaton simulations")
+context("Cellular automaton simulations")
 
 test_that("cellular automaton simulation works", {
     expect_that(gosperGliderGun(), matches_file("glider_gun_t0.rds"))
