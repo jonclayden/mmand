@@ -1,6 +1,6 @@
 source("matches_file.R")
 
-context("Generating and sampling kernels")
+context("Kernel generation and sampling")
 
 test_that("standard kernel arrays can be created", {
     expect_that(shapeKernel(3), matches_file("line_kernel.rds"))

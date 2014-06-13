@@ -9,8 +9,8 @@ test_that("binary mathematical morphology operations work", {
     data <- c(0,0,1,0,0,0,1,1,1,0,0)
     kernel <- c(1,1,1)
     expect_that(binary(data), is_true())
-    expect_that(as.vector(erode(data,kernel)), equals(c(0,0,0,0,0,0,0,1,0,0,0)))
-    expect_that(as.vector(dilate(data,kernel)), equals(c(0,1,1,1,0,1,1,1,1,1,0)))
+    expect_that(erode(data,kernel), equals(c(0,0,0,0,0,0,0,1,0,0,0)))
+    expect_that(dilate(data,kernel), equals(c(0,1,1,1,0,1,1,1,1,1,0)))
     
     data <- matrix(0, nrow=3, ncol=3)
     data[2,2] <- 1
@@ -22,12 +22,12 @@ test_that("greyscale mathematical morphology operations work", {
     data <- c(0,0,0.5,0,0,0,0.2,0.5,0.3,0,0)
     kernel <- c(1,1,1)
     expect_that(binary(data), is_false())
-    expect_that(as.vector(erode(data,kernel)), equals(c(0,0,0,0,0,0,0,0.2,0,0,0)))
-    expect_that(as.vector(dilate(data,kernel)), equals(c(0,0.5,0.5,0.5,0,0.2,0.5,0.5,0.5,0.3,0)))
+    expect_that(erode(data,kernel), equals(c(0,0,0,0,0,0,0,0.2,0,0,0)))
+    expect_that(dilate(data,kernel), equals(c(0,0.5,0.5,0.5,0,0.2,0.5,0.5,0.5,0.3,0)))
     
     kernel <- c(0.5,1,0.5)
-    expect_that(as.vector(erode(data,kernel)), equals(c(-1,-1,-0.5,-1,-1,-1,-0.8,-0.5,-0.7,-1,-1)))
-    expect_that(as.vector(dilate(data,kernel)), equals(c(1,1,1.5,1,1,1,1.2,1.5,1.3,1,1)))
+    expect_that(erode(data,kernel), equals(c(-1,-1,-0.5,-1,-1,-1,-0.8,-0.5,-0.7,-1,-1)))
+    expect_that(dilate(data,kernel), equals(c(1,1,1.5,1,1,1,1.2,1.5,1.3,1,1)))
     
     kernel <- shapeKernel(c(3,3), type="diamond")
     expect_that(erode(lena,kernel), matches_file("lena_eroded.rds"))
