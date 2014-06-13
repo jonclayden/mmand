@@ -28,7 +28,10 @@ morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0"), mer
     restrictions <- list(value=as.double(value), valueNot=as.double(valueNot), nNeighbours=as.integer(nNeighbours), nNeighboursNot=as.integer(nNeighboursNot))
     
     returnValue <- .Call("morph", x, kernel, operator, merge, restrictions, PACKAGE="mmand")
-    dim(returnValue) <- dim(x)
+    
+    if (length(dim(x)) > 1)
+        dim(returnValue) <- dim(x)
+    
     return (returnValue)
 }
 
