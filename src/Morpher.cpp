@@ -1,6 +1,6 @@
 #include <RcppArmadillo.h>
 
-#include "Morpher.hpp"
+#include "Morpher.h"
 
 bool Morpher::meetsRestrictions (const long n)
 {

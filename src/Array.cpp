@@ -1,6 +1,6 @@
 #include <RcppArmadillo.h>
 
-#include "Array.hpp"
+#include "Array.h"
 
 Neighbourhood Array::getNeighbourhood () const
 {

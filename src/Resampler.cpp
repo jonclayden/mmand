@@ -1,6 +1,6 @@
 #include <RcppArmadillo.h>
 
-#include "Resampler.hpp"
+#include "Resampler.h"
 
 std::vector<double> & Resampler::run ()
 {

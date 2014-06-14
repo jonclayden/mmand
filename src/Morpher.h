@@ -1,5 +1,5 @@
-#ifndef _MORPHER_HPP_
-#define _MORPHER_HPP_
+#ifndef _MORPHER_H_
+#define _MORPHER_H_
 
 #include "Array.hpp"
 #include "Kernel.hpp"

@@ -1,7 +1,7 @@
 #include <RcppArmadillo.h>
 
-#include "Resampler.hpp"
-#include "Morpher.hpp"
+#include "Resampler.h"
+#include "Morpher.h"
 
 using namespace Rcpp;
 using namespace std;

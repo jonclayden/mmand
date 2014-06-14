@@ -1,6 +1,6 @@
 #include <RcppArmadillo.h>
 
-#include "Kernel.hpp"
+#include "Kernel.h"
 
 double PolynomialKernel::term (const double x, const int i) const
 {

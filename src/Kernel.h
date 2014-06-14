@@ -1,5 +1,5 @@
-#ifndef _KERNEL_HPP_
-#define _KERNEL_HPP_
+#ifndef _KERNEL_H_
+#define _KERNEL_H_
 
 #include "Array.hpp"
 

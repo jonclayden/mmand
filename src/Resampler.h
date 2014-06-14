@@ -1,5 +1,5 @@
-#ifndef _RESAMPLER_HPP_
-#define _RESAMPLER_HPP_
+#ifndef _RESAMPLER_H_
+#define _RESAMPLER_H_
 
 #include "Array.hpp"
 #include "Kernel.hpp"
