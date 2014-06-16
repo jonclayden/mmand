@@ -41,7 +41,7 @@ In principle the size of the board in a cellular automaton is infinite. Of cours
 A binary matrix representing the final state of the system after \code{steps} generations.
 }
 
-\author{Jon Clayden <jon.clayden+mmand@gmail.com>}
+\author{Jon Clayden <code@clayden.org>}
 
 \seealso{The \code{\link{morph}} function, which powers this simulation.}
 

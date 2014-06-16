@@ -30,7 +30,7 @@ The \code{erode} function uses the kernel as an eraser, centring it on each zero
 A morphed array with the same dimensions as the original array.
 }
 
-\author{Jon Clayden <jon.clayden+mmand@gmail.com>}
+\author{Jon Clayden <code@clayden.org>}
 
 \seealso{\code{\link{morph}} for the function underlying all of these operations, \code{\link{kernels}} for kernel-generating functions, \code{\link{binarise}} for binarising an array, and \code{\link{gaussianSmooth}} for smoothing. The \code{EBImage} Bioconductor package also supplies functions to perform these operations, and may be slightly faster, but only works in two dimensions.}
 

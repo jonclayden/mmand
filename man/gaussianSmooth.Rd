@@ -19,6 +19,6 @@ gaussianSmooth(x, sigma)
 A morphed array with the same dimensions as the original array.
 }
 
-\author{Jon Clayden <jon.clayden+mmand@gmail.com>}
+\author{Jon Clayden <code@clayden.org>}
 
 \seealso{\code{\link{morph}} for the function underlying this operation, \code{\link{gaussianKernel}} for generating Gaussian kernels (which is also used by this function), and \code{\link{erode}} for mathematical morphology functions.}
