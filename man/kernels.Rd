@@ -12,7 +12,7 @@
 \alias{mitchellNetravaliKernel}
 \alias{mnKernel}
 
-\title{Functions for generating and manipulating kernels}
+\title{Kernel-generating functions}
 \description{
 These functions can be used to generate kernels for morphological, smoothing or resampling operations. There are two types of kernels: kernel arrays, which are used with \code{\link{morph}}, and kernel functions, which are used with \code{\link{resample}}.
 }
@@ -53,15 +53,25 @@ mnKernel(B = 1/3, C = 1/3)
 
 \details{
 There are two forms of kernel used by this package. Kernel arrays, otherwise known in mathematical morphology as structuring elements, are numeric arrays with class \code{kernelArray}. They are defined on a grid of odd width, and are used by \code{\link{morph}} and related functions. Kernel functions, by contrast, are represented in R as a list containing a name and, optionally, some parameters. The real implementation is in C++. They are defined everywhere within the support of the kernel, and are used by \code{\link{resample}} and friends. The key distinction is in whether the kernel will always be centred exactly on the location of an existing value in the data (for kernel arrays) or not (for kernel functions).
+
+The \code{kernelArray} and \code{kernelFunction} functions create objects of the corresponding classes, while \code{isKernelArray} and \code{isKernelFunction} test for them. In addition, \code{isKernel} returns \code{TRUE} if its argument is of either kernel class.
+
+The remaining functions generate special-case kernels: \code{shapeKernel} generates arrays with nonzero elements in a box, disc or diamond shape for use with \code{\link{morphology}} functions; \code{gaussianKernel} generates Gaussian coefficients and is used by \code{\link{gaussianSmooth}}; \code{boxKernel} is used for ``nearest neighbour'' resampling, and \code{triangleKernel} for linear, bilinear, etc. The Mitchell-Netravali kernel, a.k.a. BC-spline, is based on a family of piecewise-cubic polynomial functions, with support of four times the pixel separation in each dimension. The default parameters are the ones recommended by Mitchell and Netravali as a good trade-off between various artefacts, but other well-known special cases include B=1, C=0 (the cubic B-spline) and B=0, C=0.5 (the Catmull-Rom spline). \code{mnKernel} is a shorter alias for \code{mitchellNetravaliKernel}.
 }
 
 \value{
-An array of the requested dimensionality, which can be used as a kernel with \code{\link{morph}} and related functions.
+For \code{isKernel}, \code{isKernelArray} and \code{isKernelFunction}, a logical value. For \code{kernelArray}, \code{shapeKernel} and \code{gaussianKernel}, a kernel array. For \code{kernelFunction}, \code{boxKernel}, \code{triangleKernel}, \code{mitchellNetravaliKernel} and \code{mnKernel}, a kernel function.
 }
 
 \author{Jon Clayden <code@clayden.org>}
 
-\seealso{\code{\link{morph}} for general application of kernels to data, \code{\link{erode}} for mathematical morphology functions, and \code{\link{gaussianSmooth}} for applying smoothing to data.}
+\references{
+The Mitchell-Netravali kernel is described in the following paper.
+
+D.P. Mitchell & A.N. Netravali (1988). Reconstruction filters in computer graphics. Computer Graphics 22(4):221-228.
+}
+
+\seealso{\code{\link{morph}} for general application of kernel arrays to data, \code{\link{morphology}} for mathematical morphology functions, \code{\link{resample}} for resampling, and \code{\link{gaussianSmooth}} for smoothing. Also see \code{\link{sampleKernelFunction}} for kernel sampling and plotting.}
 
 \examples{
 shapeKernel(c(3,5), type="diamond")

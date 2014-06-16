@@ -4,14 +4,14 @@
 
 \title{Morph an array with a kernel}
 \description{
-The \code{morph} function applies a kernel, literally or multiplicatively, to a target array. Optionally, applying the kernel to a particular array element can be made conditional on its value, or the number of nonzero immediate neighbours that it has. The \code{morph} function is (S3) generic.
+The \code{morph} function applies a kernel to a target array. Optionally, applying the kernel to a particular array element can be made conditional on its value, or the number of nonzero immediate neighbours that it has. The \code{morph} function is (S3) generic.
 }
 
 \usage{
 morph(x, kernel, \dots)
 
-\method{morph}{default}(x, kernel, operator = c("+", "-", "*", "i", "1", "0"),
-    merge = c("sum", "min", "max", "mean", "median"), value = NULL,
+\method{morph}{default}(x, kernel, operator = c("+","-","*","i","1","0"),
+    merge = c("sum","min","max","mean","median"), value = NULL,
     valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, \dots)
 }
 
@@ -32,4 +32,4 @@ A morphed array with the same dimensions as the original array.
 
 \author{Jon Clayden <code@clayden.org>}
 
-\seealso{\code{\link{kernels}} for kernel-generating functions, and \code{\link{erode}} for more specific mathematical morphology functions. \code{\link{gameOfLife}} shows how this function can be used for non-morphological purposes, in that case to power a cellular automaton. See also the \code{kernel} and \code{kernapply} functions in the \code{stats} package, particularly if you want to smooth time series.}
+\seealso{\code{\link{kernels}} for kernel-generating functions, and \code{\link{morphology}} for more specific mathematical morphology functions. \code{\link{gameOfLife}} shows how this function can be used for non-morphological purposes, in that case to power a cellular automaton. See also the \code{kernel} and \code{kernapply} functions in the \code{stats} package, particularly if you want to smooth time series.}
