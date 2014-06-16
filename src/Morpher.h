@@ -1,8 +1,8 @@
 #ifndef _MORPHER_H_
 #define _MORPHER_H_
 
-#include "Array.hpp"
-#include "Kernel.hpp"
+#include "Array.h"
+#include "Kernel.h"
 
 typedef std::vector<double> dbl_vector;
 typedef std::vector<int>    int_vector;

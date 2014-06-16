@@ -1,7 +1,7 @@
 #ifndef _KERNEL_H_
 #define _KERNEL_H_
 
-#include "Array.hpp"
+#include "Array.h"
 
 // Base class for all kernels
 // Defines support but will always evaluate to zero
