@@ -9,6 +9,9 @@ resample.default <- function (x, points, kernel, pointType = c("auto","general",
     if (!is.numeric(x))
         report(OL$Error, "Target array must be numeric")
     
+    if (!isKernelFunction(kernel))
+        kernel <- kernelFunction(kernel, ...)
+    
     nDims <- length(dim(x))
     
     if (nDims == 1 && !is.matrix(points) && !is.list(points))
@@ -33,9 +36,6 @@ resample.default <- function (x, points, kernel, pointType = c("auto","general",
         points <- points - 1
     else if (is.list(points))
         points <- lapply(points, "-", 1)
-    
-    if (!isKernel(kernel))
-        report(OL$Error, "Specified kernel is invalid")
     
     result <- .Call("resample", x, kernel, list(type=pointType,points=points), PACKAGE="mmand")
     
