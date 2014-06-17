@@ -8,17 +8,18 @@ The \code{morph} function applies a kernel to a target array. Optionally, applyi
 }
 
 \usage{
-morph(x, kernel, \dots)
+morph(x, kernel, ...)
 
 \method{morph}{default}(x, kernel, operator = c("+","-","*","i","1","0"),
     merge = c("sum","min","max","mean","median"), value = NULL,
-    valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, \dots)
+    valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, ...)
 }
 
 \arguments{
   \item{x}{Any object. For the default method, this must be coercible to an array.}
   \item{kernel}{An object representing the kernel to be applied, which must be coercible to an array. It must have odd width in all dimensions, but does not have to be isotropic in size. The kernel's dimensionality may be less than that of the target array, \code{x}. See \code{\link{kernels}} for kernel-generating functions.}
-  \item{operator}{The operator applied elementwise within the kernel, as a function of the original image value and the kernel value. Arithmetic operators are as usual; \code{"i"} is the identity operator, where every value within the kernel will be included as-is; and \code{1} and \code{0} include a 1 or 0 for each element}
+  \item{operator}{The operator applied elementwise within the kernel, as a function of the original image value and the kernel value. Arithmetic operators are as usual; \code{"i"} is the identity operator, where every value within the kernel will be included as-is; and \code{1} and \code{0} include a 1 or 0 for each element within the kernel's nonzero region.}
+  \item{merge}{The operator applied to combine the elements into a final value for the centre pixel. All have their usual meanings.}
   \item{value}{An optional vector of values in the target array for which to apply the kernel. Takes priority over \code{valueNot} if both are specified.}
   \item{valueNot}{An optional vector of values in the target array for which not to apply the kernel.}
   \item{nNeighbours}{An optional numeric vector giving allowable numbers of nonzero neighbours (including diagonal neighbours) for array elements where the kernel will be applied. Takes priority over \code{nNeighboursNot} if both are specified.}

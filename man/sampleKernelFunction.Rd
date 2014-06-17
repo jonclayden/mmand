@@ -23,6 +23,7 @@ sampleKernelFunction(kernel, values)
   \item{lwd}{The line width to use for the kernel profile.}
   \item{col}{The line colour to use for the kernel profile.}
   \item{axis}{The axis to profile along.}
+  \item{\dots}{Additional plot parameters.}
 }
 
 \value{
