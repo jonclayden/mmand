@@ -66,5 +66,13 @@ rescale <- function (x, factor, kernel, ...)
 
 neighbourhood <- function (x, width)
 {
-    return (.Call("get_neighbourhood", as.array(x), as.integer(width[1]), PACKAGE="mmand"))
+    x <- as.array(x)
+    
+    nDims <- length(dim(x))
+    if (length(width) < nDims)
+        width <- rep(width, length.out=nDims)
+    if (any(width > dim(x)))
+        report(OL$Error, "Requested neighbourhood is larger than the data")
+    
+    return (.Call("get_neighbourhood", x, as.integer(width), PACKAGE="mmand"))
 }

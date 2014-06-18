@@ -68,7 +68,7 @@ RcppExport SEXP get_neighbourhood (SEXP data_, SEXP width_)
 {
 BEGIN_RCPP
     Array *array = arrayFromData(data_);
-    Neighbourhood neighbourhood = array->getNeighbourhood(as<int>(width_));
+    Neighbourhood neighbourhood = array->getNeighbourhood(as<int_vector>(width_));
     
     delete array;
     
