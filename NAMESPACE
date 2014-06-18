@@ -1,5 +1,6 @@
 useDynLib("mmand")
 
 import(reportr)
+importFrom(Rcpp, evalCpp)
 
 exportPattern("^[^\\.]")
