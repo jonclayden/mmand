@@ -5,7 +5,7 @@
 
 \title{Resample an array}
 \description{
-The \code{resample} function uses a kernel function to resample a target array. This can be thought of as a generalisation of array indexing which allows fractional indices. It is (S3) generic. The \code{rescale} is an alternative interface for the common case where the image is being scaled to a new size.
+The \code{resample} function uses a kernel function to resample a target array. This can be thought of as a generalisation of array indexing which allows fractional indices. It is (S3) generic. The \code{rescale} function is an alternative interface for the common case where the image is being scaled to a new size.
 }
 
 \usage{
@@ -26,7 +26,7 @@ rescale(x, factor, kernel, ...)
 }
 
 \value{
-If a generalised sampling scheme is used (i.e. with \code{points} a matrix), the result is a vector of sampled values. For a grid scheme (i.e. with \code{points} a list), it is a resampled array.
+If a generalised sampling scheme is used (i.e. with \code{points} a matrix), the result is a vector of sampled values. For a grid scheme (i.e. with \code{points} a list, including for \code{rescale}), it is a resampled array.
 }
 
 \author{Jon Clayden <code@clayden.org>}
