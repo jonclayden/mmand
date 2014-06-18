@@ -2,6 +2,28 @@ Significant changes to the mmand package are laid out below for each release.
 
 =================================================================================
 
+VERSION 1.0.0
+
+- The back-end code for the package has been completely rewritten, using C++ and
+  Rcpp rather than C.
+- The package can now perform image resampling, via resample(). This requires a
+  different type of kernel but is conceptually related to the existing functions
+  based on morph().
+- The morph() function has been generalised to allow for various new operations.
+  In the process, the concepts of "brush" and "eraser" kernels have been removed.
+- 2D arrays (i.e. matrices or 2D images) can now be visualised using the new
+  display() function.
+- Functions for mean and median filtering have been added.
+- There are additional functions for establishing whether an array is binary,
+  and for obtaining information about the structure of a neighbourhood within
+  an array.
+- Kernels now have a plot() method.
+- The classical image processing test image, "lena", has been added to the
+  package.
+- A suite of tests has been added.
+
+=================================================================================
+
 VERSION 0.1.2
 
 - Brush kernels which include NAs, notably diamond-shaped kernels, are now

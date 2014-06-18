@@ -25,7 +25,7 @@ closing(x, kernel)
 \details{
 The \code{erode} function uses the kernel as an eraser, centring it on each zero-valued pixel, which has the effect of eroding the extent of nonzero areas. Dilation has the opposite effect, extending the nonzero regions in the array. Opening is an erosion followed by a dilation, and closing is a dilation followed by an erosion, using the same kernel in both cases.
 
-If the kernel has only one unique nonzero value, it is described as ``flat''. For a flat kernel, the erosion is the minimum value of \code{x} within the nonzero region of \code{kernel}. For a nonflat kernel, this becomes minimum value of \code{x-kernel}. Dilation is the opposite operation, taking the maximum within the kernel.
+If the kernel has only one unique nonzero value, it is described as ``flat''. For a flat kernel, the erosion is the minimum value of \code{x} within the nonzero region of \code{kernel}. For a nonflat kernel, this becomes minimum value of \code{x - kernel}. Dilation is the opposite operation, taking the maximum within the kernel.
 }
 
 \value{
