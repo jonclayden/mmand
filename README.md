@@ -1,6 +1,6 @@
-# Mathematical Morphology in Any Number of Directions
+# Mathematical Morphology in Any Number of Dimensions
 
-The `mmand` R package provides tools for performing mathematical morphology operations, such as erosion and dilation, on arrays of arbitrary dimensionality. It can also resample arrays, obtaining values between pixel centres or scaling the image up or down wholesale.
+The `mmand` R package provides tools for performing mathematical morphology operations, such as erosion and dilation, or smoothing, on arrays of arbitrary dimensionality. It can also resample arrays, obtaining values between pixel centres or scaling the image up or down wholesale.
 
 A test image of a jet engine fan is available within the package, and will be used for demonstration below. It can be read in and displayed using the code
 
@@ -58,3 +58,58 @@ erode(x,k)
 ```
 
 Notice that the remaining nonzero value is now reduced from 0.5 to 0.2, the minimum value across the original pixel and its neighbours on either side. With a wider kernel, its final value would have dropped to zero.
+
+The effect is more intuitively demonstrated on a real two-dimensional image:
+
+```R
+k <- shapeKernel(c(3,3), type="diamond")
+display(erode(fan, k))
+```
+
+![Eroded fan image](http://www.clayden.org/files/mmand/fan_eroded.png)
+
+Notice that darker areas appear enlarged. In this case the kernel is itself a 2D array (or matrix), and unlike the 1D case there is a choice of plausible shapes for a particular width. The `shapeKernel()` function will create box, disc and diamond shaped kernels, and their higher-dimensional equivalents.
+
+Using a wider kernel exaggerates the effect:
+
+```R
+k <- shapeKernel(c(7,7), type="diamond")
+display(erode(fan, k))
+```
+
+![Eroded fan image, 7x7 kernel](http://www.clayden.org/files/mmand/fan_eroded_77.png)
+
+In the case above, the diamond shape of the kernel is obvious in areas where the kernel is larger than the eroded features.
+
+Note that the kernel may also be anisotropic, i.e. it may have a different width in each dimension:
+
+```R
+k <- shapeKernel(c(7,3), type="diamond")
+display(erode(fan, k))
+```
+
+![Eroded fan image, 7x3 kernel](http://www.clayden.org/files/mmand/fan_eroded_73.png)
+
+The effect of dilation is complementary:
+
+```R
+k <- shapeKernel(c(3,3), type="diamond")
+display(dilate(fan, k))
+```
+
+![Dilated fan image](http://www.clayden.org/files/mmand/fan_dilated.png)
+
+In this case the low-intensity and narrow handwriting towards the middle of the fan has all but disappeared.
+
+The basic operations can be combined together for other useful purposes. For example, the difference between the dilation and the erosion of an image, known as the *morphological gradient*, can be used to show up edges between areas of light and dark.
+
+```R
+k <- shapeKernel(c(3,3), type="diamond")
+display(dilate(fan,k)  - erode(fan,k))
+```
+
+![Morphological gradient of the fan image](http://www.clayden.org/files/mmand/fan_gradient.png)
+
+## Smoothing
+
+To be continued...
