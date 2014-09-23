@@ -1,5 +1,3 @@
-source("matches_file.R")
-
 context("Image resampling and rescaling")
 
 test_that("image resampling operations work", {
