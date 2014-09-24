@@ -154,8 +154,13 @@ std::vector<double> & Morpher::run ()
     currentLoc.resize(nDims);
     
     double kernelSum = 0.0;
-    for (long k=0; k<neighbourhoodSize; k++)
-        kernelSum += kernelArray->at(k);
+    double visitedKernelSum;
+    
+    if (mergeOp == SumOp)
+    {
+        for (long k=0; k<neighbourhoodSize; k++)
+            kernelSum += kernelArray->at(k);
+    }
     
     for (long i=0; i<nSamples; i++)
     {
@@ -167,6 +172,9 @@ std::vector<double> & Morpher::run ()
         
         resetValues();
         original->expandIndex(i, currentLoc);
+        
+        if (mergeOp == SumOp)
+            visitedKernelSum = 0.0;
         
         for (long k=0; k<neighbourhoodSize; k++)
         {
@@ -209,10 +217,16 @@ std::vector<double> & Morpher::run ()
                         accumulateValue(0.0);
                     break;
                 }
+                
+                if (mergeOp == SumOp)
+                    visitedKernelSum += kernelArray->at(k);
             }
         }
         
-        samples[i] = mergeValues();
+        if (mergeOp == SumOp)
+            samples[i] = mergeValues() * (kernelSum / visitedKernelSum);
+        else
+            samples[i] = mergeValues();
     }
     
     return samples;
