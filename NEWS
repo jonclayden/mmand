@@ -1,16 +1,32 @@
 Significant changes to the mmand package are laid out below for each release.
 
-=================================================================================
+===============================================================================
+
+VERSION 1.1.0
+
+- The README.md file has been expanded into a full tutorial for the package,
+  complete with visual examples.
+- Calls to the morph() function with merge="sum" previously failed to adjust
+  final pixel values when the whole kernel was not used, notably at the edges
+  of images. This led to values lower than expected. The bug has now been
+  corrected.
+- The test image has been replaced by a less traditional, but also less sexist,
+  alternative.
+- Package tests have been updated to make use of new functionality in version
+  0.9 of the "testthat" package.
+
+===============================================================================
 
 VERSION 1.0.0
 
-- The back-end code for the package has been completely rewritten, using C++ and
-  Rcpp rather than C.
+- The back-end code for the package has been completely rewritten, using C++
+  and Rcpp rather than C.
 - The package can now perform image resampling, via resample(). This requires a
-  different type of kernel but is conceptually related to the existing functions
-  based on morph().
-- The morph() function has been generalised to allow for various new operations.
-  In the process, the concepts of "brush" and "eraser" kernels have been removed.
+  different type of kernel but is conceptually related to the existing
+  functions based on morph().
+- The morph() function has been generalised to allow for various new
+  operations. In the process, the concepts of "brush" and "eraser" kernels have
+  been removed.
 - 2D arrays (i.e. matrices or 2D images) can now be visualised using the new
   display() function.
 - Functions for mean and median filtering have been added.
@@ -22,7 +38,7 @@ VERSION 1.0.0
   package.
 - A suite of tests has been added.
 
-=================================================================================
+===============================================================================
 
 VERSION 0.1.2
 
@@ -30,17 +46,17 @@ VERSION 0.1.2
   properly handled by the C code. The value of the output array was sometimes
   overwritten by that of the input array when it should not have been.
   
-=================================================================================
+===============================================================================
 
 VERSION 0.1.1
 
 - A mistake in internal memory management which could lead to a segmentation
   fault has been corrected.
 
-=================================================================================
+===============================================================================
 
 VERSION 0.1.0
 
 - First public release.
 
-=================================================================================
+===============================================================================
