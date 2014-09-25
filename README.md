@@ -245,14 +245,14 @@ index 2.5? One answer is that it simply doesn't have one, but if these were
 samples from a fundamentally continuous source, then there is conceptually a 
 value everywhere. We just didn't capture it. Our best guess would have to be 
 that it is either 0 or 1, or something in between. If we try to use 2.5 as an 
-index we get
+index we get the value 0:
 
 ```R
 x[2.5]
 # [1] 0
 ```
 
-R simply truncates 2.5 to 2 and returns element 2. The `resample()` function 
+(R simply truncates 2.5 to 2 and returns element 2.) The `resample()` function 
 provides a set of alternatives:
 
 ```R
