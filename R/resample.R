@@ -1,3 +1,34 @@
+#' Resample an array
+#' 
+#' The \code{resample} function uses a kernel function to resample a target
+#' array. This can be thought of as a generalisation of array indexing which
+#' allows fractional indices. It is (S3) generic. The \code{rescale} function
+#' is an alternative interface for the common case where the image is being
+#' scaled to a new size.
+#' 
+#' 
+#' @aliases resample resample.default rescale
+#' @param x Any object. For the default method, this must be coercible to an
+#' array.
+#' @param points Either a matrix giving the points to sample at, one per row,
+#' or a list giving the locations on each axis, which will be made into a grid.
+#' @param kernel A kernel function object, used to provide coefficients for
+#' each resampled value, or the name of one.
+#' @param pointType A string giving the type of the point specification being
+#' used. Usually can be left as \code{"auto"}.
+#' @param factor A vector of scale factors, which will be recycled to the
+#' dimensionality of \code{x}.
+#' @param \dots Additional options, such as kernel parameters.
+#' @return If a generalised sampling scheme is used (i.e. with \code{points} a
+#' matrix), the result is a vector of sampled values. For a grid scheme (i.e.
+#' with \code{points} a list, including for \code{rescale}), it is a resampled
+#' array.
+#' @author Jon Clayden <code@@clayden.org>
+#' @seealso \code{\link{kernels}} for kernel-generating functions.
+#' @examples
+#' 
+#' resample(c(0,0,1,0,0), seq(0.75,5.25,0.5), triangleKernel())
+#' 
 resample <- function (x, points, kernel, ...)
 {
     UseMethod("resample")
@@ -64,6 +95,24 @@ rescale <- function (x, factor, kernel, ...)
     resample(x, points, kernel, ...)
 }
 
+
+#' Get neighbourhood information for an array
+#' 
+#' This function provides information about the structure of a neighbourhood of
+#' a given width within a specified array.
+#' 
+#' 
+#' @param x An object that can be coerced to an array.
+#' @param width A vector giving the width of the neighbourhood in each
+#' dimension, which will be recycled if necessary. Must not be greater than the
+#' size of the array. Even values are rounded up to the next odd integer.
+#' @return A list with the following elements.  \item{widths}{The width of the
+#' neighbourhood along each dimension. Currently all elements of this vector
+#' will be the same.} \item{size}{The number of pixels within the
+#' neighbourhood.} \item{locs}{A matrix giving the coordinates of each
+#' neighbourhood pixel, relative to the centre pixel, one per row.}
+#' \item{offsets}{Vector offsets of the neighbourhood values within \code{x}.}
+#' @author Jon Clayden <code@@clayden.org>
 neighbourhood <- function (x, width)
 {
     x <- as.array(x)
