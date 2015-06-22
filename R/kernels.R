@@ -35,73 +35,111 @@
 #' C=0.5 (the Catmull-Rom spline). \code{mnKernel} is a shorter alias for
 #' \code{mitchellNetravaliKernel}.
 #' 
-#' @aliases kernels isKernel kernelArray isKernelArray shapeKernel
-#' gaussianKernel kernelFunction isKernelFunction boxKernel triangleKernel
-#' mitchellNetravaliKernel mnKernel
 #' @param object Any object.
 #' @param values A numeric vector or array, containing the values of the kernel
-#' array.
+#'   array.
 #' @param width A numeric vector giving the width of the shape in each
-#' dimension, in array elements. Does not need to be integer-valued, or equal
-#' for all dimensions. Will be recycled to length \code{dim} if that parameter
-#' is also specified.
+#'   dimension, in array elements. Does not need to be integer-valued, or equal
+#'   for all dimensions. Will be recycled to length \code{dim} if that
+#'   parameter is also specified.
 #' @param sigma A numeric vector giving the standard deviation of the
-#' underlying Gaussian distribution in each dimension, in array elements. Does
-#' not need to be equal for all dimensions. Will be recycled to length
-#' \code{dim} if that parameter is also specified.
+#'   underlying Gaussian distribution in each dimension, in array elements.
+#'   Does not need to be equal for all dimensions. Will be recycled to length
+#'   \code{dim} if that parameter is also specified.
 #' @param dim An integer value giving the dimensionality of the kernel.
-#' Defaults to the length of \code{width} or \code{sigma}.
+#'   Defaults to the length of \code{width} or \code{sigma}.
 #' @param size A numeric vector giving the width of the kernel in each
-#' dimension, which will be rounded up to the nearest odd integer. Defaults to
-#' four times the corresponding \code{sigma} value.
+#'   dimension, which will be rounded up to the nearest odd integer. Defaults
+#'   to four times the corresponding \code{sigma} value.
 #' @param type A string giving the type of shape to produce. In one dimension,
-#' these shapes are all equivalent.
+#'   these shapes are all equivalent.
 #' @param binary If \code{FALSE}, the value of the kernel at each point
-#' represents the proportion of the array element within the shape. If
-#' \code{TRUE}, these values are binarised to be 1 if at least half of the
-#' element is within the shape, and 0 otherwise.
+#'   represents the proportion of the array element within the shape. If
+#'   \code{TRUE}, these values are binarised to be 1 if at least half of the
+#'   element is within the shape, and 0 otherwise.
 #' @param normalised If \code{TRUE}, the sum of non-missing elements of the
-#' kernel will be unity. Note that this is the default for
-#' \code{gaussianKernel}, but not for \code{shapeKernel}.
+#'   kernel will be unity. Note that this is the default for
+#'   \code{gaussianKernel}, but not for \code{shapeKernel}.
 #' @param name A string giving the name of the kernel function required.
 #' @param \dots Parameters for the kernel function.
 #' @param B,C Mitchell-Netravali coefficients, each of which must be between 0
-#' and 1.
+#'   and 1.
 #' @return For \code{isKernel}, \code{isKernelArray} and
-#' \code{isKernelFunction}, a logical value. For \code{kernelArray},
-#' \code{shapeKernel} and \code{gaussianKernel}, a kernel array. For
-#' \code{kernelFunction}, \code{boxKernel}, \code{triangleKernel},
-#' \code{mitchellNetravaliKernel} and \code{mnKernel}, a kernel function.
-#' @author Jon Clayden <code@@clayden.org>
-#' @seealso \code{\link{morph}} for general application of kernel arrays to
-#' data, \code{\link{morphology}} for mathematical morphology functions,
-#' \code{\link{resample}} for resampling, and \code{\link{gaussianSmooth}} for
-#' smoothing. Also see \code{\link{sampleKernelFunction}} for kernel sampling
-#' and plotting.
-#' @references The Mitchell-Netravali kernel is described in the following
-#' paper.
+#'   \code{isKernelFunction}, a logical value. For \code{kernelArray},
+#'   \code{shapeKernel} and \code{gaussianKernel}, a kernel array. For
+#'   \code{kernelFunction}, \code{boxKernel}, \code{triangleKernel},
+#'   \code{mitchellNetravaliKernel} and \code{mnKernel}, a kernel function.
 #' 
-#' D.P. Mitchell & A.N. Netravali (1988). Reconstruction filters in computer
-#' graphics. Computer Graphics 22(4):221-228.
 #' @examples
 #' shapeKernel(c(3,5), type="diamond")
 #' gaussianKernel(c(0.3,0.3))
 #' mnKernel()
+#' @author Jon Clayden <code@@clayden.org>
+#' @seealso \code{\link{morph}} for general application of kernel arrays to
+#'   data, \code{\link{morphology}} for mathematical morphology functions,
+#'   \code{\link{resample}} for resampling, and \code{\link{gaussianSmooth}}
+#'   for smoothing. Also see \code{\link{sampleKernelFunction}} for kernel
+#'   sampling and plotting.
+#' @references The Mitchell-Netravali kernel is described in the following
+#'   paper.
+#'   
+#'   D.P. Mitchell & A.N. Netravali (1988). Reconstruction filters in computer
+#'   graphics. Computer Graphics 22(4):221-228.
+#' @export
 isKernel <- function (object)
 {
     return ("kernel" %in% class(object))
 }
 
+#' @rdname kernels
+#' @export
 isKernelArray <- function (object)
 {
     return ("kernelArray" %in% class(object))
 }
 
+#' @rdname kernels
+#' @export
 isKernelFunction <- function (object)
 {
     return ("kernelFunction" %in% class(object))
 }
 
+#' Sampling and plotting kernels
+#' 
+#' These functions can be used to sample and plot kernel profiles.
+#' 
+#' @param kernel A kernel function object.
+#' @param values A vector of values to sample the function at. These are in
+#'   units of pixels, with zero representing the centre of the kernel.
+#' @param x A kernel object of the appropriate class.
+#' @param y Ignored.
+#' @param xlim The limits of the range used to profile the kernel.
+#' @param lwd The line width to use for the kernel profile.
+#' @param col The line colour to use for the kernel profile.
+#' @param axis The axis to profile along.
+#' @param \dots Additional plot parameters.
+#' @return For \code{sampleKernelFunction} a vector of kernel values at the
+#'   locations requested. The \code{plot} methods are called for their
+#'   side-effects.
+#' 
+#' @examples
+#' 
+#' sampleKernelFunction(mnKernel(), -2:2)
+#' plot(mnKernel())
+#' @author Jon Clayden <code@@clayden.org>
+#' @seealso \code{\link{kernels}} for kernel-generating functions.
+#' @export 
+sampleKernelFunction <- function (kernel, values)
+{
+    if (!isKernelFunction(kernel))
+        report(OL$Error, "Specified kernel is not a valid kernel function")
+    
+    return (.Call("sample_kernel", kernel, as.numeric(values), PACKAGE="mmand"))
+}
+
+#' @rdname sampleKernelFunction
+#' @export
 plot.kernelArray <- function (x, y, axis = 1, lwd = 2, col = "red", ...)
 {
     indices <- as.list(ceiling(dim(x) / 2))
@@ -118,41 +156,8 @@ plot.kernelArray <- function (x, y, axis = 1, lwd = 2, col = "red", ...)
     abline(h=0, lty=2, col="grey60")
 }
 
-
-#' Sampling and plotting kernels
-#' 
-#' These functions can be used to sample and plot kernel profiles.
-#' 
-#' 
-#' @aliases sampleKernelFunction plot.kernelFunction plot.kernelArray
-#' @param kernel A kernel function object.
-#' @param values A vector of values to sample the function at. These are in
-#' units of pixels, with zero representing the centre of the kernel.
-#' @param x A kernel object of the appropriate class.
-#' @param y Ignored.
-#' @param xlim The limits of the range used to profile the kernel.
-#' @param lwd The line width to use for the kernel profile.
-#' @param col The line colour to use for the kernel profile.
-#' @param axis The axis to profile along.
-#' @param \dots Additional plot parameters.
-#' @return For \code{sampleKernelFunction} a vector of kernel values at the
-#' locations requested. The \code{plot} methods are called for their
-#' side-effects.
-#' @author Jon Clayden <code@@clayden.org>
-#' @seealso \code{\link{kernels}} for kernel-generating functions.
-#' @examples
-#' 
-#' sampleKernelFunction(mnKernel(), -2:2)
-#' plot(mnKernel())
-#' 
-sampleKernelFunction <- function (kernel, values)
-{
-    if (!isKernelFunction(kernel))
-        report(OL$Error, "Specified kernel is not a valid kernel function")
-    
-    return (.Call("sample_kernel", kernel, as.numeric(values), PACKAGE="mmand"))
-}
-
+#' @rdname sampleKernelFunction
+#' @export
 plot.kernelFunction <- function (x, y, xlim = c(-2,2), lwd = 2, col = "red", ...)
 {
     values <- seq(xlim[1], xlim[2], length.out=101)
@@ -161,6 +166,8 @@ plot.kernelFunction <- function (x, y, xlim = c(-2,2), lwd = 2, col = "red", ...
     abline(h=0, lty=2, col="grey60")
 }
 
+#' @rdname kernels
+#' @export
 kernelArray <- function (values)
 {
     if (isKernelArray(values))
@@ -177,6 +184,8 @@ kernelArray <- function (values)
     }
 }
 
+#' @rdname kernels
+#' @export
 shapeKernel <- function (width, dim = length(width), type = c("box","disc","diamond"), binary = TRUE, normalised = FALSE)
 {
     type <- match.arg(type)
@@ -223,6 +232,8 @@ shapeKernel <- function (width, dim = length(width), type = c("box","disc","diam
     return (kernelArray(kernel))
 }
 
+#' @rdname kernels
+#' @export
 gaussianKernel <- function (sigma, dim = length(sigma), size = 6*sigma, normalised = TRUE)
 {
     if (dim > length(sigma))
@@ -250,6 +261,8 @@ gaussianKernel <- function (sigma, dim = length(sigma), size = 6*sigma, normalis
     return (kernelArray(kernel))
 }
 
+#' @rdname kernels
+#' @export
 kernelFunction <- function (name = c("box","triangle","mitchell-netravali"), ...)
 {
     if (is.character(name))
@@ -264,16 +277,22 @@ kernelFunction <- function (name = c("box","triangle","mitchell-netravali"), ...
     return (structure(list(name=name, ...), class=c("kernelFunction","kernel")))
 }
 
+#' @rdname kernels
+#' @export
 boxKernel <- function ()
 {
     return (kernelFunction("box"))
 }
 
+#' @rdname kernels
+#' @export
 triangleKernel <- function ()
 {
     return (kernelFunction("triangle"))
 }
 
+#' @rdname kernels
+#' @export
 mitchellNetravaliKernel <- mnKernel <- function (B = 1/3, C = 1/3)
 {
     return (kernelFunction("mitchell-netravali", B=B, C=C))

@@ -19,7 +19,6 @@
     return (.Cache$dpi)
 }
 
-
 #' Display a 2D image
 #' 
 #' This function displays a 2D greyscale image. It is a wrapper around
@@ -32,23 +31,26 @@
 #' display. Unfortunately the latter is not always possible, due to downstream
 #' limitations.
 #' 
-#' @aliases display display.default
 #' @param x An object that can be coerced to a numeric matrix.
 #' @param transpose Whether to transpose the matrix before display. This is
-#' usually necessary due to the conventions of \code{image}.
+#'   usually necessary due to the conventions of \code{image}.
 #' @param useRaster Whether to use raster graphics if possible. This is
-#' generally preferred for speed. Passed to \code{image}.
+#'   generally preferred for speed. Passed to \code{image}.
 #' @param add Whether to add the image to an existing plot.
 #' @param col The colour scale to use. The default is 256 grey levels.
 #' @param \dots Additional arguments to \code{image}.
 #' @return This function is called for its side-effect of displaying an image
-#' on a new R device.
+#'   on a new R device.
+#' 
 #' @author Jon Clayden <code@@clayden.org>
+#' @export
 display <- function (x, ...)
 {
     UseMethod("display")
 }
 
+#' @rdname display
+#' @export
 display.default <- function (x, transpose = TRUE, useRaster = TRUE, add = FALSE, col = grey(0:255/255), ...)
 {
     x <- as.matrix(x)

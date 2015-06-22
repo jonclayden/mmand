@@ -26,27 +26,28 @@
 #' 
 #' @aliases gameOfLife gosperGliderGun
 #' @param init The initial state of the automaton, a binary matrix. If missing,
-#' the initial state will be randomly generated, with a population density
-#' given by \code{density}.
+#'   the initial state will be randomly generated, with a population density
+#'   given by \code{density}.
 #' @param size The dimensions of the board. Defaults to the size of
-#' \code{init}, but must be given if that parameter is missing. If both are
-#' specified and \code{size} is larger than the dimensions of \code{init}, then
-#' the latter will be padded with zeroes.
+#'   \code{init}, but must be given if that parameter is missing. If both are
+#'   specified and \code{size} is larger than the dimensions of \code{init},
+#'   then the latter will be padded with zeroes.
 #' @param density The approximate population density of the starting state.
-#' Ignored if \code{init} is provided.
+#'   Ignored if \code{init} is provided.
 #' @param steps The number of generations of the automaton to simulate.
 #' @param viz If \code{TRUE}, the state of the system at each generation is
-#' plotted.
+#'   plotted.
 #' @param tick The amount of time, in seconds, to pause before plotting each
-#' successive generation. Ignored if \code{viz} is \code{FALSE}.
+#'   successive generation. Ignored if \code{viz} is \code{FALSE}.
 #' @return A binary matrix representing the final state of the system after
-#' \code{steps} generations.
-#' @author Jon Clayden <code@@clayden.org>
-#' @seealso The \code{\link{morph}} function, which powers this simulation.
+#'   \code{steps} generations.
+#' 
 #' @examples
 #' 
 #' \dontrun{gameOfLife(init=gosperGliderGun(), size=c(40,40), steps=50, viz=TRUE)}
-#' 
+#' @author Jon Clayden <code@@clayden.org>
+#' @seealso The \code{\link{morph}} function, which powers this simulation.
+#' @export
 gameOfLife <- function (init, size, density = 0.3, steps = 200, viz = FALSE, tick = 0.5)
 {
     state <- NULL
@@ -112,6 +113,8 @@ gameOfLife <- function (init, size, density = 0.3, steps = 200, viz = FALSE, tic
     invisible(state)
 }
 
+#' @rdname gameOfLife
+#' @export
 gosperGliderGun <- function ()
 {
     state <- matrix(0L, nrow=11, ncol=38)
