@@ -19,7 +19,10 @@ usually necessary due to the conventions of \code{image}.}
 \item{useRaster}{Whether to use raster graphics if possible. This is
 generally preferred for speed. Passed to \code{image}.}
 
-\item{add}{Whether to add the image to an existing plot.}
+\item{add}{Whether to add the image to an existing plot. If \code{TRUE},
+zero values in the image will be converted to \code{NA}s for plotting
+purposes, to make them transparent. This will not affect the original
+image data.}
 
 \item{col}{The colour scale to use. The default is 256 grey levels.}
 

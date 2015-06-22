@@ -119,6 +119,59 @@ binarise <- function (x)
     return (morph(x, kernel=1, operator="1", valueNot=0))
 }
 
+#' Threshold a numeric array or vector
+#' 
+#' This function thresholds an array or vector, setting elements below the
+#' threshold value to zero. The threshold can be given literally or calculated
+#' using k-means clustering.
+#' 
+#' @param x A numeric vector or array.
+#' @param level The literal threshold level, if required.
+#' @param method The method to use to calculate the threshold. If
+#'   \code{"literal"} then the value of \code{level} will be used. If
+#'   \code{"kmeans"} then the threshold value will be determined implicitly
+#'   using k-means clustering.
+#' @param binarise Whether to set suprathreshold elements to unity (if
+#'   \code{TRUE}), or leave them at their original values (if \code{FALSE}).
+#' 
+#' @examples
+#' x <- c(0.1, 0.05, 0.95, 0.85, 0.15, 0.9)
+#' threshold(x, method="kmeans")
+#' threshold(x, 0.5)
+#' @author Jon Clayden <code@@clayden.org>
+#' @seealso \code{\link{binarise}}
+#' @export
+threshold <- function (x, level, method = c("kmeans","literal"), binarise = TRUE)
+{
+    method <- match.arg(method)
+    if (missing(level) && method == "literal")
+        report(OL$Error, "A literal threshold level is required")
+    
+    if (method == "literal")
+    {
+        if (binarise)
+            x <- ifelse(x < threshold, 0L, 1L)
+        else
+            x <- ifelse(x < threshold, 0L, x)
+    }
+    else if (method == "kmeans")
+    {
+        # Drop dims so that the clustering is done by intensity only
+        dims <- dim(x)
+        dim(x) <- NULL
+        
+        kmeansResult <- kmeans(x, 2)
+        if (binarise)
+            x <- ifelse(kmeansResult$cluster == which.min(kmeansResult$centers), 0L, 1L)
+        else
+            x <- ifelse(kmeansResult$cluster == which.min(kmeansResult$centers), 0L, x)
+        
+        dim(x) <- dims
+    }
+    
+    return (x)
+}
+
 #' Smooth a numeric array with a Gaussian kernel
 #' 
 #' This function smoothes an array using a Gaussian kernel with a specified
