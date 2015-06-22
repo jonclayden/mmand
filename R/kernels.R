@@ -85,6 +85,7 @@
 #'   
 #'   D.P. Mitchell & A.N. Netravali (1988). Reconstruction filters in computer
 #'   graphics. Computer Graphics 22(4):221-228.
+#' @rdname kernels
 #' @export
 isKernel <- function (object)
 {

@@ -154,7 +154,7 @@ gaussianSmooth <- function (x, sigma)
 #' @author Jon Clayden <code@@clayden.org>
 #' @seealso \code{\link{morph}} for the function underlying this operation, and
 #'   \code{\link{kernels}} for kernel-generating functions.
-#' @aliases filters
+#' @rdname filters
 #' @export
 meanFilter <- function (x, kernel)
 {
@@ -204,8 +204,8 @@ medianFilter <- function (x, kernel)
 #'   \code{\link{gaussianSmooth}} for smoothing. The \code{EBImage}
 #'   Bioconductor package also supplies functions to perform these operations,
 #'   and may be slightly faster, but only works in two dimensions.
+#' @rdname morphology
 #' @export
-#' @aliases morphology
 erode <- function (x, kernel)
 {
     x <- as.array(x)
