@@ -134,6 +134,9 @@ double Morpher::mergeValues ()
                 else
                     return values[middleIndex];
             }
+            
+            default:
+            return NA_REAL;
         }
     }
     
