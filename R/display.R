@@ -36,7 +36,10 @@
 #'   usually necessary due to the conventions of \code{image}.
 #' @param useRaster Whether to use raster graphics if possible. This is
 #'   generally preferred for speed. Passed to \code{image}.
-#' @param add Whether to add the image to an existing plot.
+#' @param add Whether to add the image to an existing plot. If \code{TRUE},
+#'   zero values in the image will be converted to \code{NA}s for plotting
+#'   purposes, to make them transparent. This will not affect the original
+#'   image data.
 #' @param col The colour scale to use. The default is 256 grey levels.
 #' @param \dots Additional arguments to \code{image}.
 #' @return This function is called for its side-effect of displaying an image
@@ -60,7 +63,10 @@ display.default <- function (x, transpose = TRUE, useRaster = TRUE, add = FALSE,
     dpi <- .checkDpi()
     
     if (add)
+    {
+        x[x==0] <- NA
         image(x[1:nrow(x),ncol(x):1], col=col, useRaster=useRaster, add=TRUE, ...)
+    }
     else
     {
         if (attr(dpi,"explicit") && dpi[1] == dpi[2])
