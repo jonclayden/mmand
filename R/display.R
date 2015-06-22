@@ -39,6 +39,7 @@
 #' @param useRaster Whether to use raster graphics if possible. This is
 #' generally preferred for speed. Passed to \code{image}.
 #' @param add Whether to add the image to an existing plot.
+#' @param col The colour scale to use. The default is 256 grey levels.
 #' @param \dots Additional arguments to \code{image}.
 #' @return This function is called for its side-effect of displaying an image
 #' on a new R device.
@@ -48,14 +49,13 @@ display <- function (x, ...)
     UseMethod("display")
 }
 
-display.default <- function (x, transpose = TRUE, useRaster = TRUE, add = FALSE, ...)
+display.default <- function (x, transpose = TRUE, useRaster = TRUE, add = FALSE, col = grey(0:255/255), ...)
 {
     x <- as.matrix(x)
     if (transpose)
         x <- t(x)
     
     dpi <- .checkDpi()
-    col <- grey(0:255/255)
     
     if (add)
         image(x[1:nrow(x),ncol(x):1], col=col, useRaster=useRaster, add=TRUE, ...)
