@@ -294,7 +294,11 @@ triangleKernel <- function ()
 
 #' @rdname kernels
 #' @export
-mitchellNetravaliKernel <- mnKernel <- function (B = 1/3, C = 1/3)
+mitchellNetravaliKernel <- function (B = 1/3, C = 1/3)
 {
     return (kernelFunction("mitchell-netravali", B=B, C=C))
 }
+
+#' @rdname kernels
+#' @export
+mnKernel <- mitchellNetravaliKernel

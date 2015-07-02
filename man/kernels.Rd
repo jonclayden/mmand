@@ -9,6 +9,7 @@
 \alias{kernelArray}
 \alias{kernelFunction}
 \alias{mitchellNetravaliKernel}
+\alias{mnKernel}
 \alias{shapeKernel}
 \alias{triangleKernel}
 \title{Kernel-generating functions}
@@ -34,6 +35,8 @@ boxKernel()
 triangleKernel()
 
 mitchellNetravaliKernel(B = 1/3, C = 1/3)
+
+mnKernel(B = 1/3, C = 1/3)
 }
 \arguments{
 \item{object}{Any object.}

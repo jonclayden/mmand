@@ -24,7 +24,6 @@
 #' board slightly better. These are not visualised, nor returned in the final
 #' state.
 #' 
-#' @aliases gameOfLife gosperGliderGun
 #' @param init The initial state of the automaton, a binary matrix. If missing,
 #'   the initial state will be randomly generated, with a population density
 #'   given by \code{density}.
