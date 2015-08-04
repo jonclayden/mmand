@@ -4,12 +4,15 @@
 \alias{display}
 \alias{display.array}
 \alias{display.default}
+\alias{display.matrix}
 \title{Display a 2D image}
 \usage{
 display(x, ...)
 
 \method{display}{default}(x, transpose = TRUE, useRaster = TRUE,
   add = FALSE, col = grey(0:255/255), ...)
+
+\method{display}{matrix}(x, ...)
 
 \method{display}{array}(x, max = 1, ...)
 }

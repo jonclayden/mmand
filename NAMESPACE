@@ -2,6 +2,7 @@
 
 S3method(display,array)
 S3method(display,default)
+S3method(display,matrix)
 S3method(morph,default)
 S3method(plot,kernelArray)
 S3method(plot,kernelFunction)

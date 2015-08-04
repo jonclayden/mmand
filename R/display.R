@@ -91,10 +91,17 @@ display.default <- function (x, transpose = TRUE, useRaster = TRUE, add = FALSE,
 
 #' @rdname display
 #' @export
+display.matrix <- function (x, ...)
+{
+    display.default(x, ...)
+}
+
+#' @rdname display
+#' @export
 display.array <- function (x, max = 1, ...)
 {
     if (length(dim(x)) != 3)
-        error("Only three-dimensional arrays may be displayed")
+        stop("Only three-dimensional arrays may be displayed")
     
     max <- ifelse(storage.mode(x) == "integer", 255L, as.double(max))
     
@@ -110,7 +117,7 @@ display.array <- function (x, max = 1, ...)
         else if (dim3 == 4L)
             cols <- rgb(x[,,1], x[,,2], x[,,3], x[,,4], maxColorValue=max)
         else
-            error("Third dimension should not be greater than 4")
+            stop("Third dimension should not be greater than 4")
         
         uniqueCols <- unique(cols)
         indices <- match(cols, uniqueCols)
