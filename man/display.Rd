@@ -2,6 +2,7 @@
 % Please edit documentation in R/display.R
 \name{display}
 \alias{display}
+\alias{display.array}
 \alias{display.default}
 \title{Display a 2D image}
 \usage{
@@ -9,9 +10,12 @@ display(x, ...)
 
 \method{display}{default}(x, transpose = TRUE, useRaster = TRUE,
   add = FALSE, col = grey(0:255/255), ...)
+
+\method{display}{array}(x, max = 1, ...)
 }
 \arguments{
-\item{x}{An object that can be coerced to a numeric matrix.}
+\item{x}{An R object. For the default method, it must be coercible to a
+numeric matrix.}
 
 \item{transpose}{Whether to transpose the matrix before display. This is
 usually necessary due to the conventions of \code{image}.}
@@ -24,17 +28,24 @@ zero values in the image will be converted to \code{NA}s for plotting
 purposes, to make them transparent. This will not affect the original
 image data.}
 
-\item{col}{The colour scale to use. The default is 256 grey levels.}
+\item{col}{The colour scale to use. The default is 256 grey levels. The
+array method overrides this appropriately.}
 
-\item{\dots}{Additional arguments to \code{image}.}
+\item{max}{The maximum colour value for each channel. If the array has
+integer mode, this is fixed to 255. Passed to \code{\link{rgb}}.}
+
+\item{\dots}{Additional arguments to \code{image}, or the default method.}
 }
 \value{
 This function is called for its side-effect of displaying an image
   on a new R device.
 }
 \description{
-This function displays a 2D greyscale image. It is a wrapper around
-\code{image}, with more sensible defaults for images. It is (S3) generic.
+This function displays a 2D greyscale or RGB colour image. It is a wrapper
+around \code{image}, with more sensible defaults for images. It is (S3)
+generic. A method for 3D arrays is provided, which assumes that the third
+dimension corresponds to channel (grey/alpha for two channels, red/green/
+blue for three, red/green/blue/alpha for four).
 }
 \details{
 Relative to the defaults for \code{image} (from the \code{graphics}

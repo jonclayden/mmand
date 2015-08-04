@@ -21,8 +21,11 @@
 
 #' Display a 2D image
 #' 
-#' This function displays a 2D greyscale image. It is a wrapper around
-#' \code{image}, with more sensible defaults for images. It is (S3) generic.
+#' This function displays a 2D greyscale or RGB colour image. It is a wrapper
+#' around \code{image}, with more sensible defaults for images. It is (S3)
+#' generic. A method for 3D arrays is provided, which assumes that the third
+#' dimension corresponds to channel (grey/alpha for two channels, red/green/
+#' blue for three, red/green/blue/alpha for four).
 #' 
 #' Relative to the defaults for \code{image} (from the \code{graphics}
 #' package), this function transposes and then inverts the matrix along the
@@ -31,7 +34,8 @@
 #' display. Unfortunately the latter is not always possible, due to downstream
 #' limitations.
 #' 
-#' @param x An object that can be coerced to a numeric matrix.
+#' @param x An R object. For the default method, it must be coercible to a
+#'   numeric matrix.
 #' @param transpose Whether to transpose the matrix before display. This is
 #'   usually necessary due to the conventions of \code{image}.
 #' @param useRaster Whether to use raster graphics if possible. This is
@@ -40,8 +44,11 @@
 #'   zero values in the image will be converted to \code{NA}s for plotting
 #'   purposes, to make them transparent. This will not affect the original
 #'   image data.
-#' @param col The colour scale to use. The default is 256 grey levels.
-#' @param \dots Additional arguments to \code{image}.
+#' @param col The colour scale to use. The default is 256 grey levels. The
+#'   array method overrides this appropriately.
+#' @param max The maximum colour value for each channel. If the array has
+#'   integer mode, this is fixed to 255. Passed to \code{\link{rgb}}.
+#' @param \dots Additional arguments to \code{image}, or the default method.
 #' @return This function is called for its side-effect of displaying an image
 #'   on a new R device.
 #' 
@@ -80,4 +87,34 @@ display.default <- function (x, transpose = TRUE, useRaster = TRUE, add = FALSE,
     }
     
     invisible(NULL)
+}
+
+#' @rdname display
+#' @export
+display.array <- function (x, max = 1, ...)
+{
+    if (length(dim(x)) != 3)
+        error("Only three-dimensional arrays may be displayed")
+    
+    max <- ifelse(storage.mode(x) == "integer", 255L, as.double(max))
+    
+    dim3 <- dim(x)[3]
+    if (dim3 == 1L)
+        display.default(drop(x), ...)
+    else
+    {
+        if (dim3 == 2L)
+            cols <- rgb(x[,,1], x[,,1], x[,,1], x[,,2], maxColorValue=max)
+        else if (dim3 == 3L)
+            cols <- rgb(x[,,1], x[,,2], x[,,3], maxColorValue=max)
+        else if (dim3 == 4L)
+            cols <- rgb(x[,,1], x[,,2], x[,,3], x[,,4], maxColorValue=max)
+        else
+            error("Third dimension should not be greater than 4")
+        
+        uniqueCols <- unique(cols)
+        indices <- match(cols, uniqueCols)
+        dim(indices) <- dim(x)[1:2]
+        display.default(indices, col=uniqueCols, ...)
+    }
 }
