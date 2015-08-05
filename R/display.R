@@ -103,13 +103,17 @@ display.array <- function (x, max = 1, ...)
     if (length(dim(x)) != 3)
         stop("Only three-dimensional arrays may be displayed")
     
-    max <- ifelse(storage.mode(x) == "integer", 255L, as.double(max))
+    mode <- storage.mode(x)
+    max <- ifelse(mode == "integer", 255L, as.double(max))
     
     dim3 <- dim(x)[3]
     if (dim3 == 1L)
         display.default(drop(x), ...)
     else
     {
+        x[x < 0] <- as(0, mode)
+        x[x > max] <- max
+        
         if (dim3 == 2L)
             cols <- rgb(x[,,1], x[,,1], x[,,1], x[,,2], maxColorValue=max)
         else if (dim3 == 3L)
