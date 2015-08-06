@@ -8,6 +8,7 @@
 \alias{isKernelFunction}
 \alias{kernelArray}
 \alias{kernelFunction}
+\alias{kernels}
 \alias{mitchellNetravaliKernel}
 \alias{mnKernel}
 \alias{shapeKernel}

@@ -4,6 +4,7 @@
 \alias{closing}
 \alias{dilate}
 \alias{erode}
+\alias{morphology}
 \alias{opening}
 \title{Standard mathematical morphology operations}
 \usage{

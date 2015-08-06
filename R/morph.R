@@ -258,6 +258,7 @@ medianFilter <- function (x, kernel)
 #'   Bioconductor package also supplies functions to perform these operations,
 #'   and may be slightly faster, but only works in two dimensions.
 #' @rdname morphology
+#' @aliases morphology
 #' @export
 erode <- function (x, kernel)
 {
