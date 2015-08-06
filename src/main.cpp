@@ -27,7 +27,7 @@ Kernel * kernelFromElements (SEXP kernel_)
 {
     List kernelElements(kernel_);
     string kernelName = as<string>(kernelElements["name"]);
-    Kernel *kernel;
+    Kernel *kernel = NULL;
     
     if (kernelName.compare("box") == 0)
         kernel = KernelGenerator::box();
@@ -101,7 +101,7 @@ BEGIN_RCPP
     
     List samplingScheme(samplingScheme_);
     string schemeType = as<string>(samplingScheme["type"]);
-    SamplingScheme *sampler;
+    SamplingScheme *sampler = NULL;
     
     if (schemeType.compare("general") == 0)
         sampler = new GeneralSamplingScheme(as<arma::mat>(samplingScheme["points"]));

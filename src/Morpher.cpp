@@ -9,7 +9,7 @@ bool Morpher::meetsRestrictions (const long n)
     if (includedValues.size() > 0)
     {
         bool found = false;
-        for (int i=0; i<includedValues.size(); i++)
+        for (size_t i=0; i<includedValues.size(); i++)
         {
             if (value == includedValues[i])
                 found = true;
@@ -20,7 +20,7 @@ bool Morpher::meetsRestrictions (const long n)
     }
     else if (excludedValues.size() > 0)
     {
-        for (int i=0; i<excludedValues.size(); i++)
+        for (size_t i=0; i<excludedValues.size(); i++)
         {
             if (value == excludedValues[i])
                 return false;
@@ -55,7 +55,7 @@ bool Morpher::meetsRestrictions (const long n)
         if (includedNeighbourhoods.size() > 0)
         {
             bool found = false;
-            for (int i=0; i<includedNeighbourhoods.size(); i++)
+            for (size_t i=0; i<includedNeighbourhoods.size(); i++)
             {
                 if (nNeighbours == includedNeighbourhoods[i])
                     found = true;
@@ -66,7 +66,7 @@ bool Morpher::meetsRestrictions (const long n)
         }
         else if (excludedNeighbourhoods.size() > 0)
         {
-            for (int i=0; i<excludedNeighbourhoods.size(); i++)
+            for (size_t i=0; i<excludedNeighbourhoods.size(); i++)
             {
                 if (nNeighbours == excludedNeighbourhoods[i])
                     return false;
@@ -112,7 +112,7 @@ double Morpher::mergeValues ()
             case SumOp:
             {
                 double sum = 0.0;
-                for (int l=0; l<values.size(); l++)
+                for (size_t l=0; l<values.size(); l++)
                     sum += values[l];
                 return sum;
             }
@@ -120,7 +120,7 @@ double Morpher::mergeValues ()
             case MeanOp:
             {
                 double sum = 0.0;
-                for (int l=0; l<values.size(); l++)
+                for (size_t l=0; l<values.size(); l++)
                     sum += values[l];
                 return (sum / static_cast<double>(values.size()));
             }
@@ -176,8 +176,7 @@ std::vector<double> & Morpher::run ()
         resetValues();
         original->expandIndex(i, currentLoc);
         
-        if (mergeOp == SumOp)
-            visitedKernelSum = 0.0;
+        visitedKernelSum = 0.0;
         
         for (long k=0; k<neighbourhoodSize; k++)
         {
