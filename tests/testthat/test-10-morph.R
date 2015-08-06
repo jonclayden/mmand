@@ -13,6 +13,7 @@ test_that("binary mathematical morphology operations work", {
     data <- matrix(0, nrow=3, ncol=3)
     data[2,2] <- 1
     kernel <- shapeKernel(c(3,3), type="diamond")
+    expect_that(neighbourhood(data,3)$offsets, equals(-4:4))
     expect_that(dilate(data,kernel), equals_reference("dilate_2d_bin.rds"))
 })
 
@@ -46,4 +47,12 @@ test_that("smoothing and filtering operations work", {
     kernel <- shapeKernel(c(3,3), type="diamond")
     expect_that(meanFilter(fan,kernel), equals_reference("fan_mean_filtered.rds"))
     expect_that(medianFilter(fan,kernel), equals_reference("fan_median_filtered.rds"))
+})
+
+test_that("binarising and thresholding work", {
+    data <- c(0.1, 0.05, 0.95, 0.85, 0.15, 0.9)
+    expect_that(binarise(data)[3], equals(1))
+    expect_that(threshold(data,0.5)[3], equals(1))
+    expect_that(threshold(data,0.5,binarise=FALSE)[3], equals(0.95))
+    expect_that(threshold(data,method="kmeans")[3], equals(1))
 })
