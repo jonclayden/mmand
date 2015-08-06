@@ -2,6 +2,16 @@ Significant changes to the mmand package are laid out below for each release.
 
 ===============================================================================
 
+VERSION 1.2.0
+
+- A function has been added for thresholding arrays, either using a literal
+  threshold value, or implicitly using k-means clustering.
+- The display() function now supports multichannel images (e.g., RGB, RGBA).
+  Zero values are also now set to NA when adding to an existing image, to make
+  those pixels transparent.
+
+===============================================================================
+
 VERSION 1.1.0
 
 - The README.md file has been expanded into a full tutorial for the package,
