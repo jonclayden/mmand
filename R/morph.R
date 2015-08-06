@@ -128,9 +128,9 @@ binarise <- function (x)
 #' @param x A numeric vector or array.
 #' @param level The literal threshold level, if required.
 #' @param method The method to use to calculate the threshold. If
-#'   \code{"literal"} then the value of \code{level} will be used. If
-#'   \code{"kmeans"} then the threshold value will be determined implicitly
-#'   using k-means clustering.
+#'   \code{"literal"} (the default) then the value of \code{level} will be
+#'   used. If \code{"kmeans"} then the threshold value will be determined
+#'   implicitly using k-means clustering.
 #' @param binarise Whether to set suprathreshold elements to unity (if
 #'   \code{TRUE}), or leave them at their original values (if \code{FALSE}).
 #' 
@@ -141,7 +141,7 @@ binarise <- function (x)
 #' @author Jon Clayden <code@@clayden.org>
 #' @seealso \code{\link{binarise}}
 #' @export
-threshold <- function (x, level, method = c("kmeans","literal"), binarise = TRUE)
+threshold <- function (x, level, method = c("literal","kmeans"), binarise = TRUE)
 {
     method <- match.arg(method)
     if (missing(level) && method == "literal")
@@ -150,9 +150,9 @@ threshold <- function (x, level, method = c("kmeans","literal"), binarise = TRUE
     if (method == "literal")
     {
         if (binarise)
-            x <- ifelse(x < threshold, 0L, 1L)
+            x <- ifelse(x < level, 0L, 1L)
         else
-            x <- ifelse(x < threshold, 0L, x)
+            x <- ifelse(x < level, 0L, x)
     }
     else if (method == "kmeans")
     {

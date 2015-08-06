@@ -4,7 +4,7 @@
 \alias{threshold}
 \title{Threshold a numeric array or vector}
 \usage{
-threshold(x, level, method = c("kmeans", "literal"), binarise = TRUE)
+threshold(x, level, method = c("literal", "kmeans"), binarise = TRUE)
 }
 \arguments{
 \item{x}{A numeric vector or array.}
@@ -12,9 +12,9 @@ threshold(x, level, method = c("kmeans", "literal"), binarise = TRUE)
 \item{level}{The literal threshold level, if required.}
 
 \item{method}{The method to use to calculate the threshold. If
-\code{"literal"} then the value of \code{level} will be used. If
-\code{"kmeans"} then the threshold value will be determined implicitly
-using k-means clustering.}
+\code{"literal"} (the default) then the value of \code{level} will be
+used. If \code{"kmeans"} then the threshold value will be determined
+implicitly using k-means clustering.}
 
 \item{binarise}{Whether to set suprathreshold elements to unity (if
   \code{TRUE}), or leave them at their original values (if \code{FALSE}).}
