@@ -1,4 +1,4 @@
-#include <RcppArmadillo.h>
+#include <RcppEigen.h>
 
 #include "Array.h"
 
@@ -37,7 +37,7 @@ Neighbourhood Array::getNeighbourhood (const std::vector<int> &widths) const
         steps[i+1] = steps[i] * dims[i];
     }
     
-    neighbourhood.locs = arma::Mat<int>(neighbourhood.size, nDims);
+    neighbourhood.locs = Eigen::MatrixXi(neighbourhood.size, nDims);
     neighbourhood.offsets = std::vector<long>(neighbourhood.size);
     
     for (int j=0; j<neighbourhood.size; j++)

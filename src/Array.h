@@ -5,7 +5,7 @@ struct Neighbourhood
 {
     long size;
     std::vector<int> widths;
-    arma::Mat<int> locs;
+    Eigen::MatrixXi locs;
     std::vector<long> offsets;
 };
 

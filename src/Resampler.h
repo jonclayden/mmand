@@ -22,17 +22,17 @@ public:
 class GeneralSamplingScheme: public SamplingScheme
 {
 private:
-    arma::mat locations;
+    Eigen::MatrixXd locations;
     
 public:
-    GeneralSamplingScheme (const arma::mat &locations)
+    GeneralSamplingScheme (const Eigen::MatrixXd &locations)
         : locations(locations) {}
     
     const double at (int sample, int dim) const { return locations(sample,dim); }
     
-    int getNDims () const { return locations.n_cols; }
+    int getNDims () const { return locations.cols(); }
     
-    int getNSamples () const { return locations.n_rows; }
+    int getNSamples () const { return locations.rows(); }
 };
 
 class GriddedSamplingScheme: public SamplingScheme

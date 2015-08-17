@@ -7,7 +7,7 @@ Maintainer: Jon Clayden <code@clayden.org>
 Depends: R (>= 2.12.1)
 Suggests: png, testthat (>= 0.9)
 Imports: stats, methods, graphics, grDevices, reportr, Rcpp
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: Rcpp, RcppEigen
 Description: Provides tools for performing mathematical morphology operations, such as erosion and dilation, on data of arbitrary dimensionality. Can also be used for resampling, filtering, smoothing and other image processing-style operations.
 Encoding: UTF-8
 License: GPL-2

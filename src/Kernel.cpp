@@ -1,4 +1,4 @@
-#include <RcppArmadillo.h>
+#include <RcppEigen.h>
 
 #include "Kernel.h"
 
@@ -42,7 +42,7 @@ double CompositeKernel::evaluate (const double x) const
 // Used for nearest-neighbour sampling
 PolynomialKernel * KernelGenerator::box ()
 {
-    arma::vec coefficients = arma::vec(1);
+    Eigen::VectorXd coefficients(1);
     coefficients[0] = 1.0;
     return new PolynomialKernel(coefficients, 0.0, 0.5);
 }
@@ -51,7 +51,7 @@ PolynomialKernel * KernelGenerator::box ()
 // Used for linear interpolation
 PolynomialKernel * KernelGenerator::triangle ()
 {
-    arma::vec coefficients = arma::vec(2);
+    Eigen::VectorXd coefficients(2);
     coefficients[0] = 1.0;
     coefficients[1] = -1.0;
     return new PolynomialKernel(coefficients, 0.0, 1.0);
@@ -60,13 +60,13 @@ PolynomialKernel * KernelGenerator::triangle ()
 // Mitchell-Netravali family of cubic kernels
 CompositeKernel * KernelGenerator::mitchellNetravali (const double B, const double C)
 {
-    arma::vec coefficients1 = arma::vec(4, arma::fill::zeros);
+    Eigen::VectorXd coefficients1 = Eigen::VectorXd::Zero(4);
     coefficients1[0] = 1.0 - B/3.0;
     coefficients1[2] = -3.0 + 2.0*B + C;
     coefficients1[3] = 2.0 - 1.5*B - C;
     PolynomialKernel *kernel1 = new PolynomialKernel(coefficients1, 0.0, 1.0);
     
-    arma::vec coefficients2 = arma::vec(4);
+    Eigen::VectorXd coefficients2 = Eigen::VectorXd::Zero(4);
     coefficients2[0] = 4.0*B/3.0 + 4.0*C;
     coefficients2[1] = -2.0*B - 8.0*C;
     coefficients2[2] = B + 5.0*C;

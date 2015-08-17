@@ -70,13 +70,13 @@ private:
     
 protected:
     int degree;
-    arma::vec coefficients;
+    Eigen::VectorXd coefficients;
     
 public:
-    PolynomialKernel (const arma::vec &coefficients, const double supportMin, const double supportMax)
+    PolynomialKernel (const Eigen::VectorXd &coefficients, const double supportMin, const double supportMax)
         : Kernel(supportMin,supportMax), coefficients(coefficients)
     {
-        this->degree = coefficients.n_elem - 1;
+        this->degree = coefficients.size() - 1;
     }
     
     double evaluate (const double x) const;

@@ -1,4 +1,4 @@
-#include <RcppArmadillo.h>
+#include <RcppEigen.h>
 
 #include "Resampler.h"
 #include "Morpher.h"
@@ -104,7 +104,7 @@ BEGIN_RCPP
     SamplingScheme *sampler = NULL;
     
     if (schemeType.compare("general") == 0)
-        sampler = new GeneralSamplingScheme(as<arma::mat>(samplingScheme["points"]));
+        sampler = new GeneralSamplingScheme(as<Eigen::MatrixXd>(samplingScheme["points"]));
     else if (schemeType.compare("grid") == 0)
     {
         List points = samplingScheme["points"];
