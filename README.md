@@ -163,6 +163,15 @@ display(dilate(fan,k) - erode(fan,k))
 ![Morphological gradient of the fan 
 image](http://www.clayden.org/files/mmand/fan_gradient.png)
 
+The [Sobel filter](http://en.wikipedia.org/wiki/Sobel_operator) has a similar
+effect.
+
+```R
+display(sobelFilter(fan))
+```
+
+![Sobel filtered fan image](http://www.clayden.org/files/mmand/fan_sobel.png)
+
 ## Smoothing
 
 A loosely related operation is [kernel-based 
