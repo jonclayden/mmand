@@ -177,6 +177,11 @@ threshold <- function (x, level, method = c("literal","kmeans"), binarise = TRUE
 #' This function smoothes an array using a Gaussian kernel with a specified
 #' standard deviation.
 #' 
+#' This implementation takes advantage of the separability of the Gaussian
+#' kernel for speed when working in multiple dimensions. It is therefore
+#' equivalent to, but much faster than, directly applying a multidimensional
+#' kernel.
+#' 
 #' @param x An object that can be coerced to an array, or for which a
 #'   \code{\link{morph}} method exists.
 #' @param sigma A numeric vector giving the standard deviation of the kernel in
@@ -191,8 +196,14 @@ threshold <- function (x, level, method = c("literal","kmeans"), binarise = TRUE
 #' @export
 gaussianSmooth <- function (x, sigma)
 {
-    kernel <- gaussianKernel(sigma, normalised=TRUE)
-    return (morph(x, kernel, operator="*", merge="sum"))
+    morphFun <- function(y,k) morph(y, k, operator="*", merge="sum")
+    
+    kernels <- lapply(seq_along(sigma), function(i) {
+        currentSigma <- replace(rep(0,length(sigma)), i, sigma[i])
+        gaussianKernel(currentSigma, normalised=TRUE)
+    })
+    
+    return (Reduce(morphFun, kernels, x))
 }
 
 #' Apply a filter to an array
