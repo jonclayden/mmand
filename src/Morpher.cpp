@@ -225,10 +225,15 @@ std::vector<double> & Morpher::run ()
             }
         }
         
+        samples[i] = mergeValues();
+        
         if (mergeOp == SumOp)
-            samples[i] = mergeValues() * (kernelSum / visitedKernelSum);
-        else
-            samples[i] = mergeValues();
+        {
+            if (kernelSum != 0.0)
+                samples[i] *= kernelSum;
+            if (visitedKernelSum != 0.0)
+                samples[i] /= visitedKernelSum;
+        }
     }
     
     return samples;
