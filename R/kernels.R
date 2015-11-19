@@ -248,7 +248,7 @@ gaussianKernel <- function (sigma, dim = length(sigma), size = 6*sigma, normalis
     
     size <- ifelse(size %% 2 == 1, size, size+1)
     
-    scaleFactors <- max(sigma) / sigma
+    scaleFactors <- max(sigma) / ifelse(sigma==0, 1, sigma)
     x <- lapply(1:dim, function(i) 1:size[i] - (size[i]+1)/2)
     centres <- lapply(1:dim, function(i) scaleFactors[i] * x[[i]])
     
