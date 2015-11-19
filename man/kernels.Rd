@@ -12,6 +12,7 @@
 \alias{mitchellNetravaliKernel}
 \alias{mnKernel}
 \alias{shapeKernel}
+\alias{sobelKernel}
 \alias{triangleKernel}
 \title{Kernel-generating functions}
 \usage{
@@ -28,6 +29,8 @@ shapeKernel(width, dim = length(width), type = c("box", "disc", "diamond"),
 
 gaussianKernel(sigma, dim = length(sigma), size = 6 * sigma,
   normalised = TRUE)
+
+sobelKernel(dim, axis = 1)
 
 kernelFunction(name = c("box", "triangle", "mitchell-netravali"), ...)
 
@@ -51,7 +54,7 @@ for all dimensions. Will be recycled to length \code{dim} if that
 parameter is also specified.}
 
 \item{dim}{An integer value giving the dimensionality of the kernel.
-Defaults to the length of \code{width} or \code{sigma}.}
+Defaults to the length of \code{width} or \code{sigma}, where available.}
 
 \item{type}{A string giving the type of shape to produce. In one dimension,
 these shapes are all equivalent.}
@@ -74,6 +77,8 @@ Does not need to be equal for all dimensions. Will be recycled to length
 dimension, which will be rounded up to the nearest odd integer. Defaults
 to four times the corresponding \code{sigma} value.}
 
+\item{axis}{The axis along which the gradient operator will be applied.}
+
 \item{name}{A string giving the name of the kernel function required.}
 
 \item{B, C}{Mitchell-Netravali coefficients, each of which must be between 0
@@ -84,8 +89,8 @@ and 1.}
 \value{
 For \code{isKernel}, \code{isKernelArray} and
   \code{isKernelFunction}, a logical value. For \code{kernelArray},
-  \code{shapeKernel} and \code{gaussianKernel}, a kernel array. For
-  \code{kernelFunction}, \code{boxKernel}, \code{triangleKernel},
+  \code{shapeKernel}, \code{gaussianKernel} and \code{sobelKernel}, a kernel
+  array. For \code{kernelFunction}, \code{boxKernel}, \code{triangleKernel},
   \code{mitchellNetravaliKernel} and \code{mnKernel}, a kernel function.
 }
 \description{
@@ -115,15 +120,16 @@ The remaining functions generate special-case kernels: \code{shapeKernel}
 generates arrays with nonzero elements in a box, disc or diamond shape for
 use with \code{\link{morphology}} functions; \code{gaussianKernel} generates
 Gaussian coefficients and is used by \code{\link{gaussianSmooth}};
-\code{boxKernel} is used for ``nearest neighbour'' resampling, and
-\code{triangleKernel} for linear, bilinear, etc. The Mitchell-Netravali
-kernel, a.k.a. BC-spline, is based on a family of piecewise-cubic polynomial
-functions, with support of four times the pixel separation in each
-dimension. The default parameters are the ones recommended by Mitchell and
-Netravali as a good trade-off between various artefacts, but other
-well-known special cases include B=1, C=0 (the cubic B-spline) and B=0,
-C=0.5 (the Catmull-Rom spline). \code{mnKernel} is a shorter alias for
-\code{mitchellNetravaliKernel}.
+\code{sobelKernel} generates the Sobel-Feldman gradient operator, for use by
+\code{\link{sobelFilter}}; \code{boxKernel} is used for ``nearest
+neighbour'' resampling, and \code{triangleKernel} for linear, bilinear, etc.
+The Mitchell-Netravali kernel, a.k.a. BC-spline, is based on a family of
+piecewise-cubic polynomial functions, with support of four times the pixel
+separation in each dimension. The default parameters are the ones
+recommended by Mitchell and Netravali as a good trade-off between various
+artefacts, but other well-known special cases include B=1, C=0 (the cubic
+B-spline) and B=0, C=0.5 (the Catmull-Rom spline). \code{mnKernel} is a
+shorter alias for \code{mitchellNetravaliKernel}.
 }
 \examples{
 shapeKernel(c(3,5), type="diamond")

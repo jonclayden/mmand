@@ -208,16 +208,21 @@ gaussianSmooth <- function (x, sigma)
 
 #' Apply a filter to an array
 #' 
-#' These functions apply mean or median filters to an array.
+#' These functions apply mean, median or Sobel filters to an array.
 #' 
 #' @param x An object that can be coerced to an array, or for which a
 #'   \code{\link{morph}} method exists.
 #' @param kernel A kernel array, indicating the scope of the filter.
+#' @param dim For \code{sobelFilter}, the dimensionality of the kernel. If
+#'   missing, this defaults to the dimensionality of \code{x}.
+#' @param axis For \code{sobelFilter}, the axis along which to apply the
+#'   operator, or 0 to apply it along all directions and generate a magnitude
+#'   image. See also \code{\link{sobelKernel}}.
 #' @return A morphed array with the same dimensions as the original array.
 #' 
 #' @author Jon Clayden <code@@clayden.org>
-#' @seealso \code{\link{morph}} for the function underlying this operation, and
-#'   \code{\link{kernels}} for kernel-generating functions.
+#' @seealso \code{\link{morph}} for the function underlying these operations,
+#'   and \code{\link{kernels}} for kernel-generating functions.
 #' @rdname filters
 #' @export
 meanFilter <- function (x, kernel)
@@ -230,6 +235,38 @@ meanFilter <- function (x, kernel)
 medianFilter <- function (x, kernel)
 {
     return (morph(x, kernel, operator="i", merge="median"))
+}
+
+#' @rdname filters
+#' @export
+sobelFilter <- function (x, dim, axis = 0)
+{
+    x <- as.array(x)
+    if (missing(dim))
+        dim <- length(base::dim(x))
+    
+    if (axis < 0 || axis > dim)
+        report(OL$Error, "The axis should be between 0 and the dimensionality of the kernel")
+    
+    if (axis == 0)
+    {
+        squaredImages <- lapply(1:dim, function(i) sobelFilter(x,dim,i)^2)
+        return (sqrt(Reduce("+", squaredImages)))
+    }
+    else
+    {
+        morphFun <- function(y,k) morph(y, k, operator="*", merge="sum")
+        
+        kernels <- lapply(1:dim, function(i) {
+            if (i == axis)
+                k <- sobelKernel(1)
+            else
+                k <- sobelKernel(1, 0)
+            array(k, dim=replace(rep(1L,dim), i, 3L))
+        })
+        
+        return (Reduce(morphFun, kernels, x))
+    }
 }
 
 #' Standard mathematical morphology operations

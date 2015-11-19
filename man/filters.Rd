@@ -3,29 +3,39 @@
 \name{meanFilter}
 \alias{meanFilter}
 \alias{medianFilter}
+\alias{sobelFilter}
 \title{Apply a filter to an array}
 \usage{
 meanFilter(x, kernel)
 
 medianFilter(x, kernel)
+
+sobelFilter(x, dim, axis = 0)
 }
 \arguments{
 \item{x}{An object that can be coerced to an array, or for which a
 \code{\link{morph}} method exists.}
 
 \item{kernel}{A kernel array, indicating the scope of the filter.}
+
+\item{dim}{For \code{sobelFilter}, the dimensionality of the kernel. If
+missing, this defaults to the dimensionality of \code{x}.}
+
+\item{axis}{For \code{sobelFilter}, the axis along which to apply the
+operator, or 0 to apply it along all directions and generate a magnitude
+image. See also \code{\link{sobelKernel}}.}
 }
 \value{
 A morphed array with the same dimensions as the original array.
 }
 \description{
-These functions apply mean or median filters to an array.
+These functions apply mean, median or Sobel filters to an array.
 }
 \author{
 Jon Clayden <code@clayden.org>
 }
 \seealso{
-\code{\link{morph}} for the function underlying this operation, and
-  \code{\link{kernels}} for kernel-generating functions.
+\code{\link{morph}} for the function underlying these operations,
+  and \code{\link{kernels}} for kernel-generating functions.
 }
 
