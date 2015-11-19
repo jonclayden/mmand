@@ -47,6 +47,8 @@ test_that("smoothing and filtering operations work", {
     kernel <- shapeKernel(c(3,3), type="diamond")
     expect_that(meanFilter(fan,kernel), equals_reference("fan_mean_filtered.rds"))
     expect_that(medianFilter(fan,kernel), equals_reference("fan_median_filtered.rds"))
+    
+    expect_that(sobelFilter(fan), equals_reference("fan_sobel_filtered.rds"))
 })
 
 test_that("binarising and thresholding work", {

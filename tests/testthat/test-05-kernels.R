@@ -10,6 +10,10 @@ test_that("standard kernel arrays can be created", {
     expect_that(gaussianKernel(c(0.5,0.5)), equals_reference("gaussian_kernel_2d.rds"))
     expect_that(gaussianKernel(c(0.5,0.5),normalised=FALSE), equals_reference("gaussian_kernel_2d_unnorm.rds"))
     expect_that(gaussianKernel(c(0.5,0.3)), equals_reference("gaussian_kernel_2d_anis.rds"))
+    
+    expect_that(sobelKernel(1), equals(kernelArray(c(1,0,-1))))
+    expect_that(sobelKernel(1,0), equals(kernelArray(c(1,2,1)/4)))
+    expect_that(sobelKernel(2), equals_reference("sobel_kernel_2d.rds"))
 })
 
 test_that("standard kernel functions can be created", {
