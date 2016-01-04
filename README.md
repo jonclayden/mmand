@@ -254,6 +254,9 @@ fan_thresholded <- threshold(fan, method="kmeans")
 display(fan_thresholded)
 ```
 
+![Thresholded fan 
+image](http://www.clayden.org/files/mmand/fan_thresholded.png)
+
 We can then find the connected components. In this case the kernel determines
 which pixels are deemed to be neighbours. For example,
 
@@ -267,6 +270,9 @@ Now we can visualise the result.
 ```R
 display(fan_components, col=rainbow(max(fan_components,na.rm=TRUE)))
 ```
+
+![Connected components of fan 
+image](http://www.clayden.org/files/mmand/fan_components.png)
 
 As we might expect, the largest components (which label only the "on" areas of
 the image) correspond to (most of) the ring of fan blades, and the bright part
