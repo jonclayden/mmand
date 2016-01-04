@@ -92,7 +92,8 @@ BEGIN_RCPP
     
     delete array;
     
-    return List::create(Named("widths")=neighbourhood.widths, Named("size")=neighbourhood.size, Named("locs")=neighbourhood.locs, Named("offsets")=neighbourhood.offsets);
+    const int size = static_cast<int>(neighbourhood.size);
+    return List::create(Named("widths")=neighbourhood.widths, Named("size")=size, Named("locs")=neighbourhood.locs, Named("offsets")=neighbourhood.offsets);
 END_RCPP
 }
 
