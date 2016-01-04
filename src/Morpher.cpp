@@ -152,7 +152,7 @@ std::vector<double> & Morpher::run ()
     
     const int_vector &dims = original->getDimensions();
     int nDims = original->getDimensionality();
-    size_t nSamples = original->size();
+    const size_t nSamples = original->size();
     samples.resize(nSamples);
     currentLoc.resize(nDims);
     

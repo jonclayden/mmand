@@ -1,5 +1,6 @@
 #include <RcppEigen.h>
 
+#include "Componenter.h"
 #include "Resampler.h"
 #include "Morpher.h"
 
@@ -167,5 +168,19 @@ BEGIN_RCPP
     morpher.setValidValues(as<dbl_vector>(restrictions["value"]), as<dbl_vector>(restrictions["valueNot"]));
     vector<double> &samples = morpher.run();
     return wrap(samples);
+END_RCPP
+}
+
+RcppExport SEXP connectedComponents (SEXP data_, SEXP kernel_)
+{
+BEGIN_RCPP
+    Array<double> *array = arrayFromData(data_);
+    
+    Array<double> *kernelArray = arrayFromData(kernel_);
+    DiscreteKernel *kernel = new DiscreteKernel(kernelArray);
+    
+    Componenter componenter(array, kernel);
+    vector<int> &labels = componenter.run();
+    return wrap(labels);
 END_RCPP
 }

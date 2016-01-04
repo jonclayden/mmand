@@ -125,5 +125,4 @@ void Array<DataType>::expandIndex (const size_t &loc, std::vector<int> &result) 
 
 // Tell the compiler that we're going to need these specialisations (otherwise
 // it won't generate the relevant code and we'll get a linker error)
-template class Array<int>;
 template class Array<double>;
