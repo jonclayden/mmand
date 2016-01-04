@@ -13,7 +13,7 @@ enum MergeOp { SumOp, MinOp, MaxOp, MeanOp, MedianOp };
 class Morpher
 {
 private:
-    Array *original;
+    Array<double> *original;
     DiscreteKernel *kernel;
     
     ElementOp elementOp;
@@ -28,14 +28,14 @@ private:
     dbl_vector values;
     dbl_vector samples;
     
-    bool meetsRestrictions (const long n);
+    bool meetsRestrictions (const size_t n);
     
     void resetValues ();
     void accumulateValue (double value);
     double mergeValues ();
     
 public:
-    Morpher (Array * const original, DiscreteKernel * const kernel, const ElementOp elementOp, const MergeOp mergeOp)
+    Morpher (Array<double> * const original, DiscreteKernel * const kernel, const ElementOp elementOp, const MergeOp mergeOp)
         : original(original), kernel(kernel), elementOp(elementOp), mergeOp(mergeOp)
     {
         this->immediateNeighbourhood = original->getNeighbourhood(3);

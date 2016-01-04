@@ -6,7 +6,7 @@
 using namespace Rcpp;
 using namespace std;
 
-Array * arrayFromData (SEXP data_)
+Array<double> * arrayFromData (SEXP data_)
 {
     NumericVector data(data_);
     
@@ -19,7 +19,7 @@ Array * arrayFromData (SEXP data_)
         dim[0] = data.length();
     }
         
-    Array *array = new Array(as<dbl_vector>(data), dim);
+    Array<double> *array = new Array<double>(dim, as<dbl_vector>(data));
     return array;
 }
 
@@ -67,7 +67,7 @@ END_RCPP
 RcppExport SEXP get_neighbourhood (SEXP data_, SEXP width_)
 {
 BEGIN_RCPP
-    Array *array = arrayFromData(data_);
+    Array<double> *array = arrayFromData(data_);
     Neighbourhood neighbourhood = array->getNeighbourhood(as<int_vector>(width_));
     
     delete array;
@@ -95,7 +95,7 @@ END_RCPP
 RcppExport SEXP resample (SEXP data_, SEXP kernel_, SEXP samplingScheme_)
 {
 BEGIN_RCPP
-    Array *array = arrayFromData(data_);
+    Array<double> *array = arrayFromData(data_);
     Kernel *kernel = kernelFromElements(kernel_);
     Resampler resampler(array, kernel);
     
@@ -123,9 +123,9 @@ END_RCPP
 RcppExport SEXP morph (SEXP data_, SEXP kernel_, SEXP elementOp_, SEXP mergeOp_, SEXP restrictions_)
 {
 BEGIN_RCPP
-    Array *array = arrayFromData(data_);
+    Array<double> *array = arrayFromData(data_);
     
-    Array *kernelArray = arrayFromData(kernel_);
+    Array<double> *kernelArray = arrayFromData(kernel_);
     DiscreteKernel *kernel = new DiscreteKernel(kernelArray);
     
     const string elementOpString = as<string>(elementOp_);

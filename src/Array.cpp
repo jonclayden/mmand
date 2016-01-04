@@ -2,20 +2,21 @@
 
 #include "Array.h"
 
-Neighbourhood Array::getNeighbourhood () const
+template <typename DataType>
+Neighbourhood Array<DataType>::getNeighbourhood () const
 {
     return this->getNeighbourhood(dims);
 }
 
-Neighbourhood Array::getNeighbourhood (const int width) const
+template <typename DataType>
+Neighbourhood Array<DataType>::getNeighbourhood (const int width) const
 {
-    std::vector<int> widths(nDims);
-    for (int i=0; i<nDims; i++)
-        widths[i] = width;
+    std::vector<int> widths(nDims, width);
     return this->getNeighbourhood(widths);
 }
 
-Neighbourhood Array::getNeighbourhood (const std::vector<int> &widths) const
+template <typename DataType>
+Neighbourhood Array<DataType>::getNeighbourhood (const std::vector<int> &widths) const
 {
     Neighbourhood neighbourhood;
     
@@ -29,7 +30,7 @@ Neighbourhood Array::getNeighbourhood (const std::vector<int> &widths) const
     }
     
     neighbourhood.size = 1;
-    std::vector<long> steps(nDims+1);
+    std::vector<size_t> steps(nDims+1);
     steps[0] = 1;
     for (int i=0; i<nDims; i++)
     {
@@ -37,8 +38,8 @@ Neighbourhood Array::getNeighbourhood (const std::vector<int> &widths) const
         steps[i+1] = steps[i] * dims[i];
     }
     
-    neighbourhood.locs = Eigen::MatrixXi(neighbourhood.size, nDims);
-    neighbourhood.offsets = std::vector<long>(neighbourhood.size);
+    neighbourhood.locs.resize(neighbourhood.size, nDims);
+    neighbourhood.offsets.resize(neighbourhood.size);
     
     for (int j=0; j<neighbourhood.size; j++)
     {
@@ -70,9 +71,10 @@ Neighbourhood Array::getNeighbourhood (const std::vector<int> &widths) const
     return neighbourhood;
 }
 
-void Array::flattenIndex (const std::vector<int> &loc, long &result) const
+template <typename DataType>
+void Array<DataType>::flattenIndex (const std::vector<int> &loc, size_t &result) const
 {
-    // Dimensionalities 1-3 are most common so treat them as special cases for speed
+    // Dimensionalities 1-4 are most common so treat them as special cases for speed
     switch (nDims)
     {
         case 1:
@@ -80,16 +82,19 @@ void Array::flattenIndex (const std::vector<int> &loc, long &result) const
         break;
         
         case 2:
-        result = loc[0] + loc[1] * dims[0];
+        result = loc[0] + dims[0] * loc[1];
         break;
         
         case 3:
-        result = loc[0] + loc[1] * dims[0] + loc[2] * dims[0] * dims[1];
+        result = loc[0] + dims[0] * (loc[1] + dims[1] * loc[2]);
         break;
+        
+        case 4:
+        result = loc[0] + dims[0] * (loc[1] + dims[1] * (loc[2] + dims[2] * loc[3]));
         
         default:
         {
-            long temp;
+            size_t temp;
             result = loc[0];
             
             for (int i=1; i<nDims; i++)
@@ -103,9 +108,10 @@ void Array::flattenIndex (const std::vector<int> &loc, long &result) const
     }
 }
 
-void Array::expandIndex (const long &loc, std::vector<int> &result) const
+template <typename DataType>
+void Array<DataType>::expandIndex (const size_t &loc, std::vector<int> &result) const
 {
-    long temp;
+    size_t temp;
     result[0] = loc % dims[0];
     
     for (int i=1; i<nDims; i++)
@@ -116,3 +122,8 @@ void Array::expandIndex (const long &loc, std::vector<int> &result) const
         result[i] = (loc / temp) % dims[i];
     }
 }
+
+// Tell the compiler that we're going to need these specialisations (otherwise
+// it won't generate the relevant code and we'll get a linker error)
+template class Array<int>;
+template class Array<double>;

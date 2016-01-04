@@ -39,7 +39,7 @@ class GriddedSamplingScheme: public SamplingScheme
 {
 private:
     std::vector<dbl_vector> locations;
-    std::vector<long> steps;
+    std::vector<size_t> steps;
     int_vector dims;
     int nSamples;
     
@@ -49,7 +49,7 @@ public:
     {
         int nDims = locations.size();
         dims = int_vector(nDims);
-        steps = std::vector<long>(nDims+1);
+        steps = std::vector<size_t>(nDims+1);
         steps[0] = 1;
         nSamples = 1;
         
@@ -75,7 +75,7 @@ public:
 class Resampler
 {
 private:
-    Array *original;
+    Array<double> *original;
     Kernel *kernel;
     SamplingScheme *sampler;
     dbl_vector samples;
@@ -83,7 +83,7 @@ private:
 public:
     Resampler () {}
     
-    Resampler (Array * const original, Kernel * const kernel)
+    Resampler (Array<double> * const original, Kernel * const kernel)
         : original(original), kernel(kernel) {}
     
     ~Resampler ()

@@ -2,7 +2,7 @@
 
 #include "Morpher.h"
 
-bool Morpher::meetsRestrictions (const long n)
+bool Morpher::meetsRestrictions (const size_t n)
 {
     double value = original->at(n);
     
@@ -29,9 +29,9 @@ bool Morpher::meetsRestrictions (const long n)
     
     if (includedNeighbourhoods.size() > 0 || excludedNeighbourhoods.size() > 0)
     {
-        int nDims = original->getNDims();
+        int nDims = original->getDimensionality();
         original->expandIndex(n, currentLoc);
-        const std::vector<int> &dims = original->getDims();
+        const std::vector<int> &dims = original->getDimensions();
         
         int nNeighbours = 0;
         int neighbourhoodCentre = (immediateNeighbourhood.size - 1) / 2;
@@ -145,14 +145,14 @@ double Morpher::mergeValues ()
 
 std::vector<double> & Morpher::run ()
 {
-    Array * kernelArray = kernel->getArray();
+    Array<double> * kernelArray = kernel->getArray();
     const Neighbourhood &kernelNeighbourhood = kernelArray->getNeighbourhood();
-    const Neighbourhood &sourceNeighbourhood = original->getNeighbourhood(kernelArray->getDims());
-    const long neighbourhoodSize = kernelNeighbourhood.size;
+    const Neighbourhood &sourceNeighbourhood = original->getNeighbourhood(kernelArray->getDimensions());
+    const size_t neighbourhoodSize = kernelNeighbourhood.size;
     
-    const int_vector &dims = original->getDims();
-    int nDims = original->getNDims();
-    long nSamples = original->size();
+    const int_vector &dims = original->getDimensions();
+    int nDims = original->getDimensionality();
+    size_t nSamples = original->size();
     samples.resize(nSamples);
     currentLoc.resize(nDims);
     
@@ -161,11 +161,11 @@ std::vector<double> & Morpher::run ()
     
     if (mergeOp == SumOp)
     {
-        for (long k=0; k<neighbourhoodSize; k++)
+        for (size_t k=0; k<neighbourhoodSize; k++)
             kernelSum += kernelArray->at(k);
     }
     
-    for (long i=0; i<nSamples; i++)
+    for (size_t i=0; i<nSamples; i++)
     {
         if (!meetsRestrictions(i))
         {
@@ -178,7 +178,7 @@ std::vector<double> & Morpher::run ()
         
         visitedKernelSum = 0.0;
         
-        for (long k=0; k<neighbourhoodSize; k++)
+        for (size_t k=0; k<neighbourhoodSize; k++)
         {
             bool validLoc = true;
             for (int j=0; j<nDims; j++)

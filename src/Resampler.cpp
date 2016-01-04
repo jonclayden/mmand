@@ -8,14 +8,14 @@ std::vector<double> & Resampler::run ()
     int neighbourhoodWidth = static_cast<int>(floor(2.0*kernel->getSupportMax()));
     Neighbourhood neighbourhood = original->getNeighbourhood(neighbourhoodWidth);
     
-    const std::vector<int> &dims = original->getDims();
+    const std::vector<int> &dims = original->getDimensions();
     int nDims = sampler->getNDims();
     int nSamples = sampler->getNSamples();
     samples.resize(nSamples);
     
     std::vector<int> nearestNeighbour(nDims);
     std::vector<double> nearestNeighbourOffset(nDims);
-    long nearestNeighbourIndex;
+    size_t nearestNeighbourIndex;
     
     for (int i=0; i<nSamples; i++)
     {
@@ -46,7 +46,7 @@ std::vector<double> & Resampler::run ()
             
             if (kernelValue != 0.0)
             {
-                long currentIndex = nearestNeighbourIndex + neighbourhood.offsets[k];
+                size_t currentIndex = nearestNeighbourIndex + neighbourhood.offsets[k];
                 samples[i] += kernelValue * original->at(currentIndex);
                 kernelTotal += kernelValue;
             }
