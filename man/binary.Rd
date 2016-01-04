@@ -7,7 +7,7 @@
 binary(x)
 }
 \arguments{
-\item{x}{An object that can be coerced to a numeric array}
+\item{x}{An object that can be coerced to a numeric array.}
 }
 \value{
 A logical value indicating whether the array is binary or not.

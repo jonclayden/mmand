@@ -86,7 +86,7 @@ morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0"), mer
 #' This function checks whether a numeric array is binary, with only one unique
 #' nonzero value, or not.
 #' 
-#' @param x An object that can be coerced to a numeric array
+#' @param x An object that can be coerced to a numeric array.
 #' @return A logical value indicating whether the array is binary or not.
 #'   Binary in this case means that the array contains only one unique nonzero
 #'   value.

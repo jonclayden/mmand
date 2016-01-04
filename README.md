@@ -1,13 +1,14 @@
 # Mathematical Morphology in Any Number of Dimensions
 
-The `mmand` R package provides tools for performing mathematical morphology 
-operations, such as erosion and dilation, or smoothing, on arrays of arbitrary 
-dimensionality. It can also resample arrays, obtaining values between pixel 
-centres or scaling the image up or down wholesale.
+The `mmand` R package provides tools for performing mathematical morphology
+operations, such as erosion and dilation, or finding connected components, on
+arrays of arbitrary dimensionality. It can also smooth and resample arrays,
+obtaining values between pixel centres or scaling the image up or down
+wholesale.
 
-All of these operations are underpinned by two powerful functions, which 
-perform two different types of kernel-based operations: `morph()` and 
-`resample()`.
+All of these operations are underpinned by three powerful functions, which
+perform different types of kernel-based operations: `morph()`, `components()`
+and `resample()`.
 
 ## Contents
 
@@ -15,6 +16,7 @@ perform two different types of kernel-based operations: `morph()` and
 - [Mathematical morphology](#mathematical-morphology)
 - [Greyscale morphology](#greyscale-morphology)
 - [Smoothing](#smoothing)
+- [Connected components](#connected-components)
 - [Resampling](#resampling)
 
 ## Test image
@@ -214,7 +216,8 @@ display(gaussianSmooth(fan, c(3,3)))
 
 ![Smoothed fan image](http://www.clayden.org/files/mmand/fan_smoothed.png)
 
-An alternative approach to noise reduction is [median filtering](), and `mmand` 
+An alternative approach to noise reduction is
+[median filtering](http://en.wikipedia.org/wiki/Median_filter), and `mmand`
 provides another function for this purpose:
 
 ```R
@@ -228,7 +231,7 @@ image](http://www.clayden.org/files/mmand/fan_median_filtered.png)
 This method is typically better at preserving edges in the image, which can be 
 desirable in some applications.
 
-## Resampling
+## Connected components
 
 Every operation described so far has been based on `mmand`'s flexible `morph()` 
 function, which uses a kernel represented by an array to select pixels of 
@@ -237,7 +240,42 @@ adjust their values, and then applying a merge operation of some sort (sum,
 minimum, maximum, median, etc.) to produce the pixel value in the final image. 
 In every case the result has the same size as the original data array.
 
-The other category of problems that `mmand` can solve uses a different type of 
+In the next section we will examine operations that change the array's
+dimensions, but first we consider another useful operation: finding connected
+components. This is the task of assigning a label to each contiguous subregion
+of an array.
+
+To demonstrate, we start by first thresholding the fan image using *k*-means
+clustering (with *k*=2). The package's `threshold()` function can be used for
+this:
+
+```R
+fan_thresholded <- threshold(fan, method="kmeans")
+display(fan_thresholded)
+```
+
+We can then find the connected components. In this case the kernel determines
+which pixels are deemed to be neighbours. For example,
+
+```R
+k <- shapeKernel(c(3,3), type="box")
+fan_components <- components(fan_thresholded, k)
+```
+
+Now we can visualise the result.
+
+```R
+display(fan_components, col=rainbow(max(fan_components,na.rm=TRUE)))
+```
+
+As we might expect, the largest components (which label only the "on" areas of
+the image) correspond to (most of) the ring of fan blades, and the bright part
+of the central hub. This is a useful tool for "segmentation", or dividing an
+image into coherent areas.
+
+## Resampling
+
+The final category of problems that `mmand` can solve uses a different type of
 kernel to resample an image at arbitrary points, or on a new grid. This allows 
 images to be resized, or arrays to be indexed using non-integer indices. The 
 kernels in these cases are functions, which provide coefficients for using data 
