@@ -265,7 +265,7 @@ k <- shapeKernel(c(3,3), type="box")
 fan_components <- components(fan_thresholded, k)
 ```
 
-Now we can visualise the result.
+Now we can visualise the result by assigning a colour to each component.
 
 ```R
 display(fan_components, col=rainbow(max(fan_components,na.rm=TRUE)))
@@ -274,10 +274,12 @@ display(fan_components, col=rainbow(max(fan_components,na.rm=TRUE)))
 ![Connected components of fan 
 image](http://www.clayden.org/files/mmand/fan_components.png)
 
-As we might expect, the largest components (which label only the "on" areas of
-the image) correspond to (most of) the ring of fan blades, and the bright part
-of the central hub. This is a useful tool for "segmentation", or dividing an
-image into coherent areas.
+As we might expect, the largest components—which label only the "on" areas of
+the image—correspond to (most of) the ring of fan blades, and the bright part
+of the central hub.
+
+This is can be a useful tool for "segmentation", or dividing an image into
+coherent areas.
 
 ## Resampling
 
