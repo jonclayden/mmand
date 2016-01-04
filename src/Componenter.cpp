@@ -39,7 +39,12 @@ std::vector<int> & Componenter::run ()
         // only need to look at half of it
         for (size_t k=(neighbourhoodSize/2)+1; k<neighbourhoodSize; k++)
         {
-            const size_t loc = i + sourceNeighbourhood.offsets[k];
+            const ptrdiff_t loc = i + sourceNeighbourhood.offsets[k];
+            
+            // Out of bounds
+            if (loc < 0 || loc >= nLabels)
+                continue;
+            
             const double &neighbourValue = original->at(loc);
             const double &kernelValue = kernelArray->at(k);
             
