@@ -65,6 +65,25 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP is_symmetric (SEXP data_)
+{
+BEGIN_RCPP
+    NumericVector data(data_);
+    bool isSymmetric = true;
+    
+    for (int i=0; i<data.length()/2; i++)
+    {
+        if (!R_IsNA(data[i]) && data[i] != data[data.length()-i-1])
+        {
+            isSymmetric = false;
+            break;
+        }
+    }
+    
+    return wrap(isSymmetric);
+END_RCPP
+}
+
 RcppExport SEXP get_neighbourhood (SEXP data_, SEXP width_)
 {
 BEGIN_RCPP
@@ -171,7 +190,7 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP connectedComponents (SEXP data_, SEXP kernel_)
+RcppExport SEXP connected_components (SEXP data_, SEXP kernel_)
 {
 BEGIN_RCPP
     Array<double> *array = arrayFromData(data_);
