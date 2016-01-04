@@ -284,7 +284,7 @@ sobelFilter <- function (x, dim, axis = 0)
 #' If the kernel has only one unique nonzero value, it is described as
 #' ``flat''. For a flat kernel, the erosion is the minimum value of \code{x}
 #' within the nonzero region of \code{kernel}. For a nonflat kernel, this
-#' becomes minimum value of \code{x - kernel}. Dilation is the opposite
+#' becomes the minimum value of \code{x - kernel}. Dilation is the opposite
 #' operation, taking the maximum within the kernel.
 #' 
 #' @param x An object that can be coerced to an array, or for which a

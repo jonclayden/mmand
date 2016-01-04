@@ -41,7 +41,7 @@ dilation followed by an erosion, using the same kernel in both cases.
 If the kernel has only one unique nonzero value, it is described as
 ``flat''. For a flat kernel, the erosion is the minimum value of \code{x}
 within the nonzero region of \code{kernel}. For a nonflat kernel, this
-becomes minimum value of \code{x - kernel}. Dilation is the opposite
+becomes the minimum value of \code{x - kernel}. Dilation is the opposite
 operation, taking the maximum within the kernel.
 }
 \examples{

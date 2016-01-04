@@ -37,6 +37,10 @@ symmetric <- function (x)
 #'   elements identify the component to which each element in the array
 #'   belongs. Zero values in the original array will result in NAs.
 #' 
+#' @examples
+#' x <- c(0,0,1,0,0,0,1,1,1,0,0)
+#' k <- c(1,1,1)
+#' components(x,k)
 #' @author Jon Clayden <code@@clayden.org>
 #' @seealso \code{\link{kernels}} for kernel-generating functions.
 #' @export
