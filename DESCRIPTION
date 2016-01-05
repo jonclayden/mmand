@@ -4,8 +4,6 @@ Date: 2016-01-05
 Title: Mathematical Morphology in Any Number of Dimensions
 Author: Jon Clayden
 Maintainer: Jon Clayden <code@clayden.org>
-Depends:
-    R (>= 2.12.1)
 Suggests:
     png,
     testthat (>= 0.9)
