@@ -2,6 +2,23 @@ Significant changes to the mmand package are laid out below for each release.
 
 ===============================================================================
 
+VERSION 1.3.0
+
+- The package can now find connected components in images, representing
+  contiguous subregions, using the new components() function. The LEMON network
+  library is used to solve the associated graph problem.
+- The Sobel-Feldman kernel and filter are now available through new functions.
+  These can be used to obtain a finite-difference gradient.
+- The new symmetric() function reports whether or not an array is symmetric.
+- Gaussian smoothing in multiple dimensions has been made much faster by
+  exploiting the separability of the kernel. Sigma values of zero may also be
+  used in some dimensions. (Hat-tip to Tim Tierney.)
+- Erosion and dilation did not work as documented when the kernel had a zero at
+  its centre. This has been corrected. (Reported by Scott Flanagan.)
+- Zero-sum kernels are now properly handled.
+
+===============================================================================
+
 VERSION 1.2.0
 
 - A function has been added for thresholding arrays, either using a literal
