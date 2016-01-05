@@ -315,19 +315,20 @@ erode <- function (x, kernel)
         kernel <- kernelArray(kernel)
     
     greyscaleImage <- !binary(x)
-    nNeighboursNot <- NULL
+    nNeighboursNot <- valueNot <- NULL
     
     if (greyscaleImage)
-    {
         operator <- ifelse(binary(kernel), "i", "-")
-        valueNot <- NULL
-    }
     else
     {
-        if (all(dim(kernel) <= 3))
-            nNeighboursNot <- 3^length(dim(x)) - 1
+        # Kernels with zero at the origin mess up the heuristics
         operator <- "i"
-        valueNot <- 0
+        if (kernel[ceiling(length(kernel)/2)] != 0)
+        {
+            valueNot <- 0
+            if (all(dim(kernel) <= 3))
+                nNeighboursNot <- 3^length(dim(x)) - 1
+        }
     }
     
     return (morph(x, kernel, operator=operator, merge="min", valueNot=valueNot, nNeighboursNot=nNeighboursNot))
@@ -342,19 +343,19 @@ dilate <- function (x, kernel)
         kernel <- kernelArray(kernel)
     
     greyscaleImage <- !binary(x)
-    nNeighboursNot <- NULL
+    nNeighboursNot <- value <- NULL
     
     if (greyscaleImage)
-    {
         operator <- ifelse(binary(kernel), "i", "+")
-        value <- NULL
-    }
     else
     {
-        if (all(dim(kernel) <= 3))
-            nNeighboursNot <- 0
         operator <- "i"
-        value <- 0
+        if (kernel[ceiling(length(kernel)/2)] != 0)
+        {
+            value <- 0
+            if (all(dim(kernel) <= 3))
+                nNeighboursNot <- 0
+        }
     }
     
     return (morph(x, kernel, operator=operator, merge="max", value=value, nNeighboursNot=nNeighboursNot))
