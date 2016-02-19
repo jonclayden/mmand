@@ -339,6 +339,8 @@ erode <- function (x, kernel)
 dilate <- function (x, kernel)
 {
     x <- as.array(x)
+    if (!symmetric(kernel))
+        kernel <- array(rev(kernel), dim=dim(as.array(kernel)))
     if (!isKernelArray(kernel))
         kernel <- kernelArray(kernel)
     
