@@ -117,31 +117,47 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP resample (SEXP data_, SEXP kernel_, SEXP samplingScheme_)
+// RcppExport SEXP resample (SEXP data_, SEXP kernel_, SEXP samplingScheme_)
+// {
+// BEGIN_RCPP
+//     Array<double> *array = arrayFromData(data_);
+//     Kernel *kernel = kernelFromElements(kernel_);
+//     Resampler resampler(array, kernel);
+//
+//     List samplingScheme(samplingScheme_);
+//     string schemeType = as<string>(samplingScheme["type"]);
+//     SamplingScheme *sampler = NULL;
+//
+//     if (schemeType.compare("general") == 0)
+//         sampler = new GeneralSamplingScheme(as<Eigen::MatrixXd>(samplingScheme["points"]));
+//     else if (schemeType.compare("grid") == 0)
+//     {
+//         List points = samplingScheme["points"];
+//         vector<dbl_vector> samplingVector(points.length());
+//         for (int i=0; i<points.length(); i++)
+//             samplingVector[i] = as<dbl_vector>(points[i]);
+//         sampler = new GriddedSamplingScheme(samplingVector);
+//     }
+//
+//     resampler.setSamplingScheme(sampler);
+//     vector<double> &samples = resampler.run();
+//     return wrap(samples);
+// END_RCPP
+// }
+
+RcppExport SEXP test (SEXP data_, SEXP kernel_, SEXP point_, SEXP loc_)
 {
 BEGIN_RCPP
-    Array<double> *array = arrayFromData(data_);
+    const Array<double> *array = arrayFromData(data_);
     Kernel *kernel = kernelFromElements(kernel_);
     Resampler resampler(array, kernel);
     
-    List samplingScheme(samplingScheme_);
-    string schemeType = as<string>(samplingScheme["type"]);
-    SamplingScheme *sampler = NULL;
+    int_vector point = as<int_vector>(point_);
+    const double loc = as<double>(loc_);
+    Array<double>::ConstIterator it = array->beginLine(point, 0);
+    double result = resampler.interpolate(it, it+4, loc);
     
-    if (schemeType.compare("general") == 0)
-        sampler = new GeneralSamplingScheme(as<Eigen::MatrixXd>(samplingScheme["points"]));
-    else if (schemeType.compare("grid") == 0)
-    {
-        List points = samplingScheme["points"];
-        vector<dbl_vector> samplingVector(points.length());
-        for (int i=0; i<points.length(); i++)
-            samplingVector[i] = as<dbl_vector>(points[i]);
-        sampler = new GriddedSamplingScheme(samplingVector);
-    }
-    
-    resampler.setSamplingScheme(sampler);
-    vector<double> &samples = resampler.run();
-    return wrap(samples);
+    return wrap(result);
 END_RCPP
 }
 
