@@ -2,59 +2,33 @@
 
 #include "Resampler.h"
 
-std::vector<double> & Resampler::run ()
+double Resampler::interpolate (Array<double>::ConstIterator begin, Array<double>::ConstIterator end, const double loc)
 {
-    // Precalculate index deltas for the neighbourhood constituting the support region for the kernel
-    int neighbourhoodWidth = static_cast<int>(floor(2.0*kernel->getSupportMax()));
-    Neighbourhood neighbourhood = original->getNeighbourhood(neighbourhoodWidth);
+    std::vector<double> data;
+    Array<double>::ConstIterator it;
     
-    const std::vector<int> &dims = original->getDimensions();
-    int nDims = sampler->getNDims();
-    int nSamples = sampler->getNSamples();
-    samples.resize(nSamples);
-    
-    std::vector<int> nearestNeighbour(nDims);
-    std::vector<double> nearestNeighbourOffset(nDims);
-    size_t nearestNeighbourIndex;
-    
-    for (int i=0; i<nSamples; i++)
+    if (presharpen)
     {
-        for (int j=0; j<nDims; j++)
+        int i;
+        std::vector<double> coefs;
+        for (i=0, it=begin; ; i++)
         {
-            nearestNeighbour[j] = static_cast<int>(round(sampler->at(i,j)));
-            nearestNeighbourOffset[j] = static_cast<double>(nearestNeighbour[j]) - sampler->at(i,j);
-        }
-        original->flattenIndex(nearestNeighbour, nearestNeighbourIndex);
-        
-        samples[i] = 0.0;
-        double kernelTotal = 0.0;
-        for (int k=0; k<neighbourhood.size; k++)
-        {
-            double kernelValue = 1.0;
-            for (int j=0; j<nDims; j++)
-            {
-                double delta = nearestNeighbourOffset[j] + static_cast<double>(neighbourhood.locs(k,j));
-                int currentDimIndex = nearestNeighbour[j] + neighbourhood.locs(k,j);
-                if (currentDimIndex < 0 || currentDimIndex >= dims[j])
-                {
-                    kernelValue = 0.0;
-                    break;
-                }
-                else
-                    kernelValue *= kernel->evaluate(delta);
-            }
-            
-            if (kernelValue != 0.0)
-            {
-                size_t currentIndex = nearestNeighbourIndex + neighbourhood.offsets[k];
-                samples[i] += kernelValue * original->at(currentIndex);
-                kernelTotal += kernelValue;
-            }
+            coefs.push_back(c / (b - (i==0 ? 0 : a*coefs[i-1])));
+            data.push_back((*it - (i==0 ? 0 : a*data[i-1])) / (b - (i==0 ? 0 : a*coefs[i-1])));
+            if (++it == end)
+                break;
         }
         
-        if (kernelTotal != 1.0)
-            samples[i] /= kernelTotal;
+        const int len = data.size();
+        for (i=len; i>=0; i--)
+            data[i] -= (i==len ? 0 : coefs[i]*data[i+1]);
     }
+    else
+        std::copy(begin, end+1, data.begin());
     
-    return samples;
+    double result = 0.0;
+    for (int i=0; i<data.size(); i++)
+        result += data[i] * kernel->evaluate(static_cast<double>(i) - loc);
+    
+    return result;
 }

@@ -7,95 +7,33 @@
 typedef std::vector<double> dbl_vector;
 typedef std::vector<int>    int_vector;
 
-class SamplingScheme
-{
-public:
-    SamplingScheme () {}
-    
-    virtual const double at (int sample, int dim) const { return NA_REAL; }
-    
-    virtual int getNDims () const { return NA_INTEGER; }
-    
-    virtual int getNSamples () const { return NA_INTEGER; }
-};
-
-class GeneralSamplingScheme: public SamplingScheme
-{
-private:
-    Eigen::MatrixXd locations;
-    
-public:
-    GeneralSamplingScheme (const Eigen::MatrixXd &locations)
-        : locations(locations) {}
-    
-    const double at (int sample, int dim) const { return locations(sample,dim); }
-    
-    int getNDims () const { return locations.cols(); }
-    
-    int getNSamples () const { return locations.rows(); }
-};
-
-class GriddedSamplingScheme: public SamplingScheme
-{
-private:
-    std::vector<dbl_vector> locations;
-    std::vector<size_t> steps;
-    int_vector dims;
-    int nSamples;
-    
-public:
-    GriddedSamplingScheme (const std::vector<dbl_vector> &locations)
-        : locations(locations)
-    {
-        int nDims = locations.size();
-        dims = int_vector(nDims);
-        steps = std::vector<size_t>(nDims+1);
-        steps[0] = 1;
-        nSamples = 1;
-        
-        for (int i=0; i<nDims; i++)
-        {
-            dims[i] = locations[i].size();
-            nSamples *= dims[i];
-            steps[i+1] = steps[i] * dims[i];
-        }
-    }
-    
-    const double at (int sample, int dim) const
-    {
-        int index = (sample / steps[dim]) % dims[dim];
-        return locations[dim][index];
-    }
-    
-    int getNDims () const { return locations.size(); }
-    
-    int getNSamples () const { return this->nSamples; }
-};
-
 class Resampler
 {
-private:
-    Array<double> *original;
+protected:
+    const Array<double> *original;
     Kernel *kernel;
-    SamplingScheme *sampler;
-    dbl_vector samples;
+    double a, b, c;
+    bool presharpen;
     
 public:
     Resampler () {}
     
-    Resampler (Array<double> * const original, Kernel * const kernel)
-        : original(original), kernel(kernel) {}
+    Resampler (const Array<double> *original, Kernel * const kernel)
+        : original(original), kernel(kernel)
+    {
+        a = kernel->evaluate(-1.0);
+        b = kernel->evaluate(0.0);
+        c = kernel->evaluate(1.0);
+        presharpen = (a != 0.0 || b != 1.0 || c != 0.0);
+    }
     
     ~Resampler ()
     {
         delete original;
         delete kernel;
-        delete sampler;
     }
     
-    void setSamplingScheme (SamplingScheme * const sampler) { this->sampler = sampler; }
-    
-    dbl_vector & run ();
+    double interpolate (Array<double>::ConstIterator begin, Array<double>::ConstIterator end, const double loc);
 };
 
 #endif
