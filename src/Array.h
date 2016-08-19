@@ -39,6 +39,7 @@ protected:
         
         bool operator== (const IteratorType<ValueType> &other) { return (ptr==other.ptr && step==other.step); }
         bool operator!= (const IteratorType<ValueType> &other) { return (ptr!=other.ptr || step!=other.step); }
+        bool operator> (const IteratorType<ValueType> &other) { return (ptr > other.ptr); }
         
         ValueType & operator* () { return *ptr; }
         
