@@ -37,9 +37,12 @@ protected:
         IteratorType<ValueType> & operator++ () { ptr += step; return *this; }
         IteratorType<ValueType> operator+ (ptrdiff_t n) { return IteratorType<ValueType>(ptr + n*step, step); }
         
+        ptrdiff_t operator- (const IteratorType<ValueType> &other) { return (ptr-other.ptr) / step; }
+        
         bool operator== (const IteratorType<ValueType> &other) { return (ptr==other.ptr && step==other.step); }
         bool operator!= (const IteratorType<ValueType> &other) { return (ptr!=other.ptr || step!=other.step); }
         bool operator> (const IteratorType<ValueType> &other) { return (ptr > other.ptr); }
+        bool operator< (const IteratorType<ValueType> &other) { return (ptr < other.ptr); }
         
         ValueType & operator* () { return *ptr; }
         
