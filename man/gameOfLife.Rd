@@ -43,13 +43,19 @@ function provides an interesting starting configuration.
 \details{
 Conway's Game of Life is a simple cellular automaton, based on a 2D matrix
 of ``cells''. It shows complex behaviour based on four simple rules. These
-are: \enumerate{ \item Any live cell with fewer than two live neighbours
-dies, as if caused by under-population.  \item Any live cell with two or
-three live neighbours lives on to the next generation.  \item Any live cell
-with more than three live neighbours dies, as if by overcrowding.  \item Any
-dead cell with exactly three live neighbours becomes a live cell, as if by
-reproduction. } Live and dead cells are represented by 1s and 0s in the
-matrix, respectively.
+are:
+\enumerate{
+  \item Any live cell with fewer than two live neighbours dies, as if caused
+    by under-population.
+  \item Any live cell with two or three live neighbours lives on to the next
+    generation.
+  \item Any live cell with more than three live neighbours dies, as if by
+    overcrowding.
+  \item Any dead cell with exactly three live neighbours becomes a live
+    cell, as if by reproduction.
+}
+Live and dead cells are represented by 1s and 0s in the matrix,
+respectively.
 
 The initial state and the rules above completely determine the behaviour of
 the system. The Gosper glider gun is an interesting starting configuration
