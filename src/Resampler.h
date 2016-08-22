@@ -15,9 +15,12 @@ protected:
     Kernel *kernel;
     int kernelWidth;
     double a, b, c;
-    bool presharpen;
+    bool toPresharpen;
     
     dbl_vector samples;
+    
+    template <class InputIterator, class OutputIterator>
+    void presharpen (InputIterator begin, InputIterator end, OutputIterator result);
     
     template <class InputIterator, class OutputIterator>
     void interpolate (InputIterator begin, InputIterator end, const std::vector<double> &locs, OutputIterator result);
@@ -35,7 +38,7 @@ public:
         a = kernel->evaluate(-1.0);
         b = kernel->evaluate(0.0);
         c = kernel->evaluate(1.0);
-        presharpen = (a != 0.0 || b != 1.0 || c != 0.0);
+        toPresharpen = (a != 0.0 || b != 1.0 || c != 0.0);
     }
     
     ~Resampler ()
