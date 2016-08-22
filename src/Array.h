@@ -85,6 +85,13 @@ public:
         calculateStrides();
     }
     
+    Array (const Array<DataType> &other)
+        : data(other.data), dims(other.dims)
+    {
+        nDims = dims.size();
+        calculateStrides();
+    }
+    
     size_t size () const { return data.size(); }
     bool empty () const { return (data.size() == 0); }
     
@@ -108,6 +115,11 @@ public:
         return Iterator(&at(begin) + offset, strides[dim]);
     }
     
+    ConstIterator beginLine (const size_t n, const int dim) const { return ConstIterator(&data.front() + lineOffset(n,dim), strides[dim]); }
+    Iterator beginLine (const size_t n, const int dim) { return Iterator(&data.front() + lineOffset(n,dim), strides[dim]); }
+    ConstIterator endLine (const size_t n, const int dim) const { return beginLine(n,dim) + dims[dim]; }
+    Iterator endLine (const size_t n, const int dim) { return beginLine(n,dim) + dims[dim]; }
+    
     ConstReference at (const size_t n) const { return data.at(n); }
     ConstReference at (const std::vector<int> &loc) const { return data.at(flattenIndex(loc)); }
     
@@ -123,6 +135,9 @@ public:
     const std::vector<DataType> & getData () const { return data; }
     const std::vector<int> & getDimensions () const { return dims; }
     int getDimensionality () const { return nDims; }
+    
+    size_t countLines (const int dim) const;
+    size_t lineOffset (const size_t n, const int dim) const;
     
     Neighbourhood getNeighbourhood () const;
     Neighbourhood getNeighbourhood (const int width) const;

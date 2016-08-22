@@ -3,6 +3,40 @@
 #include "Array.h"
 
 template <typename DataType>
+size_t Array<DataType>::countLines (const int dim) const
+{
+    size_t n = 1;
+    for (int i=0; i<nDims; i++)
+    {
+        if (i != dim)
+            n *= dims[i];
+    }
+    return n;
+}
+
+template <typename DataType>
+size_t Array<DataType>::lineOffset (const size_t n, const int dim) const
+{
+    std::vector<int> loc(nDims);
+    size_t result, stride = 1;
+    
+    for (int i=0; i<nDims; i++)
+    {
+        if (i == dim)
+            loc[i] = 0;
+        else
+        {
+            // Usual stride doesn't apply because we're missing out one dimension
+            stride *= dims[i];
+            loc[i] = (n / stride) % dims[i];
+        }
+    }
+    
+    flattenIndex(loc, result);
+    return result;
+}
+
+template <typename DataType>
 Neighbourhood Array<DataType>::getNeighbourhood () const
 {
     return this->getNeighbourhood(dims);
