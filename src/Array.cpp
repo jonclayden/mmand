@@ -27,8 +27,8 @@ size_t Array<DataType>::lineOffset (const size_t n, const int dim) const
         else
         {
             // Usual stride doesn't apply because we're missing out one dimension
-            stride *= dims[i];
             loc[i] = (n / stride) % dims[i];
+            stride *= dims[i];
         }
     }
     
