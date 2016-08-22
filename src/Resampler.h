@@ -11,6 +11,7 @@ class Resampler
 {
 protected:
     const Array<double> *original;
+    Array<double> *working;
     Kernel *kernel;
     int kernelWidth;
     double a, b, c;
@@ -18,16 +19,17 @@ protected:
     
     dbl_vector samples;
     
-    template <class IteratorType>
-    double interpolate (IteratorType begin, IteratorType end, const double loc);
+    template <class InputIterator, class OutputIterator>
+    void interpolate (InputIterator begin, InputIterator end, const std::vector<double> &locs, OutputIterator result);
     
-    double samplePoint (const std::vector<int> &base, const Eigen::VectorXd &offset, const int dim);
+    // double samplePoint (const std::vector<int> &base, const Eigen::VectorXd &offset, const int dim);
     
 public:
-    Resampler () {}
+    Resampler ()
+        : original(NULL), working(NULL), kernel(NULL) {}
     
     Resampler (const Array<double> *original, Kernel * const kernel)
-        : original(original), kernel(kernel)
+        : original(original), working(NULL), kernel(kernel)
     {
         kernelWidth = static_cast<int>(floor(2.0 * kernel->getSupportMax()));
         a = kernel->evaluate(-1.0);
@@ -39,10 +41,13 @@ public:
     ~Resampler ()
     {
         delete original;
+        delete working;
         delete kernel;
     }
     
-    std::vector<double> & run (const Eigen::MatrixXd &locations);
+    // std::vector<double> & run (const Eigen::MatrixXd &locations);
+    
+    const std::vector<double> & run (const std::vector<dbl_vector> &locations);
 };
 
 #endif

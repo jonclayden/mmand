@@ -130,19 +130,19 @@ BEGIN_RCPP
     
     if (schemeType.compare("general") == 0)
     {
-        vector<double> &samples = resampler.run(as<Eigen::MatrixXd>(samplingScheme["points"]));
-        return wrap(samples);
-    }
-    else
         throw std::runtime_error("Scheme type unsupported");
-    // else if (schemeType.compare("grid") == 0)
-    // {
-    //     List points = samplingScheme["points"];
-    //     vector<dbl_vector> samplingVector(points.length());
-    //     for (int i=0; i<points.length(); i++)
-    //         samplingVector[i] = as<dbl_vector>(points[i]);
-    //     sampler = new GriddedSamplingScheme(samplingVector);
-    // }
+        // vector<double> &samples = resampler.run(as<Eigen::MatrixXd>(samplingScheme["points"]));
+        // return wrap(samples);
+    }
+    else if (schemeType.compare("grid") == 0)
+    {
+        List points = samplingScheme["points"];
+        vector<dbl_vector> samplingVector(points.length());
+        for (int i=0; i<points.length(); i++)
+            samplingVector[i] = as<dbl_vector>(points[i]);
+        const dbl_vector &samples = resampler.run(samplingVector);
+        return (wrap(samples));
+    }
 
     // resampler.setSamplingScheme(sampler);
     // vector<double> &samples = resampler.run();
