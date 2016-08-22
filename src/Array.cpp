@@ -94,16 +94,9 @@ void Array<DataType>::flattenIndex (const std::vector<int> &loc, size_t &result)
         
         default:
         {
-            size_t temp;
             result = loc[0];
-            
             for (int i=1; i<nDims; i++)
-            {
-                temp = loc[i];
-                for (int j=0; j<i; j++)
-                    temp *= dims[j];
-                result += temp;
-            }
+                result += loc[i] * strides[i];
         }
     }
 }
@@ -111,16 +104,9 @@ void Array<DataType>::flattenIndex (const std::vector<int> &loc, size_t &result)
 template <typename DataType>
 void Array<DataType>::expandIndex (const size_t &loc, std::vector<int> &result) const
 {
-    size_t temp;
     result[0] = loc % dims[0];
-    
     for (int i=1; i<nDims; i++)
-    {
-        temp = 1;
-        for (int j=0; j<i; j++)
-            temp *= dims[j];
-        result[i] = (loc / temp) % dims[i];
-    }
+        result[i] = (loc / strides[i]) % dims[i];
 }
 
 // Tell the compiler that we're going to need these specialisations (otherwise
