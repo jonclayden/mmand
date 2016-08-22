@@ -36,6 +36,8 @@ protected:
         
         IteratorType<ValueType> & operator++ () { ptr += step; return *this; }
         IteratorType<ValueType> operator+ (ptrdiff_t n) { return IteratorType<ValueType>(ptr + n*step, step); }
+        IteratorType<ValueType> & operator-- () { ptr -= step; return *this; }
+        IteratorType<ValueType> operator- (ptrdiff_t n) { return IteratorType<ValueType>(ptr - n*step, step); }
         
         ptrdiff_t operator- (const IteratorType<ValueType> &other) { return (ptr-other.ptr) / step; }
         
@@ -45,8 +47,6 @@ protected:
         bool operator< (const IteratorType<ValueType> &other) { return (ptr < other.ptr); }
         
         ValueType & operator* () { return *ptr; }
-        
-        bool valid () { return (ptr != NULL && step > 0); }
     };
     
     void calculateStrides ()
