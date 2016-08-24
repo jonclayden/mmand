@@ -92,12 +92,14 @@ double Resampler::samplePoint (const std::vector<int> &base, const std::vector<d
     }
     else
     {
-        std::vector<double> elements(kernelWidth);
+        std::vector<double> elements;
+        const std::vector<int> &dims = working->getDimensions();
         for (int i=0; i<kernelWidth; i++)
         {
             std::vector<int> temp = base;
             temp[dim] += i;
-            elements[i] = samplePoint(temp, offset, dim-1);
+            if (temp[dim] < dims[dim])
+                elements.push_back(samplePoint(temp, offset, dim-1));
         }
         return interpolate(elements.begin(), elements.end(), offset[dim]);
     }
