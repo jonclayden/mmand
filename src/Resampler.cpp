@@ -33,12 +33,22 @@ void Resampler::interpolate (InputIterator begin, InputIterator end, const std::
         // NB: This will only work for kernels of width up to 4
         const int base = static_cast<int>(floor(locs[j])) - (kernelWidth>2 ? 1 : 0);
         double value = 0.0;
+        double kernelSum = 0.0;
         for (int k=base; k<base+kernelWidth; k++)
         {
             if (k >= 0 && k < len)
-                value += data[k] * kernel->evaluate(static_cast<double>(k) - locs[j]);
+            {
+                const double kernelValue = kernel->evaluate(static_cast<double>(k) - locs[j]);
+                if (kernelValue != 0.0)
+                {
+                    value += data[k] * kernelValue;
+                    kernelSum += kernelValue;
+                }
+            }
         }
         
+        if (kernelSum != 1.0 && kernelSum != 0.0)
+            value /= kernelSum;;
         *result = value;
     }
 }
