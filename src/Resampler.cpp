@@ -139,7 +139,6 @@ const std::vector<double> & Resampler::run (const Eigen::MatrixXd &locations)
                 offset[i] += static_cast<double>(base[i]) - dims[i] + 1.0;
                 base[i] = dims[i] - 1;
             }
-            Rprintf("%d %d %d %f\n", i, baseOffset, base[i], offset[i]);
         }
         samples[k] = samplePoint(base, offset, nDims-1);
     }
