@@ -53,14 +53,42 @@ void Resampler::interpolate (InputIterator begin, InputIterator end, const std::
     }
 }
 
+template <class InputIterator>
+double Resampler::interpolate (InputIterator begin, InputIterator end, const double &loc)
+{
+    const ptrdiff_t len = end - begin;
+    std::vector<double> data(begin, end);
+    
+    double value = 0.0;
+    double kernelSum = 0.0;
+    for (int k=0; k<kernelWidth; k++)
+    {
+        if (k >= 0 && k < len)
+        {
+            const double kernelValue = kernel->evaluate(static_cast<double>(k) - loc);
+            if (kernelValue != 0.0)
+            {
+                value += data[k] * kernelValue;
+                kernelSum += kernelValue;
+            }
+        }
+    }
+    
+    if (kernelSum != 1.0 && kernelSum != 0.0)
+        value /= kernelSum;
+    return value;
+}
+
 double Resampler::samplePoint (const std::vector<int> &base, const std::vector<double> &offset, const int dim)
 {
-    double value;
-    
     if (dim == 0)
     {
-        Array<double>::ConstIterator it = original->beginLine(base, 0);
-        interpolate(it, it+kernelWidth, std::vector<double>(offset.begin(),offset.begin()+1), &value);
+        Array<double>::Iterator start = working->beginLine(base, 0);
+        Array<double>::Iterator end = working->endLine(base, 0);
+        if (end > start+kernelWidth)
+            return interpolate(start, start+kernelWidth, offset[0]);
+        else
+            return interpolate(start, end, offset[0]);
     }
     else
     {
@@ -71,17 +99,16 @@ double Resampler::samplePoint (const std::vector<int> &base, const std::vector<d
             temp[dim] += i;
             elements[i] = samplePoint(temp, offset, dim-1);
         }
-        interpolate(elements.begin(), elements.end(), std::vector<double>(offset.begin()+dim,offset.begin()+dim+1), &value);
+        return interpolate(elements.begin(), elements.end(), offset[dim]);
     }
-    
-    return value;
 }
 
 const std::vector<double> & Resampler::run (const Eigen::MatrixXd &locations)
 {
+    const int_vector &dims = original->getDimensions();
     const int nDims = locations.cols();
     const int nSamples = locations.rows();
-    working = new Array<double>(std::vector<int>(1,nSamples), NA_REAL);
+    working = new Array<double>(*original);
     
     if (toPresharpen)
     {
@@ -92,20 +119,32 @@ const std::vector<double> & Resampler::run (const Eigen::MatrixXd &locations)
         }
     }
     
+    samples.resize(nSamples);
+    int_vector base(nDims);
+    dbl_vector offset(nDims);
+    const int baseOffset = std::max(0, kernelWidth/2 - 1);
     for (size_t k=0; k<nSamples; k++)
     {
-        std::vector<int> base(nDims);
-        std::vector<double> offset(nDims);
         for (int i=0; i<nDims; i++)
         {
-            // NB: This will only work for kernels of width up to 4
-            base[i] = static_cast<int>(floor(locations(k,i))) - (kernelWidth>2 ? 1 : 0);
-            offset[i] = locations(k,i) - floor(locations(k,i)) + (kernelWidth>2 ? 1.0 : 0.0);
+            base[i] = static_cast<int>(floor(locations(k,i))) - baseOffset;
+            offset[i] = locations(k,i) - static_cast<double>(base[i]);
+            if (base[i] < 0)
+            {
+                offset[i] += static_cast<double>(base[i]);
+                base[i] = 0;
+            }
+            else if (base[i] >= dims[i])
+            {
+                offset[i] += static_cast<double>(base[i]) - dims[i] + 1.0;
+                base[i] = dims[i] - 1;
+            }
+            Rprintf("%d %d %d %f\n", i, baseOffset, base[i], offset[i]);
         }
-        working->at(k) = samplePoint(base, offset, nDims-1);
+        samples[k] = samplePoint(base, offset, nDims-1);
     }
     
-    return working->getData();
+    return samples;
 }
 
 const std::vector<double> & Resampler::run (const std::vector<dbl_vector> &locations)

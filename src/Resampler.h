@@ -18,11 +18,16 @@ protected:
     double a, b, c;
     bool toPresharpen;
     
+    dbl_vector samples;
+    
     template <class InputIterator, class OutputIterator>
     void presharpen (InputIterator begin, InputIterator end, OutputIterator result);
     
     template <class InputIterator, class OutputIterator>
     void interpolate (InputIterator begin, InputIterator end, const std::vector<double> &locs, OutputIterator result);
+    
+    template <class InputIterator>
+    double interpolate (InputIterator begin, InputIterator end, const double &loc);
     
     double samplePoint (const std::vector<int> &base, const std::vector<double> &offset, const int dim);
     
