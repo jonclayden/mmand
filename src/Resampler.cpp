@@ -47,8 +47,8 @@ void Resampler::interpolate (InputIterator begin, InputIterator end, const std::
             }
         }
         
-        if (kernelSum != 1.0 && kernelSum != 0.0)
-            value /= kernelSum;;
+        // if (kernelSum != 1.0 && kernelSum != 0.0)
+        //     value /= kernelSum;;
         *result = value;
     }
 }
@@ -74,8 +74,8 @@ double Resampler::interpolate (InputIterator begin, InputIterator end, const dou
         }
     }
     
-    if (kernelSum != 1.0 && kernelSum != 0.0)
-        value /= kernelSum;
+    // if (kernelSum != 1.0 && kernelSum != 0.0)
+    //     value /= kernelSum;
     return value;
 }
 
