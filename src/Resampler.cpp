@@ -53,46 +53,60 @@ void Resampler::interpolate (InputIterator begin, InputIterator end, const std::
     }
 }
 
-// double Resampler::samplePoint (const std::vector<int> &base, const Eigen::VectorXd &offset, const int dim)
-// {
-//     if (dim == 0)
-//     {
-//         Array<double>::ConstIterator it = original->beginLine(base, 0);
-//         return interpolate(it, it+kernelWidth, offset[0]);
-//     }
-//     else
-//     {
-//         std::vector<double> elements(kernelWidth);
-//         for (int i=0; i<kernelWidth; i++)
-//         {
-//             std::vector<int> temp = base;
-//             temp[dim] += i;
-//             elements[i] = samplePoint(temp, offset, dim-1);
-//         }
-//         return interpolate(elements.begin(), elements.end(), offset[dim]);
-//     }
-// }
-//
-// std::vector<double> & Resampler::run (const Eigen::MatrixXd &locations)
-// {
-//     const int nDims = original->getDimensionality();
-//     samples.resize(locations.rows());
-//
-//     for (size_t i=0; i<samples.size(); i++)
-//     {
-//         std::vector<int> base(nDims);
-//         Eigen::VectorXd offset(nDims);
-//         for (int j=0; j<nDims; j++)
-//         {
-//             // NB: This will only work for kernels of width up to 4
-//             base[j] = static_cast<int>(floor(locations(i,j))) - (kernelWidth>2 ? 1 : 0);
-//             offset[j] = locations(i,j) - floor(locations(i,j)) + (kernelWidth>2 ? 1.0 : 0.0);
-//         }
-//         samples[i] = samplePoint(base, offset, nDims-1);
-//     }
-//
-//     return samples;
-// }
+double Resampler::samplePoint (const std::vector<int> &base, const std::vector<double> &offset, const int dim)
+{
+    double value;
+    
+    if (dim == 0)
+    {
+        Array<double>::ConstIterator it = original->beginLine(base, 0);
+        interpolate(it, it+kernelWidth, std::vector<double>(offset.begin(),offset.begin()+1), &value);
+    }
+    else
+    {
+        std::vector<double> elements(kernelWidth);
+        for (int i=0; i<kernelWidth; i++)
+        {
+            std::vector<int> temp = base;
+            temp[dim] += i;
+            elements[i] = samplePoint(temp, offset, dim-1);
+        }
+        interpolate(elements.begin(), elements.end(), std::vector<double>(offset.begin()+dim,offset.begin()+dim+1), &value);
+    }
+    
+    return value;
+}
+
+const std::vector<double> & Resampler::run (const Eigen::MatrixXd &locations)
+{
+    const int nDims = locations.cols();
+    const int nSamples = locations.rows();
+    working = new Array<double>(std::vector<int>(1,nSamples), NA_REAL);
+    
+    if (toPresharpen)
+    {
+        for (int i=0; i<nDims; i++)
+        {
+            for (size_t j=0; j<working->countLines(i); j++)
+                presharpen(working->beginLine(j,i), working->endLine(j,i), working->beginLine(j,i));
+        }
+    }
+    
+    for (size_t k=0; k<nSamples; k++)
+    {
+        std::vector<int> base(nDims);
+        std::vector<double> offset(nDims);
+        for (int i=0; i<nDims; i++)
+        {
+            // NB: This will only work for kernels of width up to 4
+            base[i] = static_cast<int>(floor(locations(k,i))) - (kernelWidth>2 ? 1 : 0);
+            offset[i] = locations(k,i) - floor(locations(k,i)) + (kernelWidth>2 ? 1.0 : 0.0);
+        }
+        working->at(k) = samplePoint(base, offset, nDims-1);
+    }
+    
+    return working->getData();
+}
 
 const std::vector<double> & Resampler::run (const std::vector<dbl_vector> &locations)
 {

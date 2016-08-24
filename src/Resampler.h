@@ -12,12 +12,11 @@ class Resampler
 protected:
     const Array<double> *original;
     Array<double> *working;
+    
     Kernel *kernel;
     int kernelWidth;
     double a, b, c;
     bool toPresharpen;
-    
-    dbl_vector samples;
     
     template <class InputIterator, class OutputIterator>
     void presharpen (InputIterator begin, InputIterator end, OutputIterator result);
@@ -25,7 +24,7 @@ protected:
     template <class InputIterator, class OutputIterator>
     void interpolate (InputIterator begin, InputIterator end, const std::vector<double> &locs, OutputIterator result);
     
-    // double samplePoint (const std::vector<int> &base, const Eigen::VectorXd &offset, const int dim);
+    double samplePoint (const std::vector<int> &base, const std::vector<double> &offset, const int dim);
     
 public:
     Resampler ()
@@ -48,7 +47,7 @@ public:
         delete kernel;
     }
     
-    // std::vector<double> & run (const Eigen::MatrixXd &locations);
+    const std::vector<double> & run (const Eigen::MatrixXd &locations);
     
     const std::vector<double> & run (const std::vector<dbl_vector> &locations);
 };
