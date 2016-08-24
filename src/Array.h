@@ -115,6 +115,7 @@ public:
         return Iterator(&at(begin) + offset, strides[dim]);
     }
     
+    // The index n here is the line number; it doesn't match the argument to at()
     ConstIterator beginLine (const size_t n, const int dim) const { return ConstIterator(&data.front() + lineOffset(n,dim), strides[dim]); }
     Iterator beginLine (const size_t n, const int dim) { return Iterator(&data.front() + lineOffset(n,dim), strides[dim]); }
     ConstIterator endLine (const size_t n, const int dim) const { return beginLine(n,dim) + dims[dim]; }
