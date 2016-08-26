@@ -76,6 +76,9 @@ public:
         : original(original), working(NULL), kernel(kernel)
     {
         kernelWidth = static_cast<int>(floor(2.0 * kernel->getSupportMax()));
+        if (kernelWidth > 4)
+            throw std::runtime_error("Kernel widths of greater than 4 are not supported");
+        
         a = kernel->evaluate(-1.0);
         b = kernel->evaluate(0.0);
         c = kernel->evaluate(1.0);
