@@ -7,35 +7,33 @@
 typedef std::vector<double> dbl_vector;
 typedef std::vector<int>    int_vector;
 
-template <class IteratorType>
 class Interpolant
 {
 private:
-    IteratorType start, end;
+    dbl_vector data;
     size_t len;
     double prestart, postend;
     
 public:
+    template <class IteratorType>
     Interpolant (IteratorType start, IteratorType end)
-        : start(start), end(end)
+        : data(start,end)
     {
-        if (end - start < 0)
-            throw std::runtime_error("End point must be after start point");
-        len = size_t(end - start);
-        prestart = 2*(*start) - *(start+1);
-        postend = 2*(*(end-1)) - *(end-2);
+        len = data.size();
+        prestart = 2*data[0] - data[1];
+        postend = 2*data[len-1] - data[len-2];
     }
     
-    const double operator[] (size_t i) const
+    const double operator() (ptrdiff_t i) const
     {
-        if (i == -1)
+        if (i > -1 && i < len)
+            return data[i];
+        else if (i == -1)
             return prestart;
         else if (i == len)
             return postend;
-        else if (i < -1 || i > len)
-            return 0.0;
         else
-            return *(start + ptrdiff_t(i));
+            return 0.0;
     }
     
     const size_t & length () const { return len; }
@@ -57,8 +55,8 @@ protected:
     template <class InputIterator, class OutputIterator>
     void presharpen (InputIterator begin, InputIterator end, OutputIterator result);
     
-    template <class InputIterator, class OutputIterator>
-    void interpolate (Interpolant<InputIterator> data, const std::vector<double> &locs, OutputIterator result);
+    template <class OutputIterator>
+    void interpolate (Interpolant data, const std::vector<double> &locs, OutputIterator result);
     
     template <class InputIterator, class OutputIterator>
     void interpolate (InputIterator begin, InputIterator end, const std::vector<double> &locs, OutputIterator result);

@@ -28,11 +28,9 @@ void Resampler::presharpen (InputIterator begin, InputIterator end, OutputIterat
     // *(result+1) = 2*(*result) - *(result-1);
 }
 
-template <class InputIterator, class OutputIterator>
-void Resampler::interpolate (Interpolant<InputIterator> data, const std::vector<double> &locs, OutputIterator result)
+template <class OutputIterator>
+void Resampler::interpolate (Interpolant data, const std::vector<double> &locs, OutputIterator result)
 {
-    const size_t len = data.length();
-    
     for (int j=0; j<locs.size(); j++, ++result)
     {
         // NB: This will only work for kernels of width up to 4
@@ -44,7 +42,7 @@ void Resampler::interpolate (Interpolant<InputIterator> data, const std::vector<
             const double kernelValue = kernel->evaluate(static_cast<double>(k) - locs[j]);
             if (kernelValue != 0.0)
             {
-                value += data[k] * kernelValue;
+                value += data(k) * kernelValue;
                 kernelSum += kernelValue;
             }
         }
@@ -204,7 +202,7 @@ const std::vector<double> & Resampler::run (const std::vector<dbl_vector> &locat
         Array<double> *result = new Array<double>(dims, NA_REAL);
         for (size_t j=0; j<working->countLines(i); j++)
         {
-            Interpolant<Array<double>::Iterator> interpolant(working->beginLine(j,i), working->endLine(j,i));
+            Interpolant interpolant(working->beginLine(j,i), working->endLine(j,i));
             interpolate(interpolant, locations[i], result->beginLine(j,i));
         }
 
