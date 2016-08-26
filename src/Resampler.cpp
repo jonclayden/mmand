@@ -6,14 +6,16 @@ template <class InputIterator, class OutputIterator>
 void Resampler::presharpen (InputIterator begin, InputIterator end, OutputIterator result)
 {
     const ptrdiff_t len = end - begin;
-    std::vector<double> coefs(len, c/b);
-    *result = *begin / b;
-    for (int i=1; i<len; i++)
+    std::vector<double> coefs(len, 0.0);
+    
+    *result = *begin;
+    for (int i=1; i<(len-1); i++)
     {
         coefs[i] = c / (b - a*coefs[i-1]);
         const double temp = a * (*result);
         *(++result) = (*(++begin) - temp) / (b - a*coefs[i-1]);
     }
+    *(++result) = *(++begin);
     
     for (int i=(len-1); i>0; i--)
     {
