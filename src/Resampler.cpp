@@ -22,10 +22,21 @@ void Resampler::presharpen (InputIterator begin, InputIterator end, OutputIterat
         const double temp = coefs[i-1] * (*result);
         *(--result) -= temp;
     }
+}
+
+void Resampler::presharpen ()
+{
+    delete working;
+    working = new Array<double>(*original);
     
-    // *(--result) = 2*(*result) - *(result+1);
-    // result = result + len;
-    // *(result+1) = 2*(*result) - *(result-1);
+    if (toPresharpen)
+    {
+        for (int i=0; i<working->getDimensionality(); i++)
+        {
+            for (size_t j=0; j<working->countLines(i); j++)
+                presharpen(working->beginLine(j,i), working->endLine(j,i), working->beginLine(j,i));
+        }
+    }
 }
 
 template <class OutputIterator>
@@ -182,19 +193,9 @@ const std::vector<double> & Resampler::run (const Eigen::MatrixXd &locations)
 const std::vector<double> & Resampler::run (const std::vector<dbl_vector> &locations)
 {
     const int nDims = locations.size();
-    
-    working = new Array<double>(*original);
-    
-    if (toPresharpen)
-    {
-        for (int i=0; i<nDims; i++)
-        {
-            for (size_t j=0; j<working->countLines(i); j++)
-                presharpen(working->beginLine(j,i), working->endLine(j,i), working->beginLine(j,i));
-        }
-    }
-    
     int_vector dims = original->getDimensions();
+    
+    presharpen();
 
     for (int i=0; i<nDims; i++)
     {

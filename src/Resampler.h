@@ -55,6 +55,8 @@ protected:
     template <class InputIterator, class OutputIterator>
     void presharpen (InputIterator begin, InputIterator end, OutputIterator result);
     
+    void presharpen ();
+    
     template <class OutputIterator>
     void interpolate (Interpolant data, const std::vector<double> &locs, OutputIterator result);
     
