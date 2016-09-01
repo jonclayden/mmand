@@ -42,10 +42,11 @@ void Resampler::presharpen ()
 template <class OutputIterator>
 void Resampler::interpolate (Interpolant data, const std::vector<double> &locs, OutputIterator result)
 {
+    const int baseOffset = std::max(0, kernelWidth/2 - 1);
+    
     for (int j=0; j<locs.size(); j++, ++result)
     {
-        // NB: This will only work for kernels of width up to 4
-        const int base = static_cast<int>(floor(locs[j])) - (kernelWidth>2 ? 1 : 0);
+        const int base = static_cast<int>(floor(locs[j])) - baseOffset;
         double value = 0.0;
         double kernelSum = 0.0;
         for (int k=base; k<base+kernelWidth; k++)
