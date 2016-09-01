@@ -65,63 +65,6 @@ void Resampler::interpolate (Interpolant data, const std::vector<double> &locs, 
     }
 }
 
-template <class InputIterator, class OutputIterator>
-void Resampler::interpolate (InputIterator begin, InputIterator end, const std::vector<double> &locs, OutputIterator result)
-{
-    const ptrdiff_t len = end - begin;
-    std::vector<double> data(begin, end);
-    
-    for (int j=0; j<locs.size(); j++, ++result)
-    {
-        // NB: This will only work for kernels of width up to 4
-        const int base = static_cast<int>(floor(locs[j])) - (kernelWidth>2 ? 1 : 0);
-        double value = 0.0;
-        double kernelSum = 0.0;
-        for (int k=base; k<base+kernelWidth; k++)
-        {
-            if (k >= 0 && k < len)
-            {
-                const double kernelValue = kernel->evaluate(static_cast<double>(k) - locs[j]);
-                if (kernelValue != 0.0)
-                {
-                    value += data[k] * kernelValue;
-                    kernelSum += kernelValue;
-                }
-            }
-        }
-        
-        // if (kernelSum != 1.0 && kernelSum != 0.0)
-        //     value /= kernelSum;;
-        *result = value;
-    }
-}
-
-template <class InputIterator>
-double Resampler::interpolate (InputIterator begin, InputIterator end, const double &loc)
-{
-    const ptrdiff_t len = end - begin;
-    std::vector<double> data(begin, end);
-    
-    double value = 0.0;
-    double kernelSum = 0.0;
-    for (int k=0; k<kernelWidth; k++)
-    {
-        if (k >= 0 && k < len)
-        {
-            const double kernelValue = kernel->evaluate(static_cast<double>(k) - loc);
-            if (kernelValue != 0.0)
-            {
-                value += data[k] * kernelValue;
-                kernelSum += kernelValue;
-            }
-        }
-    }
-    
-    // if (kernelSum != 1.0 && kernelSum != 0.0)
-    //     value /= kernelSum;
-    return value;
-}
-
 double Resampler::samplePoint (const std::vector<int> &base, const std::vector<double> &offset, const int dim)
 {
     static std::vector<double> loc(1);
