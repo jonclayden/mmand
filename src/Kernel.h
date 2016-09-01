@@ -61,22 +61,47 @@ public:
     Array<double> * getArray () const { return values; }
 };
 
-// General polynomial kernel
-// Evaluates to a polynomial function of location, within the support region
-class PolynomialKernel : public Kernel
+template <int N>
+struct PolynomialEvaluator
 {
 private:
-    double term (const double x, const int i) const;
-    
+    const Eigen::VectorXd *coefficients;
+    const PolynomialEvaluator<N-1> child;
+
+public:
+    PolynomialEvaluator (const Eigen::VectorXd *coefficients)
+        : coefficients(coefficients), child(coefficients) {}
+
+    double operator() (const double x) const { return (*coefficients)[N] + x * child(x); }
+};
+
+template <>
+struct PolynomialEvaluator<0>
+{
+private:
+    const Eigen::VectorXd *coefficients;
+
+public:
+    PolynomialEvaluator (const Eigen::VectorXd *coefficients)
+        : coefficients(coefficients) {}
+
+    double operator() (const double x) const { return (*coefficients)[0]; }
+};
+
+// General polynomial kernel
+// Evaluates to a polynomial function of location, within the support region
+template <int Degree>
+class PolynomialKernel : public Kernel
+{
 protected:
-    int degree;
     Eigen::VectorXd coefficients;
+    PolynomialEvaluator<Degree> evaluator;
     
 public:
     PolynomialKernel (const Eigen::VectorXd &coefficients, const double supportMin, const double supportMax)
-        : Kernel(supportMin,supportMax), coefficients(coefficients)
+        : Kernel(supportMin,supportMax), coefficients(coefficients), evaluator(&this->coefficients)
     {
-        this->degree = coefficients.size() - 1;
+        std::reverse(this->coefficients.data(), this->coefficients.data()+this->coefficients.size());
     }
     
     double evaluate (const double x) const;
@@ -119,8 +144,8 @@ public:
 class KernelGenerator
 {
 public:
-    static PolynomialKernel * box ();
-    static PolynomialKernel * triangle ();
+    static PolynomialKernel<0> * box ();
+    static PolynomialKernel<1> * triangle ();
     static CompositeKernel * mitchellNetravali (const double B, const double C);
 };
 

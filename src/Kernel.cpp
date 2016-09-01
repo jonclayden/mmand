@@ -2,22 +2,13 @@
 
 #include "Kernel.h"
 
-double PolynomialKernel::term (const double x, const int i) const
-{
-    if (i == degree)
-        return coefficients[i];
-    else
-        return coefficients[i] + x * term(x, i+1);
-}
-
-double PolynomialKernel::evaluate (const double x) const
+template <int Degree>
+double PolynomialKernel<Degree>::evaluate (const double x) const
 {
     if (!isWithinSupport(x))
         return 0.0;
-    else if (degree < 0)
-        return 0.0;
     else
-        return term(fabs(x), 0);
+        return evaluator(fabs(x));
 }
 
 double CompositeKernel::evaluate (const double x) const
@@ -40,21 +31,21 @@ double CompositeKernel::evaluate (const double x) const
 
 // Box kernel: constant value of 1.0, support of 0.5
 // Used for nearest-neighbour sampling
-PolynomialKernel * KernelGenerator::box ()
+PolynomialKernel<0> * KernelGenerator::box ()
 {
     Eigen::VectorXd coefficients(1);
     coefficients[0] = 1.0;
-    return new PolynomialKernel(coefficients, 0.0, 0.5);
+    return new PolynomialKernel<0>(coefficients, 0.0, 0.5);
 }
 
 // Triangle kernel: linear slope downwards from 0 to 1
 // Used for linear interpolation
-PolynomialKernel * KernelGenerator::triangle ()
+PolynomialKernel<1> * KernelGenerator::triangle ()
 {
     Eigen::VectorXd coefficients(2);
     coefficients[0] = 1.0;
     coefficients[1] = -1.0;
-    return new PolynomialKernel(coefficients, 0.0, 1.0);
+    return new PolynomialKernel<1>(coefficients, 0.0, 1.0);
 }
 
 // Mitchell-Netravali family of cubic kernels
@@ -64,14 +55,14 @@ CompositeKernel * KernelGenerator::mitchellNetravali (const double B, const doub
     coefficients1[0] = 1.0 - B/3.0;
     coefficients1[2] = -3.0 + 2.0*B + C;
     coefficients1[3] = 2.0 - 1.5*B - C;
-    PolynomialKernel *kernel1 = new PolynomialKernel(coefficients1, 0.0, 1.0);
+    PolynomialKernel<3> *kernel1 = new PolynomialKernel<3>(coefficients1, 0.0, 1.0);
     
     Eigen::VectorXd coefficients2 = Eigen::VectorXd::Zero(4);
     coefficients2[0] = 4.0*B/3.0 + 4.0*C;
     coefficients2[1] = -2.0*B - 8.0*C;
     coefficients2[2] = B + 5.0*C;
     coefficients2[3] = -B/6.0 - C;
-    PolynomialKernel *kernel2 = new PolynomialKernel(coefficients2, 1.0, 2.0);
+    PolynomialKernel<3> *kernel2 = new PolynomialKernel<3>(coefficients2, 1.0, 2.0);
     
     std::vector<Kernel*> kernels;
     kernels.push_back(kernel1);
