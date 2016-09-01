@@ -124,14 +124,20 @@ double Resampler::interpolate (InputIterator begin, InputIterator end, const dou
 
 double Resampler::samplePoint (const std::vector<int> &base, const std::vector<double> &offset, const int dim)
 {
+    static std::vector<double> loc(1);
+    static double result;
+    
+    Interpolant interpolant;
+    
     if (dim == 0)
     {
         Array<double>::Iterator start = working->beginLine(base, 0);
         Array<double>::Iterator end = working->endLine(base, 0);
         if (end > start+kernelWidth)
-            return interpolate(start, start+kernelWidth, offset[0]);
+            interpolant = Interpolant(start, start+kernelWidth);
         else
-            return interpolate(start, end, offset[0]);
+            interpolant = Interpolant(start, end);
+        loc[0] = offset[0];
     }
     else
     {
@@ -144,8 +150,12 @@ double Resampler::samplePoint (const std::vector<int> &base, const std::vector<d
             if (temp[dim] < dims[dim])
                 elements.push_back(samplePoint(temp, offset, dim-1));
         }
-        return interpolate(elements.begin(), elements.end(), offset[dim]);
+        interpolant = Interpolant(elements.begin(), elements.end());
+        loc[0] = offset[dim];
     }
+    
+    interpolate(interpolant, loc, &result);
+    return result;
 }
 
 const std::vector<double> & Resampler::run (const Eigen::MatrixXd &locations)
@@ -153,16 +163,8 @@ const std::vector<double> & Resampler::run (const Eigen::MatrixXd &locations)
     const int_vector &dims = original->getDimensions();
     const int nDims = locations.cols();
     const int nSamples = locations.rows();
-    working = new Array<double>(*original);
     
-    if (toPresharpen)
-    {
-        for (int i=0; i<nDims; i++)
-        {
-            for (size_t j=0; j<working->countLines(i); j++)
-                presharpen(working->beginLine(j,i), working->endLine(j,i), working->beginLine(j,i));
-        }
-    }
+    presharpen();
     
     samples.resize(nSamples);
     int_vector base(nDims);

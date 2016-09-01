@@ -15,6 +15,8 @@ private:
     double prestart, postend;
     
 public:
+    Interpolant () {}
+    
     template <class IteratorType>
     Interpolant (IteratorType start, IteratorType end)
         : data(start,end)
