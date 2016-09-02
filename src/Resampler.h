@@ -48,7 +48,7 @@ protected:
     Array<double> *working;
     
     Kernel *kernel;
-    int kernelWidth;
+    int kernelWidth, baseOffset;
     double a, b, c;
     bool toPresharpen;
     
@@ -74,6 +74,7 @@ public:
         kernelWidth = static_cast<int>(floor(2.0 * kernel->getSupportMax()));
         if (kernelWidth > 4)
             throw std::runtime_error("Kernel widths of greater than 4 are not supported");
+        baseOffset = std::max(0, kernelWidth/2 - 1);
         
         a = kernel->evaluate(-1.0);
         b = kernel->evaluate(0.0);

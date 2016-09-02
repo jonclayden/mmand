@@ -42,25 +42,13 @@ void Resampler::presharpen ()
 template <class OutputIterator>
 void Resampler::interpolate (Interpolant data, const std::vector<double> &locs, OutputIterator result)
 {
-    const int baseOffset = std::max(0, kernelWidth/2 - 1);
-    
     for (int j=0; j<locs.size(); j++, ++result)
     {
         const int base = static_cast<int>(floor(locs[j])) - baseOffset;
         double value = 0.0;
-        double kernelSum = 0.0;
         for (int k=base; k<base+kernelWidth; k++)
-        {
-            const double kernelValue = kernel->evaluate(static_cast<double>(k) - locs[j]);
-            if (kernelValue != 0.0)
-            {
-                value += data(k) * kernelValue;
-                kernelSum += kernelValue;
-            }
-        }
+            value += data(k) * kernel->evaluate(static_cast<double>(k) - locs[j]);
         
-        // if (kernelSum != 1.0 && kernelSum != 0.0)
-        //     value /= kernelSum;;
         *result = value;
     }
 }
@@ -112,7 +100,6 @@ const std::vector<double> & Resampler::run (const Eigen::MatrixXd &locations)
     samples.resize(nSamples);
     int_vector base(nDims);
     dbl_vector offset(nDims);
-    const int baseOffset = std::max(0, kernelWidth/2 - 1);
     for (size_t k=0; k<nSamples; k++)
     {
         for (int i=0; i<nDims; i++)
