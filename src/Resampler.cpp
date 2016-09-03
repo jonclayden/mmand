@@ -2,6 +2,10 @@
 
 #include "Resampler.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 template <class InputIterator, class OutputIterator>
 void Resampler::presharpen (InputIterator begin, InputIterator end, OutputIterator result)
 {
@@ -98,10 +102,15 @@ const std::vector<double> & Resampler::run (const Eigen::MatrixXd &locations)
     presharpen();
     
     samples.resize(nSamples);
-    int_vector base(nDims);
-    dbl_vector offset(nDims);
-    for (size_t k=0; k<nSamples; k++)
+    
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+    for (int k=0; k<nSamples; k++)
     {
+        int_vector base(nDims);
+        dbl_vector offset(nDims);
+        
         for (int i=0; i<nDims; i++)
         {
             base[i] = static_cast<int>(floor(locations(k,i))) - baseOffset;
@@ -134,7 +143,11 @@ const std::vector<double> & Resampler::run (const std::vector<dbl_vector> &locat
     {
         dims[i] = locations[i].size();
         Array<double> *result = new Array<double>(dims, NA_REAL);
-        for (size_t j=0; j<working->countLines(i); j++)
+        
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+        for (int j=0; j<working->countLines(i); j++)
         {
             Interpolant interpolant(working->beginLine(j,i), working->endLine(j,i));
             interpolate(interpolant, locations[i], result->beginLine(j,i));
