@@ -7,6 +7,8 @@
 typedef std::vector<double> dbl_vector;
 typedef std::vector<int>    int_vector;
 
+// Base class representing a line of presharpened data
+// Has a value at index -1 and len; zero beyond these extended limits
 class Interpolant
 {
 protected:
@@ -19,6 +21,7 @@ public:
     const size_t & length () const { return len; }
 };
 
+// Cached version, which stores the target data for repeated access
 class CachedInterpolant : public Interpolant
 {
 private:
@@ -47,6 +50,7 @@ public:
     }
 };
 
+// Uncached version, which is faster for single-pass access
 template <class IteratorType>
 class UncachedInterpolant : public Interpolant
 {
@@ -76,6 +80,7 @@ public:
     }
 };
 
+// Main class responsible for resampling
 class Resampler
 {
 protected:
@@ -94,8 +99,8 @@ protected:
     
     void presharpen ();
     
-    // For some reason, virtualisation of the call operator doesn't function as
-    // expected if these methods take an Interpolant rather than a derived class
+    // For some reason, the (virtual) call operator doesn't function as expected
+    // if these methods take an Interpolant rather than a derived class
     template <class InputIterator>
     double interpolate (const UncachedInterpolant<InputIterator> data, const double &loc);
     

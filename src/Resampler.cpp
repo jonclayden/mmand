@@ -6,6 +6,8 @@
 #include <omp.h>
 #endif
 
+// Presharpen data (i.e., calculate spline coefficients) along a single line
+// This function is slightly inscrutable but aims to be fast and general
 template <class InputIterator, class OutputIterator>
 void Resampler::presharpen (InputIterator begin, InputIterator end, OutputIterator result)
 {
@@ -28,6 +30,7 @@ void Resampler::presharpen (InputIterator begin, InputIterator end, OutputIterat
     }
 }
 
+// Presharpen the entire source array
 void Resampler::presharpen ()
 {
     delete working;
@@ -37,12 +40,14 @@ void Resampler::presharpen ()
     {
         for (int i=0; i<working->getDimensionality(); i++)
         {
+            // Note that a "line" is a set of locations varying only along one dimension
             for (size_t j=0; j<working->countLines(i); j++)
                 presharpen(working->beginLine(j,i), working->endLine(j,i), working->beginLine(j,i));
         }
     }
 }
 
+// Single point interpolation for generalised resampling
 template <class InputIterator>
 double Resampler::interpolate (const UncachedInterpolant<InputIterator> data, const double &loc)
 {
@@ -54,6 +59,7 @@ double Resampler::interpolate (const UncachedInterpolant<InputIterator> data, co
     return value;
 }
 
+// Multi-point interpolation for gridded resampling
 template <class OutputIterator>
 void Resampler::interpolate (const CachedInterpolant data, const std::vector<double> &locs, OutputIterator result)
 {
@@ -68,6 +74,8 @@ void Resampler::interpolate (const CachedInterpolant data, const std::vector<dou
     }
 }
 
+// Recursive function for sampling at a particular location in space
+// Starts at dim=(image dimensionality) and works down towards zero
 double Resampler::samplePoint (const std::vector<int> &base, const std::vector<double> &offset, const int dim)
 {
     double result;
@@ -98,6 +106,7 @@ double Resampler::samplePoint (const std::vector<int> &base, const std::vector<d
     return result;
 }
 
+// Main function for generalised resampling
 const std::vector<double> & Resampler::run (const Rcpp::NumericMatrix &locations)
 {
     const int_vector &dims = original->getDimensions();
@@ -137,6 +146,7 @@ const std::vector<double> & Resampler::run (const Rcpp::NumericMatrix &locations
     return samples;
 }
 
+// Main function for gridded resampling
 const std::vector<double> & Resampler::run (const std::vector<dbl_vector> &locations)
 {
     const int nDims = locations.size();
