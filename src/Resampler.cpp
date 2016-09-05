@@ -43,6 +43,16 @@ void Resampler::presharpen ()
     }
 }
 
+double Resampler::interpolate (Interpolant data, const double &loc)
+{
+    const int base = static_cast<int>(floor(loc)) - baseOffset;
+    double value = 0.0;
+    for (int k=base; k<base+kernelWidth; k++)
+        value += data(k) * kernel->evaluate(static_cast<double>(k) - loc);
+    
+    return value;
+}
+
 template <class OutputIterator>
 void Resampler::interpolate (Interpolant data, const std::vector<double> &locs, OutputIterator result)
 {
@@ -59,20 +69,16 @@ void Resampler::interpolate (Interpolant data, const std::vector<double> &locs, 
 
 double Resampler::samplePoint (const std::vector<int> &base, const std::vector<double> &offset, const int dim)
 {
-    static std::vector<double> loc(1);
-    static double result;
-    
-    Interpolant interpolant;
+    double result;
     
     if (dim == 0)
     {
         Array<double>::Iterator start = working->beginLine(base, 0);
         Array<double>::Iterator end = working->endLine(base, 0);
         if (end > start+kernelWidth)
-            interpolant = Interpolant(start, start+kernelWidth);
+            result = interpolate(Interpolant(start,start+kernelWidth), offset[0]);
         else
-            interpolant = Interpolant(start, end);
-        loc[0] = offset[0];
+            result = interpolate(Interpolant(start,end), offset[0]);
     }
     else
     {
@@ -85,11 +91,9 @@ double Resampler::samplePoint (const std::vector<int> &base, const std::vector<d
             if (temp[dim] < dims[dim])
                 elements.push_back(samplePoint(temp, offset, dim-1));
         }
-        interpolant = Interpolant(elements.begin(), elements.end());
-        loc[0] = offset[dim];
+        result = interpolate(Interpolant(elements.begin(),elements.end()), offset[dim]);
     }
     
-    interpolate(interpolant, loc, &result);
     return result;
 }
 
