@@ -13,6 +13,9 @@ test_that("image resampling operations work", {
     expect_that(resample(data,point,triangleKernel()), equals(6))
     expect_that(resample(data,point,mitchellNetravaliKernel()), equals(6))
     
+    points <- point %x% matrix(1,4,1)
+    expect_that(resample(data,points,mitchellNetravaliKernel()), equals(c(6,6,6,6)))
+    
     grid <- list(c(1.5,2.5),c(1.5,2.5))
     expect_that(resample(data,grid,boxKernel()), equals(matrix(c(1,2,4,5),2,2)))
     expect_that(resample(data,grid,triangleKernel()), equals(matrix(c(3,4,6,7),2,2)))
