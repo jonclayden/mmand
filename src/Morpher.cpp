@@ -1,4 +1,4 @@
-#include <RcppEigen.h>
+#include <Rcpp.h>
 
 #include "Morpher.h"
 

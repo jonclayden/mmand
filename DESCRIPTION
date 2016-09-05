@@ -14,7 +14,7 @@ Imports:
     grDevices,
     reportr,
     Rcpp
-LinkingTo: Rcpp, RcppEigen
+LinkingTo: Rcpp
 Description: Provides tools for performing mathematical morphology operations,
     such as erosion and dilation, on data of arbitrary dimensionality. Can also
     be used for finding connected components, resampling, filtering, smoothing

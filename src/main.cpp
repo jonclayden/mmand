@@ -1,4 +1,4 @@
-#include <RcppEigen.h>
+#include <Rcpp.h>
 
 #include "Componenter.h"
 #include "Resampler.h"
@@ -129,7 +129,8 @@ BEGIN_RCPP
     
     if (schemeType.compare("general") == 0)
     {
-        const dbl_vector &samples = resampler.run(as<Eigen::MatrixXd>(samplingScheme["points"]));
+        NumericMatrix points = samplingScheme["points"];
+        const dbl_vector &samples = resampler.run(points);
         return wrap(samples);
     }
     else if (schemeType.compare("grid") == 0)

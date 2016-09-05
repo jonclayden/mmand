@@ -89,7 +89,7 @@ public:
         delete kernel;
     }
     
-    const std::vector<double> & run (const Eigen::MatrixXd &locations);
+    const std::vector<double> & run (const Rcpp::NumericMatrix &locations);
     
     const std::vector<double> & run (const std::vector<dbl_vector> &locations);
 };

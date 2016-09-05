@@ -1,13 +1,13 @@
 #ifndef _ARRAY_H_
 #define _ARRAY_H_
 
-#include <RcppEigen.h>
+#include <Rcpp.h>
 
 struct Neighbourhood
 {
     size_t size;
     std::vector<int> widths;
-    Eigen::ArrayXXi locs;
+    Rcpp::IntegerMatrix locs;
     std::vector<ptrdiff_t> offsets;
 };
 

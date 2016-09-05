@@ -65,11 +65,11 @@ template <int N>
 struct PolynomialEvaluator
 {
 private:
-    const Eigen::VectorXd *coefficients;
+    const Rcpp::NumericVector *coefficients;
     const PolynomialEvaluator<N-1> child;
 
 public:
-    PolynomialEvaluator (const Eigen::VectorXd *coefficients)
+    PolynomialEvaluator (const Rcpp::NumericVector *coefficients)
         : coefficients(coefficients), child(coefficients) {}
 
     double operator() (const double x) const { return (*coefficients)[N] + x * child(x); }
@@ -79,10 +79,10 @@ template <>
 struct PolynomialEvaluator<0>
 {
 private:
-    const Eigen::VectorXd *coefficients;
+    const Rcpp::NumericVector *coefficients;
 
 public:
-    PolynomialEvaluator (const Eigen::VectorXd *coefficients)
+    PolynomialEvaluator (const Rcpp::NumericVector *coefficients)
         : coefficients(coefficients) {}
 
     double operator() (const double x) const { return (*coefficients)[0]; }
@@ -94,14 +94,14 @@ template <int Degree>
 class PolynomialKernel : public Kernel
 {
 protected:
-    Eigen::VectorXd coefficients;
+    Rcpp::NumericVector coefficients;
     PolynomialEvaluator<Degree> evaluator;
     
 public:
-    PolynomialKernel (const Eigen::VectorXd &coefficients, const double supportMin, const double supportMax)
+    PolynomialKernel (const Rcpp::NumericVector &coefficients, const double supportMin, const double supportMax)
         : Kernel(supportMin,supportMax), coefficients(coefficients), evaluator(&this->coefficients)
     {
-        std::reverse(this->coefficients.data(), this->coefficients.data()+this->coefficients.size());
+        std::reverse(this->coefficients.begin(), this->coefficients.end());
     }
     
     double evaluate (const double x) const;

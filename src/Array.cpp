@@ -1,4 +1,4 @@
-#include <RcppEigen.h>
+#include <Rcpp.h>
 
 #include "Array.h"
 
@@ -72,7 +72,7 @@ Neighbourhood Array<DataType>::getNeighbourhood (const std::vector<int> &widths)
         steps[i+1] = steps[i] * dims[i];
     }
     
-    neighbourhood.locs.resize(neighbourhood.size, nDims);
+    neighbourhood.locs = Rcpp::IntegerMatrix(neighbourhood.size, nDims);
     neighbourhood.offsets.resize(neighbourhood.size);
     
     for (int j=0; j<neighbourhood.size; j++)

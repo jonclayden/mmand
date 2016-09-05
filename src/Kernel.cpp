@@ -1,4 +1,4 @@
-#include <RcppEigen.h>
+#include <Rcpp.h>
 
 #include "Kernel.h"
 
@@ -33,7 +33,7 @@ double CompositeKernel::evaluate (const double x) const
 // Used for nearest-neighbour sampling
 PolynomialKernel<0> * KernelGenerator::box ()
 {
-    Eigen::VectorXd coefficients(1);
+    Rcpp::NumericVector coefficients(1);
     coefficients[0] = 1.0;
     return new PolynomialKernel<0>(coefficients, 0.0, 0.5);
 }
@@ -42,7 +42,7 @@ PolynomialKernel<0> * KernelGenerator::box ()
 // Used for linear interpolation
 PolynomialKernel<1> * KernelGenerator::triangle ()
 {
-    Eigen::VectorXd coefficients(2);
+    Rcpp::NumericVector coefficients(2);
     coefficients[0] = 1.0;
     coefficients[1] = -1.0;
     return new PolynomialKernel<1>(coefficients, 0.0, 1.0);
@@ -51,13 +51,13 @@ PolynomialKernel<1> * KernelGenerator::triangle ()
 // Mitchell-Netravali family of cubic kernels
 CompositeKernel * KernelGenerator::mitchellNetravali (const double B, const double C)
 {
-    Eigen::VectorXd coefficients1 = Eigen::VectorXd::Zero(4);
+    Rcpp::NumericVector coefficients1 = Rcpp::NumericVector(4, 0.0);
     coefficients1[0] = 1.0 - B/3.0;
     coefficients1[2] = -3.0 + 2.0*B + C;
     coefficients1[3] = 2.0 - 1.5*B - C;
     PolynomialKernel<3> *kernel1 = new PolynomialKernel<3>(coefficients1, 0.0, 1.0);
     
-    Eigen::VectorXd coefficients2 = Eigen::VectorXd::Zero(4);
+    Rcpp::NumericVector coefficients2 = Rcpp::NumericVector(4, 0.0);
     coefficients2[0] = 4.0*B/3.0 + 4.0*C;
     coefficients2[1] = -2.0*B - 8.0*C;
     coefficients2[2] = B + 5.0*C;

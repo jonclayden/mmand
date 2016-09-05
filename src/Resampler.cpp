@@ -1,4 +1,4 @@
-#include <RcppEigen.h>
+#include <Rcpp.h>
 
 #include "Resampler.h"
 
@@ -93,7 +93,7 @@ double Resampler::samplePoint (const std::vector<int> &base, const std::vector<d
     return result;
 }
 
-const std::vector<double> & Resampler::run (const Eigen::MatrixXd &locations)
+const std::vector<double> & Resampler::run (const Rcpp::NumericMatrix &locations)
 {
     const int_vector &dims = original->getDimensions();
     const int nDims = locations.cols();
