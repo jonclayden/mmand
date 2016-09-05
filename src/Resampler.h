@@ -9,16 +9,24 @@ typedef std::vector<int>    int_vector;
 
 class Interpolant
 {
-private:
-    dbl_vector data;
+protected:
     size_t len;
     double prestart, postend;
     
 public:
-    Interpolant () {}
+    virtual double operator() (ptrdiff_t i) const { return 0.0; }
     
+    const size_t & length () const { return len; }
+};
+
+class CachedInterpolant : public Interpolant
+{
+private:
+    dbl_vector data;
+    
+public:
     template <class IteratorType>
-    Interpolant (IteratorType start, IteratorType end)
+    CachedInterpolant (IteratorType start, IteratorType end)
         : data(start,end)
     {
         len = data.size();
@@ -26,7 +34,7 @@ public:
         postend = 2*data[len-1] - data[len-2];
     }
     
-    const double operator() (ptrdiff_t i) const
+    double operator() (ptrdiff_t i) const
     {
         if (i > -1 && i < len)
             return data[i];
@@ -37,8 +45,35 @@ public:
         else
             return 0.0;
     }
+};
+
+template <class IteratorType>
+class UncachedInterpolant : public Interpolant
+{
+private:
+    IteratorType start, end;
     
-    const size_t & length () const { return len; }
+public:
+    UncachedInterpolant (IteratorType start, IteratorType end)
+        : start(start), end(end)
+    {
+        len = end - start;
+        prestart = 2*(*start) - (*(++start));
+        --end;
+        postend = 2*(*end) - (*(--end));
+    }
+    
+    double operator() (ptrdiff_t i) const
+    {
+        if (i > -1 && i < len)
+            return *(start + i);
+        else if (i == -1)
+            return prestart;
+        else if (i == len)
+            return postend;
+        else
+            return 0.0;
+    }
 };
 
 class Resampler
@@ -59,10 +94,13 @@ protected:
     
     void presharpen ();
     
-    double interpolate (Interpolant data, const double &loc);
+    // For some reason, virtualisation of the call operator doesn't function as
+    // expected if these methods take an Interpolant rather than a derived class
+    template <class InputIterator>
+    double interpolate (const UncachedInterpolant<InputIterator> data, const double &loc);
     
     template <class OutputIterator>
-    void interpolate (Interpolant data, const std::vector<double> &locs, OutputIterator result);
+    void interpolate (const CachedInterpolant data, const std::vector<double> &locs, OutputIterator result);
     
     double samplePoint (const std::vector<int> &base, const std::vector<double> &offset, const int dim);
     

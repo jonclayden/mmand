@@ -43,24 +43,25 @@ void Resampler::presharpen ()
     }
 }
 
-double Resampler::interpolate (Interpolant data, const double &loc)
+template <class InputIterator>
+double Resampler::interpolate (const UncachedInterpolant<InputIterator> data, const double &loc)
 {
     const int base = static_cast<int>(floor(loc)) - baseOffset;
     double value = 0.0;
-    for (int k=base; k<base+kernelWidth; k++)
+    for (ptrdiff_t k=base; k<base+kernelWidth; k++)
         value += data(k) * kernel->evaluate(static_cast<double>(k) - loc);
     
     return value;
 }
 
 template <class OutputIterator>
-void Resampler::interpolate (Interpolant data, const std::vector<double> &locs, OutputIterator result)
+void Resampler::interpolate (const CachedInterpolant data, const std::vector<double> &locs, OutputIterator result)
 {
     for (int j=0; j<locs.size(); j++, ++result)
     {
         const int base = static_cast<int>(floor(locs[j])) - baseOffset;
         double value = 0.0;
-        for (int k=base; k<base+kernelWidth; k++)
+        for (ptrdiff_t k=base; k<base+kernelWidth; k++)
             value += data(k) * kernel->evaluate(static_cast<double>(k) - locs[j]);
         
         *result = value;
@@ -76,9 +77,9 @@ double Resampler::samplePoint (const std::vector<int> &base, const std::vector<d
         Array<double>::Iterator start = working->beginLine(base, 0);
         Array<double>::Iterator end = working->endLine(base, 0);
         if (end > start+kernelWidth)
-            result = interpolate(Interpolant(start,start+kernelWidth), offset[0]);
+            result = interpolate(UncachedInterpolant<Array<double>::Iterator>(start,start+kernelWidth), offset[0]);
         else
-            result = interpolate(Interpolant(start,end), offset[0]);
+            result = interpolate(UncachedInterpolant<Array<double>::Iterator>(start,end), offset[0]);
     }
     else
     {
@@ -91,7 +92,7 @@ double Resampler::samplePoint (const std::vector<int> &base, const std::vector<d
             if (temp[dim] < dims[dim])
                 elements.push_back(samplePoint(temp, offset, dim-1));
         }
-        result = interpolate(Interpolant(elements.begin(),elements.end()), offset[dim]);
+        result = interpolate(UncachedInterpolant<std::vector<double>::iterator>(elements.begin(),elements.end()), offset[dim]);
     }
     
     return result;
@@ -153,7 +154,7 @@ const std::vector<double> & Resampler::run (const std::vector<dbl_vector> &locat
 #endif
         for (int j=0; j<working->countLines(i); j++)
         {
-            Interpolant interpolant(working->beginLine(j,i), working->endLine(j,i));
+            CachedInterpolant interpolant(working->beginLine(j,i), working->endLine(j,i));
             interpolate(interpolant, locations[i], result->beginLine(j,i));
         }
 
