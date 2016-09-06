@@ -16,6 +16,9 @@ protected:
     double prestart, postend;
     
 public:
+    Interpolant ()
+        : prestart(0.0), postend(0.0) {}
+    
     virtual double operator() (ptrdiff_t i) const { return 0.0; }
     
     const size_t & length () const { return len; }
@@ -33,8 +36,11 @@ public:
         : data(start,end)
     {
         len = data.size();
-        prestart = 2*data[0] - data[1];
-        postend = 2*data[len-1] - data[len-2];
+        if (len > 1)
+        {
+            prestart = 2*data[0] - data[1];
+            postend = 2*data[len-1] - data[len-2];
+        }
     }
     
     double operator() (ptrdiff_t i) const
@@ -62,9 +68,12 @@ public:
         : start(start), end(end)
     {
         len = end - start;
-        prestart = 2*(*start) - (*(++start));
-        --end;
-        postend = 2*(*end) - (*(--end));
+        if (len > 1)
+        {
+            prestart = 2*(*start) - (*(++start));
+            --end;
+            postend = 2*(*end) - (*(--end));
+        }
     }
     
     double operator() (ptrdiff_t i) const
