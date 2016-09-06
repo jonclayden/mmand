@@ -2,6 +2,12 @@ Significant changes to the mmand package are laid out below for each release.
 
 ===============================================================================
 
+VERSION 1.4.1
+
+- A buffer overflow picked up by valgrind has been corrected.
+
+===============================================================================
+
 VERSION 1.4.0
 
 - The C++ back-end for resample() has been rewritten to improve speed and fix
