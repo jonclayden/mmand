@@ -100,7 +100,9 @@ display.matrix <- function (x, ...)
 #' @export
 display.array <- function (x, max = 1, ...)
 {
-    if (length(dim(x)) != 3)
+    if (length(dim(x)) == 2)
+        return (display.default(x, ...))
+    else if (length(dim(x)) != 3)
         stop("Only three-dimensional arrays may be displayed")
     
     mode <- storage.mode(x)
