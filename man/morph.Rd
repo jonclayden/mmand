@@ -7,9 +7,10 @@
 \usage{
 morph(x, kernel, ...)
 
-\method{morph}{default}(x, kernel, operator = c("+", "-", "*", "i", "1", "0"),
-  merge = c("sum", "min", "max", "mean", "median"), value = NULL,
-  valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, ...)
+\method{morph}{default}(x, kernel, operator = c("+", "-", "*", "i", "1", "0",
+  "=="), merge = c("sum", "min", "max", "mean", "median", "all", "any"),
+  value = NULL, valueNot = NULL, nNeighbours = NULL,
+  nNeighboursNot = NULL, ...)
 }
 \arguments{
 \item{x}{Any object. For the default method, this must be coercible to an

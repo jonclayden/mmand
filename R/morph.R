@@ -49,7 +49,7 @@ morph <- function (x, kernel, ...)
 
 #' @rdname morph
 #' @export
-morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0"), merge = c("sum","min","max","mean","median"), value = NULL, valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, ...)
+morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0","=="), merge = c("sum","min","max","mean","median","all","any"), value = NULL, valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, ...)
 {
     x <- as.array(x)
     if (!is.numeric(x))

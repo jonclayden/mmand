@@ -7,8 +7,8 @@
 typedef std::vector<double> dbl_vector;
 typedef std::vector<int>    int_vector;
 
-enum ElementOp { PlusOp, MinusOp, MultiplyOp, IdentityOp, OneOp, ZeroOp };
-enum MergeOp { SumOp, MinOp, MaxOp, MeanOp, MedianOp };
+enum ElementOp { PlusOp, MinusOp, MultiplyOp, IdentityOp, OneOp, ZeroOp, EqualOp };
+enum MergeOp { SumOp, MinOp, MaxOp, MeanOp, MedianOp, AllOp, AnyOp };
 
 class Morpher
 {

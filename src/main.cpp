@@ -169,6 +169,8 @@ BEGIN_RCPP
         elementOp = OneOp;
     else if (elementOpString.compare("0") == 0)
         elementOp = ZeroOp;
+    else if (elementOpString.compare("==") == 0)
+        elementOp = EqualOp;
     else
         throw new runtime_error("Unsupported element operation specified");
     
@@ -184,6 +186,10 @@ BEGIN_RCPP
         mergeOp = MeanOp;
     else if (mergeOpString.compare("median") == 0)
         mergeOp = MedianOp;
+    else if (mergeOpString.compare("all") == 0)
+        mergeOp = AllOp;
+    else if (mergeOpString.compare("any") == 0)
+        mergeOp = AnyOp;
     else
         throw new runtime_error("Unsupported merge operation specified");
     

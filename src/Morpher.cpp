@@ -84,6 +84,10 @@ void Morpher::resetValues ()
         values.push_back(R_PosInf);
     else if (mergeOp == MaxOp)
         values.push_back(R_NegInf);
+    else if (mergeOp == AllOp)
+        values.push_back(1.0);
+    else if (mergeOp == AnyOp)
+        values.push_back(0.0);
 }
 
 void Morpher::accumulateValue (double value)
@@ -95,7 +99,11 @@ void Morpher::accumulateValue (double value)
         values[0] = value;
     else if (mergeOp == MaxOp && value > values[0])
         values[0] = value;
-    else if (mergeOp != MinOp && mergeOp != MaxOp)
+    else if (mergeOp == AllOp && value == 0.0)
+        values[0] = 0.0;
+    else if (mergeOp == AnyOp && value != 0.0)
+        values[0] = 1.0;
+    else if (mergeOp != MinOp && mergeOp != MaxOp && mergeOp != AllOp && mergeOp != AnyOp)
         values.push_back(value);
 }
 
@@ -217,6 +225,10 @@ std::vector<double> & Morpher::run ()
                     case ZeroOp:
                     if (kernelArray->at(k) != 0.0)
                         accumulateValue(0.0);
+                    break;
+                    
+                    case EqualOp:
+                    accumulateValue(original->at(i+sourceNeighbourhood.offsets[k]) == kernelArray->at(k) ? 1.0 : 0.0);
                     break;
                 }
                 
