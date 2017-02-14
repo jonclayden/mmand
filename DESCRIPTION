@@ -4,16 +4,8 @@ Date: 2016-09-06
 Title: Mathematical Morphology in Any Number of Dimensions
 Author: Jon Clayden
 Maintainer: Jon Clayden <code@clayden.org>
-Suggests:
-    png,
-    testthat (>= 0.9)
-Imports:
-    stats,
-    methods,
-    graphics,
-    grDevices,
-    reportr,
-    Rcpp
+Suggests: png, testthat (>= 0.9)
+Imports: reportr, Rcpp
 LinkingTo: Rcpp
 Description: Provides tools for performing mathematical morphology operations,
     such as erosion and dilation, on data of arbitrary dimensionality. Can also
