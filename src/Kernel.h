@@ -141,6 +141,19 @@ public:
     double evaluate (const double x) const;
 };
 
+// Lanczos kernel: windowed sinc kernel with three lobes
+class LanczosKernel : public Kernel
+{
+public:
+    LanczosKernel ()
+    {
+        supportMin = -3.0;
+        supportMax = 3.0;
+    }
+    
+    double evaluate (const double x) const;
+};
+
 // Kernel generator
 // A container for static functions to generate special case kernels easily
 class KernelGenerator
@@ -149,6 +162,7 @@ public:
     static PolynomialKernel<0> * box ();
     static PolynomialKernel<1> * triangle ();
     static CompositeKernel * mitchellNetravali (const double B, const double C);
+    static LanczosKernel * lanczos ();
 };
 
 #endif

@@ -9,6 +9,7 @@
 \alias{kernelArray}
 \alias{kernelFunction}
 \alias{kernels}
+\alias{lanczosKernel}
 \alias{mitchellNetravaliKernel}
 \alias{mnKernel}
 \alias{shapeKernel}
@@ -32,7 +33,8 @@ gaussianKernel(sigma, dim = length(sigma), size = 6 * sigma,
 
 sobelKernel(dim, axis = 1)
 
-kernelFunction(name = c("box", "triangle", "mitchell-netravali"), ...)
+kernelFunction(name = c("box", "triangle", "mitchell-netravali", "lanczos"),
+  ...)
 
 boxKernel()
 
@@ -41,6 +43,8 @@ triangleKernel()
 mitchellNetravaliKernel(B = 1/3, C = 1/3)
 
 mnKernel(B = 1/3, C = 1/3)
+
+lanczosKernel()
 }
 \arguments{
 \item{object}{Any object.}
@@ -129,7 +133,8 @@ separation in each dimension. The default parameters are the ones
 recommended by Mitchell and Netravali as a good trade-off between various
 artefacts, but other well-known special cases include B=1, C=0 (the cubic
 B-spline) and B=0, C=0.5 (the Catmull-Rom spline). \code{mnKernel} is a
-shorter alias for \code{mitchellNetravaliKernel}.
+shorter alias for \code{mitchellNetravaliKernel}. Finally, the Lanczos
+kernel is a three-lobe windowed sinc function.
 }
 \examples{
 shapeKernel(c(3,5), type="diamond")

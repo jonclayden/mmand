@@ -126,14 +126,21 @@ public:
         : original(original), working(NULL), kernel(kernel)
     {
         kernelWidth = static_cast<int>(floor(2.0 * kernel->getSupportMax()));
-        if (kernelWidth > 4)
-            throw std::runtime_error("Kernel widths of greater than 4 are not supported");
         baseOffset = std::max(0, kernelWidth/2 - 1);
         
-        a = kernel->evaluate(-1.0);
-        b = kernel->evaluate(0.0);
-        c = kernel->evaluate(1.0);
-        toPresharpen = (a != 0.0 || b != 1.0 || c != 0.0);
+        // We will need to presharpen the data if the kernel is not 1 at its
+        // centre and 0 at every integer location
+        toPresharpen = false;
+        if (fabs(kernel->evaluate(0.0) - 1.0) > 1.0e-6)
+            toPresharpen = true;
+        for (int i=1; i<(kernelWidth/2); i++)
+        {
+            if (fabs(kernel->evaluate(static_cast<double>(i))) > 1.0e-6)
+            {
+                toPresharpen = true;
+                break;
+            }
+        }
     }
     
     ~Resampler ()

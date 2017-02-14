@@ -36,6 +36,8 @@ Kernel * kernelFromElements (SEXP kernel_)
         kernel = KernelGenerator::triangle();
     else if (kernelName.compare("mitchell-netravali") == 0)
         kernel = KernelGenerator::mitchellNetravali(as<double>(kernelElements["B"]), as<double>(kernelElements["C"]));
+    else if (kernelName.compare("lanczos") == 0)
+        kernel = KernelGenerator::lanczos();
     
     return kernel;
 }

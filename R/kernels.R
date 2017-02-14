@@ -34,7 +34,8 @@
 #' recommended by Mitchell and Netravali as a good trade-off between various
 #' artefacts, but other well-known special cases include B=1, C=0 (the cubic
 #' B-spline) and B=0, C=0.5 (the Catmull-Rom spline). \code{mnKernel} is a
-#' shorter alias for \code{mitchellNetravaliKernel}.
+#' shorter alias for \code{mitchellNetravaliKernel}. Finally, the Lanczos
+#' kernel is a three-lobe windowed sinc function.
 #' 
 #' @param object Any object.
 #' @param values A numeric vector or array, containing the values of the kernel
@@ -282,7 +283,7 @@ sobelKernel <- function (dim, axis = 1)
 
 #' @rdname kernels
 #' @export
-kernelFunction <- function (name = c("box","triangle","mitchell-netravali"), ...)
+kernelFunction <- function (name = c("box","triangle","mitchell-netravali","lanczos"), ...)
 {
     if (is.character(name))
         name <- match.arg(name)
@@ -320,3 +321,10 @@ mitchellNetravaliKernel <- function (B = 1/3, C = 1/3)
 #' @rdname kernels
 #' @export
 mnKernel <- mitchellNetravaliKernel
+
+#' @rdname kernels
+#' @export
+lanczosKernel <- function ()
+{
+    return (kernelFunction("lanczos"))
+}

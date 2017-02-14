@@ -29,6 +29,16 @@ double CompositeKernel::evaluate (const double x) const
     }
 }
 
+double LanczosKernel::evaluate (const double x) const
+{
+    if (!isWithinSupport(x))
+        return 0.0;
+    else if (x == 0.0)
+        return 1.0;
+    else
+        return (3.0 * sinpi(x) * sinpi(x/3.0)) / (R_pow_di(x*M_PI, 2));
+}
+
 // Box kernel: constant value of 1.0, support of 0.5
 // Used for nearest-neighbour sampling
 PolynomialKernel<0> * KernelGenerator::box ()
@@ -68,4 +78,9 @@ CompositeKernel * KernelGenerator::mitchellNetravali (const double B, const doub
     kernels.push_back(kernel1);
     kernels.push_back(kernel2);
     return new CompositeKernel(kernels);
+}
+
+LanczosKernel * KernelGenerator::lanczos ()
+{
+    return new LanczosKernel();
 }
