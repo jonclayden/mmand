@@ -141,6 +141,18 @@ public:
                 break;
             }
         }
+        
+        if (toPresharpen)
+        {
+            if (kernelWidth > 4)
+                throw std::runtime_error("Kernels of width of greater than 4 that require presharpening are not supported");
+            else
+            {
+                a = kernel->evaluate(-1.0);
+                b = kernel->evaluate(0.0);
+                c = kernel->evaluate(1.0);
+            }
+        }
     }
     
     ~Resampler ()
