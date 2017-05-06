@@ -1,5 +1,5 @@
-library(png)
-fan <- readPNG(system.file("images", "fan-small.png", package="mmand"))
+library(loder)
+fan <- readPng(system.file("images", "fan-small.png", package="mmand"))
 
 context("Mathematical morphology and filtering")
 

@@ -26,13 +26,15 @@ used for demonstration below. It can be read in and displayed using the code
 
 ```R
 library(mmand)
-library(png)
+library(loder)
 
-fan <- readPNG(system.file("images", "fan.png", package="mmand"))
+fan <- readPng(system.file("images", "fan.png", package="mmand"))
 display(fan)
 ```
 
 ![Fan test image](http://www.clayden.org/files/mmand/fan.png)
+
+Here we are using the [loder](https://github.com/jonclayden/loder) package to read the PNG file.
 
 ## Mathematical morphology
 
@@ -345,9 +347,9 @@ given scale factor. Here, we can use it to scale a smaller version of the fan
 image up to the size of the larger version:
 
 ```R
-library(png)
+library(loder)
 
-fan_small <- readPNG(system.file("images", "fan-small.png", package="mmand"))
+fan_small <- readPng(system.file("images", "fan-small.png", package="mmand"))
 dim(fan_small)
 # [1] 128 128
 
