@@ -384,3 +384,73 @@ closing <- function (x, kernel)
     
     return (erode(dilate(x, kernel), kernel))
 }
+
+#' Skeletonise an array
+#' 
+#' @param x An object that can be coerced to an array, or for which a
+#'   \code{\link{morph}} method exists.
+#' @param kernel An array representing the kernel to be used. See
+#'   \code{\link{shapeKernel}} for functions to generate a suitable kernel.
+#' @return A skeletonised array with the same dimensions as the original array.
+#' 
+#' @references
+#' S. Beucher (1994). Digital skeletons in Euclidean and geodesic spaces.
+#' Signal Processing 38(1):127-141.
+#' \url{https://doi.org/10.1016/0165-1684(94)90061-2}.
+#' 
+#' @export skeletonise skeletonize
+skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul","beucher","sequential"))
+{
+    method <- match.arg(method)
+    
+    if (method == "lantuejoul")
+    {
+        result <- x - opening(x, kernel)
+        eroded <- x
+    
+        repeat
+        {
+            eroded <- erode(eroded, kernel)
+            if (all(eroded == 0))
+                break
+            result <- result | (eroded - opening(eroded,kernel))
+        }
+
+        return (array(as.integer(result), dim=dim(x)))
+    }
+    else if (method == "beucher")
+    {
+        repeat
+        {
+            previous <- x
+            x <- erode(x,kernel) | (dilate(x - opening(x,kernel), kernel) & x)
+            storage.mode(x) <- "integer"
+            if (isTRUE(all.equal(x, previous)))
+                return (x)
+        }
+    }
+    else
+    {
+        k1 <- matrix(c(0,NA,1,0,1,1,0,NA,1), 3, 3)
+        k2 <- matrix(c(NA,1,NA,0,1,1,0,0,NA), 3, 3)
+        rot.fn <- function(x) {t(apply(x, 2, rev))}
+        hom <- function(x,k) morph(x, k, operator="==", merge="all", value=1)
+    
+        repeat
+        {
+            previous <- x
+            for (i in 1:4)
+            {
+                x <- x & !hom(x,k1)
+                storage.mode(x) <- "integer"
+                x <- x & !hom(x,k2)
+                storage.mode(x) <- "integer"
+                k1 <- rot.fn(k1)
+                k2 <- rot.fn(k2)
+            }
+        
+            if (isTRUE(all.equal(x, previous)))
+                return (x)
+        }
+    }
+}
