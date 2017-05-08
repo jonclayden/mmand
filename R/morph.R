@@ -113,8 +113,8 @@ binary <- function (x)
 #' @author Jon Clayden <code@@clayden.org>
 #' @seealso \code{\link{morph}} for the function underlying this operation, and
 #'   \code{\link{erode}} for mathematical morphology functions.
-#' @export
-binarise <- function (x)
+#' @export binarise binarize
+binarise <- binarize <- function (x)
 {
     return (morph(x, kernel=1, operator="1", valueNot=0))
 }
