@@ -394,6 +394,9 @@ closing <- function (x, kernel)
 #' @return A skeletonised array with the same dimensions as the original array.
 #' 
 #' @references
+#' C. Lantuéjoul (1977). Sur le modèle de Johnson-Mehl généralisé. Technical
+#' report, Centre de Morphologie Mathématique, Fontainebleau, France.
+#' 
 #' S. Beucher (1994). Digital skeletons in Euclidean and geodesic spaces.
 #' Signal Processing 38(1):127-141.
 #' \url{https://doi.org/10.1016/0165-1684(94)90061-2}.
@@ -402,6 +405,7 @@ closing <- function (x, kernel)
 skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul","beucher","sequential"))
 {
     method <- match.arg(method)
+    result <- x
     
     if (method == "lantuejoul")
     {
@@ -415,18 +419,15 @@ skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul
                 break
             result <- result | (eroded - opening(eroded,kernel))
         }
-
-        return (array(as.integer(result), dim=dim(x)))
     }
     else if (method == "beucher")
     {
         repeat
         {
-            previous <- x
+            result <- x
             x <- erode(x,kernel) | (dilate(x - opening(x,kernel), kernel) & x)
-            storage.mode(x) <- "integer"
-            if (isTRUE(all.equal(x, previous)))
-                return (x)
+            if (isTRUE(all.equal(x, result)))
+                break
         }
     }
     else
@@ -438,19 +439,19 @@ skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul
     
         repeat
         {
-            previous <- x
+            result <- x
             for (i in 1:4)
             {
                 x <- x & !hom(x,k1)
-                storage.mode(x) <- "integer"
                 x <- x & !hom(x,k2)
-                storage.mode(x) <- "integer"
                 k1 <- rot.fn(k1)
                 k2 <- rot.fn(k2)
             }
         
-            if (isTRUE(all.equal(x, previous)))
-                return (x)
+            if (isTRUE(all.equal(x, result)))
+                break
         }
     }
+    
+    return (array(as.integer(result), dim=dim(x)))
 }
