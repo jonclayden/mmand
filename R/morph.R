@@ -417,7 +417,7 @@ skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul
             eroded <- erode(eroded, kernel)
             if (all(eroded == 0))
                 break
-            result <- result | (eroded - opening(eroded,kernel))
+            result <- pmax(result, eroded - opening(eroded,kernel))
         }
     }
     else if (method == "beucher")
