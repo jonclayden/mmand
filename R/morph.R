@@ -387,12 +387,24 @@ closing <- function (x, kernel)
 
 #' Skeletonise an array
 #' 
+#' Skeletonisation is the process of thinning a shape to a medial line or
+#' surface, and can be achieved using elementary mathematical morphology
+#' operations in a number of ways.
+#' 
 #' @param x An object that can be coerced to an array, or for which a
 #'   \code{\link{morph}} method exists.
-#' @param kernel An array representing the kernel to be used. See
-#'   \code{\link{shapeKernel}} for functions to generate a suitable kernel.
+#' @param kernel An array representing the kernel to be used for the underlying
+#'   morphology operations. The kernel is fixed for the \code{"hitormiss"}
+#'   method, so this argument will be ignored.
+#' @param method A string giving the method to use. See Details.
 #' @return A skeletonised array with the same dimensions as the original array.
 #' 
+#' @examples
+#' x <- c(0,0,1,0,0,0,1,1,1,0,0)
+#' k <- c(1,1,1)
+#' skeletonise(x,k)
+#' @author Jon Clayden <code@@clayden.org>
+#' @seealso \code{\link{morphology}}
 #' @references
 #' C. Lantuéjoul (1977). Sur le modèle de Johnson-Mehl généralisé. Technical
 #' report, Centre de Morphologie Mathématique, Fontainebleau, France.
@@ -402,10 +414,10 @@ closing <- function (x, kernel)
 #' \url{https://doi.org/10.1016/0165-1684(94)90061-2}.
 #' 
 #' @export skeletonise skeletonize
-skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul","beucher","sequential"))
+skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul","beucher","hitormiss"))
 {
     method <- match.arg(method)
-    result <- x
+    x <- result <- as.array(x)
     
     if (method == "lantuejoul")
     {
@@ -434,18 +446,18 @@ skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul
     {
         k1 <- matrix(c(0,NA,1,0,1,1,0,NA,1), 3, 3)
         k2 <- matrix(c(NA,1,NA,0,1,1,0,0,NA), 3, 3)
-        rot.fn <- function(x) {t(apply(x, 2, rev))}
-        hom <- function(x,k) morph(x, k, operator="==", merge="all", value=1)
+        rotateKernel <- function(x) t(apply(x, 2, rev))
+        hitOrMiss <- function(x,k) morph(x, k, operator="==", merge="all", value=1)
     
         repeat
         {
             result <- x
             for (i in 1:4)
             {
-                x <- x & !hom(x,k1)
-                x <- x & !hom(x,k2)
-                k1 <- rot.fn(k1)
-                k2 <- rot.fn(k2)
+                x <- x & !hitOrMiss(x, k1)
+                x <- x & !hitOrMiss(x, k2)
+                k1 <- rotateKernel(k1)
+                k2 <- rotateKernel(k2)
             }
         
             if (isTRUE(all.equal(x, result)))
