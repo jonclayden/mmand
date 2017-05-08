@@ -37,7 +37,7 @@ resample <- function (x, points, kernel, ...)
 resample.default <- function (x, points, kernel, pointType = c("auto","general","grid"), ...)
 {
     x <- as.array(x)
-    if (!is.numeric(x))
+    if (!is.numeric(x) && !is.logical(x))
         report(OL$Error, "Target array must be numeric")
     
     if (!isKernelFunction(kernel))

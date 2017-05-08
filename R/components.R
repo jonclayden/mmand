@@ -12,7 +12,7 @@
 symmetric <- function (x)
 {
     x <- as.array(x)
-    if (!is.numeric(x))
+    if (!is.numeric(x) && !is.logical(x))
         report(OL$Error, "Array must be numeric")
     
     return (.Call("is_symmetric", x, PACKAGE="mmand"))
@@ -54,7 +54,7 @@ components <- function (x, kernel, ...)
 components.default <- function (x, kernel, ...)
 {
     x <- as.array(x)
-    if (!is.numeric(x))
+    if (!is.numeric(x) && !is.logical(x))
         report(OL$Error, "Target array must be numeric")
     
     if (!isKernelArray(kernel))

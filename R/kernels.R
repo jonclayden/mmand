@@ -182,7 +182,7 @@ kernelArray <- function (values)
     else
     {
         values <- as.array(values)
-        if (!is.numeric(values))
+        if (!is.numeric(values) && !is.logical(values))
             report(OL$Error, "Kernel must be numeric")
         storage.mode(values) <- "double"
         return (structure(values, class=c("kernelArray","kernel")))

@@ -52,7 +52,7 @@ morph <- function (x, kernel, ...)
 morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0","=="), merge = c("sum","min","max","mean","median","all","any"), value = NULL, valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, ...)
 {
     x <- as.array(x)
-    if (!is.numeric(x))
+    if (!is.numeric(x) && !is.logical(x))
         report(OL$Error, "Target array must be numeric")
     
     if (!isKernelArray(kernel))
@@ -96,7 +96,7 @@ morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0","==")
 binary <- function (x)
 {
     x <- as.array(x)
-    if (!is.numeric(x))
+    if (!is.numeric(x) && !is.logical(x))
         report(OL$Error, "Array must be numeric")
     
     return (.Call("is_binary", x, PACKAGE="mmand"))
