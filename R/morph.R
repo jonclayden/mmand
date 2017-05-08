@@ -89,7 +89,7 @@ morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0","==")
 #' @param x An object that can be coerced to a numeric array.
 #' @return A logical value indicating whether the array is binary or not.
 #'   Binary in this case means that the array contains only one unique nonzero
-#'   value.
+#'   value, which is stored with the return value in an attribute.
 #' 
 #' @author Jon Clayden <code@@clayden.org>
 #' @export

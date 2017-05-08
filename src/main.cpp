@@ -63,7 +63,10 @@ BEGIN_RCPP
         }
     }
     
-    return wrap(isBinary);
+    RObject result = wrap(isBinary);
+    if (isBinary)
+        result.attr("value") = nonzeroValue;
+    return result;
 END_RCPP
 }
 
