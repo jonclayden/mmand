@@ -488,5 +488,9 @@ skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul
         }
     }
     
-    return (array(as.double(result), dim=dim(x)))
+    result <- as.double(result)
+    if (length(dim(x)) > 1)
+        dim(result) <- dim(x)
+    
+    return (result)
 }
