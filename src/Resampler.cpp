@@ -63,7 +63,7 @@ double Resampler::interpolate (const UncachedInterpolant<InputIterator> data, co
 template <class OutputIterator>
 void Resampler::interpolate (const CachedInterpolant data, const std::vector<double> &locs, OutputIterator result)
 {
-    for (int j=0; j<locs.size(); j++, ++result)
+    for (size_t j=0; j<locs.size(); j++, ++result)
     {
         const int base = static_cast<int>(floor(locs[j])) - baseOffset;
         double value = 0.0;
@@ -162,7 +162,7 @@ const std::vector<double> & Resampler::run (const std::vector<dbl_vector> &locat
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-        for (int j=0; j<working->countLines(i); j++)
+        for (int j=0; j<int(working->countLines(i)); j++)
         {
             CachedInterpolant interpolant(working->beginLine(j,i), working->endLine(j,i));
             interpolate(interpolant, locations[i], result->beginLine(j,i));

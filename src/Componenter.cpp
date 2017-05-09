@@ -42,7 +42,7 @@ std::vector<int> & Componenter::run ()
             const ptrdiff_t loc = i + sourceNeighbourhood.offsets[k];
             
             // Out of bounds
-            if (loc < 0 || loc >= nLabels)
+            if (loc < 0 || loc >= ptrdiff_t(nLabels))
                 continue;
             
             const double &neighbourValue = original->at(loc);

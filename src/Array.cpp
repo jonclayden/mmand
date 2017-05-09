@@ -75,7 +75,7 @@ Neighbourhood Array<DataType>::getNeighbourhood (const std::vector<int> &widths)
     neighbourhood.locs = Rcpp::IntegerMatrix(neighbourhood.size, nDims);
     neighbourhood.offsets.resize(neighbourhood.size);
     
-    for (int j=0; j<neighbourhood.size; j++)
+    for (size_t j=0; j<neighbourhood.size; j++)
     {
         if (j==0)
         {

@@ -35,7 +35,7 @@ bool Morpher::meetsRestrictions (const size_t n)
         
         int nNeighbours = 0;
         int neighbourhoodCentre = (immediateNeighbourhood.size - 1) / 2;
-        for (int k=0; k<immediateNeighbourhood.size; k++)
+        for (size_t k=0; k<immediateNeighbourhood.size; k++)
         {
             if (k == neighbourhoodCentre)
                 continue;
