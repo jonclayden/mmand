@@ -15,6 +15,7 @@ and `resample()`.
 - [Test image](#test-image)
 - [Mathematical morphology](#mathematical-morphology)
 - [Greyscale morphology](#greyscale-morphology)
+- [Skeletonisation](#skeletonisation)
 - [Smoothing](#smoothing)
 - [Connected components](#connected-components)
 - [Resampling](#resampling)
@@ -175,6 +176,28 @@ display(sobelFilter(fan))
 ```
 
 ![Sobel filtered fan image](http://www.clayden.org/files/mmand/fan_sobel.png)
+
+## Skeletonisation
+
+[Topological skeletonisation](https://en.wikipedia.org/wiki/Topological_skeleton)
+is the process of thinning a shape to a medial line or surface representing the
+approximate shape of the original. It can be thought of as the result of
+repeated erosion, up to the point where only a "core" of the shape exists. It
+is usually applied to binary data.
+
+The `mmand` package offers three different skeletonisation algorithms, with
+different advantages and limitations. (Please see the documentation at
+`?skeletonise` for details.) Below we see the results of applying each of them
+in turn to the outline of a capital letter B.
+
+```R
+library(loder)
+B <- readPng(system.file("images", "B.png", package="mmand"))
+k <- shapeKernel(c(3,3), type="diamond")
+
+display(B)
+display(skeletonise(B,k,method="lantuejoul"), col="red", add=TRUE)
+```
 
 ## Smoothing
 
