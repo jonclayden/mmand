@@ -140,7 +140,7 @@ sampleKernelFunction <- function (kernel, values)
     if (!isKernelFunction(kernel))
         report(OL$Error, "Specified kernel is not a valid kernel function")
     
-    return (.Call("sample_kernel", kernel, as.numeric(values), PACKAGE="mmand"))
+    return (.Call(C_sample_kernel, kernel, as.numeric(values)))
 }
 
 #' @rdname sampleKernelFunction

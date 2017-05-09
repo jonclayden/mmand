@@ -15,7 +15,7 @@ symmetric <- function (x)
     if (!is.numeric(x) && !is.logical(x))
         report(OL$Error, "Array must be numeric")
     
-    return (.Call("is_symmetric", x, PACKAGE="mmand"))
+    return (.Call(C_is_symmetric, x))
 }
 
 #' Find connected components
@@ -73,7 +73,7 @@ components.default <- function (x, kernel, ...)
     
     storage.mode(x) <- "double"
     
-    returnValue <- .Call("connected_components", x, kernel, PACKAGE="mmand") + 1
+    returnValue <- .Call(C_connected_components, x, kernel) + 1
     
     if (length(dim(x)) > 1)
         dim(returnValue) <- dim(x)

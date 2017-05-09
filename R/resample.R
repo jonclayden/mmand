@@ -68,7 +68,7 @@ resample.default <- function (x, points, kernel, pointType = c("auto","general",
     else if (is.list(points))
         points <- lapply(points, "-", 1)
     
-    result <- .Call("resample", x, kernel, list(type=pointType,points=points), PACKAGE="mmand")
+    result <- .Call(C_resample, x, kernel, list(type=pointType,points=points))
     
     if (is.list(points) && nDims > 1)
         dim(result) <- sapply(points, length)
@@ -127,5 +127,5 @@ neighbourhood <- function (x, width)
     if (any(width > dim(x)))
         report(OL$Error, "Requested neighbourhood is larger than the data")
     
-    return (.Call("get_neighbourhood", x, as.integer(width), PACKAGE="mmand"))
+    return (.Call(C_get_neighbourhood, x, as.integer(width)))
 }

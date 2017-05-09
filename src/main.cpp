@@ -221,3 +221,21 @@ BEGIN_RCPP
     return wrap(labels);
 END_RCPP
 }
+
+static R_CallMethodDef callMethods[] = {
+    { "is_binary",              (DL_FUNC) &is_binary,               1 },
+    { "is_symmetric",           (DL_FUNC) &is_symmetric,            1 },
+    { "get_neighbourhood",      (DL_FUNC) &get_neighbourhood,       2 },
+    { "sample_kernel",          (DL_FUNC) &sample_kernel,           2 },
+    { "resample",               (DL_FUNC) &resample,                3 },
+    { "morph",                  (DL_FUNC) &morph,                   5 },
+    { "connected_components",   (DL_FUNC) &connected_components,    2 },
+    { NULL, NULL, 0 }
+};
+
+extern "C" void R_init_mmand (DllInfo *info)
+{
+    R_registerRoutines(info, NULL, callMethods, NULL, NULL);
+    R_useDynamicSymbols(info, FALSE);
+    R_forceSymbols(info, TRUE);
+}

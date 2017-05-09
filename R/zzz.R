@@ -4,5 +4,5 @@
 #' @importFrom graphics abline image par plot
 #' @importFrom methods as
 #' @importFrom stats dnorm kmeans runif
-#' @useDynLib mmand
+#' @useDynLib mmand, .registration = TRUE, .fixes = "C_"
 NULL

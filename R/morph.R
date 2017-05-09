@@ -73,7 +73,7 @@ morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0","==")
     
     restrictions <- list(value=as.double(value), valueNot=as.double(valueNot), nNeighbours=as.integer(nNeighbours), nNeighboursNot=as.integer(nNeighboursNot))
     
-    returnValue <- .Call("morph", x, kernel, operator, merge, restrictions, PACKAGE="mmand")
+    returnValue <- .Call(C_morph, x, kernel, operator, merge, restrictions)
     
     if (length(dim(x)) > 1)
         dim(returnValue) <- dim(x)
@@ -99,7 +99,7 @@ binary <- function (x)
     if (!is.numeric(x) && !is.logical(x))
         report(OL$Error, "Array must be numeric")
     
-    return (.Call("is_binary", x, PACKAGE="mmand"))
+    return (.Call(C_is_binary, x))
 }
 
 #' Binarise a numeric array
