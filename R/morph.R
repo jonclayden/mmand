@@ -389,7 +389,20 @@ closing <- function (x, kernel)
 #' 
 #' Skeletonisation is the process of thinning a shape to a medial line or
 #' surface, and can be achieved using elementary mathematical morphology
-#' operations in a number of ways.
+#' operations in a number of ways. Three methods are available through this
+#' function. They are all iterative and therefore relatively time-consuming.
+#' 
+#' The default method is Lantuéjoul's formula, a union across repeated
+#' erosions, which works in any number of dimensions and may produce
+#' reasonable results on greyscale images, but does not in general produce a
+#' connected skeleton. Beucher introduced an alternative which may produce a
+#' better result (although again the skeleton may not be connected), but this
+#' implementation of the latter algorithm only applies to binary arrays. The
+#' final method uses the so-called hit-or-miss transform, which searches for
+#' exact patterns in the source array. This is guaranteed to produce a
+#' connected skeleton, which is often desirable, but uses fixed kernels (so the
+#' \code{kernel} argument is ignored) and is currently only implemented for 2D
+#' binary arrays.
 #' 
 #' @param x An object that can be coerced to an array, or for which a
 #'   \code{\link{morph}} method exists.
@@ -417,7 +430,9 @@ closing <- function (x, kernel)
 skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul","beucher","hitormiss"))
 {
     method <- match.arg(method)
+    isBinary <- binary(x)
     x <- result <- as.array(x)
+    nDims <- length(dim(x))
     
     if (method == "lantuejoul")
     {
@@ -434,6 +449,9 @@ skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul
     }
     else if (method == "beucher")
     {
+        if (!isBinary)
+            flag(OL$Warning, "The Beucher skeletonisation method will not preserve a greyscale")
+        
         repeat
         {
             result <- x
@@ -444,9 +462,14 @@ skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul
     }
     else
     {
-        k1 <- matrix(c(0,NA,1,0,1,1,0,NA,1), 3, 3)
-        k2 <- matrix(c(NA,1,NA,0,1,1,0,0,NA), 3, 3)
-        rotateKernel <- function(x) t(apply(x, 2, rev))
+        if (!isBinary)
+            report(OL$Error, "The hit-or-miss transform skeletonisation method only works with binary images")
+        if (nDims != 2)
+            report(OL$Error, "The hit-or-miss transform skeletonisation method is only implemented in 2D")
+        
+        k1 <- matrix(c(0,NA,1,0,1,1,0,NA,1) * attr(isBinary,"value"), 3, 3)
+        k2 <- matrix(c(NA,1,NA,0,1,1,0,0,NA) * attr(isBinary,"value"), 3, 3)
+        rotateKernel <- function(k) t(apply(k, 2, rev))
         hitOrMiss <- function(x,k) morph(x, k, operator="==", merge="all", value=1)
     
         repeat
@@ -465,5 +488,5 @@ skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul
         }
     }
     
-    return (array(as.integer(result), dim=dim(x)))
+    return (array(as.double(result), dim=dim(x)))
 }
