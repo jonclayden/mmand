@@ -9,6 +9,7 @@ test_that("binary mathematical morphology operations work", {
     expect_that(binary(data), is_true())
     expect_that(erode(data,kernel), equals(c(0,0,0,0,0,0,0,1,0,0,0)))
     expect_that(dilate(data,kernel), equals(c(0,1,1,1,0,1,1,1,1,1,0)))
+    expect_that(skeletonise(data,kernel), equals(c(0,0,1,0,0,0,0,1,0,0,0)))
     
     # Odd kernels: asymmetric and zero-origin
     expect_that(erode(data,c(0,1,1)), equals(c(0,0,0,0,0,0,1,1,0,0,0)))
