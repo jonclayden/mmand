@@ -71,10 +71,9 @@ state.
 
 \dontrun{gameOfLife(init=gosperGliderGun(), size=c(40,40), steps=50, viz=TRUE)}
 }
-\author{
-Jon Clayden <code@clayden.org>
-}
 \seealso{
 The \code{\link{morph}} function, which powers this simulation.
 }
-
+\author{
+Jon Clayden <code@clayden.org>
+}

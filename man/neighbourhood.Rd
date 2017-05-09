@@ -30,4 +30,3 @@ a given width within a specified array.
 \author{
 Jon Clayden <code@clayden.org>
 }
-

@@ -2,9 +2,9 @@
 % Please edit documentation in R/display.R
 \name{display}
 \alias{display}
-\alias{display.array}
 \alias{display.default}
 \alias{display.matrix}
+\alias{display.array}
 \title{Display a 2D image}
 \usage{
 display(x, ...)
@@ -14,11 +14,13 @@ display(x, ...)
 
 \method{display}{matrix}(x, ...)
 
-\method{display}{array}(x, max = 1, ...)
+\method{display}{array}(x, max = NULL, ...)
 }
 \arguments{
 \item{x}{An R object. For the default method, it must be coercible to a
 numeric matrix.}
+
+\item{\dots}{Additional arguments to \code{image}, or the default method.}
 
 \item{transpose}{Whether to transpose the matrix before display. This is
 usually necessary due to the conventions of \code{image}.}
@@ -34,10 +36,10 @@ image data.}
 \item{col}{The colour scale to use. The default is 256 grey levels. The
 array method overrides this appropriately.}
 
-\item{max}{The maximum colour value for each channel. If the array has
-integer mode, this is fixed to 255. Passed to \code{\link{rgb}}.}
-
-\item{\dots}{Additional arguments to \code{image}, or the default method.}
+\item{max}{The maximum colour value for each channel. If \code{NULL}, the
+default, this is taken from the \code{"range"} attribute, if there is one,
+otherwise it is 255 for integer-mode arrays, and 1 otherwise. Passed to
+\code{\link{rgb}}.}
 }
 \value{
 This function is called for its side-effect of displaying an image
@@ -57,8 +59,10 @@ y-direction, uses a grey colour scale, fills the entire device with the
 image, and tries to size the image correctly given the dot pitch of the
 display. Unfortunately the latter is not always possible, due to downstream
 limitations.
+
+If \code{x} has attributes \code{"range"}, \code{"background"}, \code{"asp"}
+or \code{"dpi"}, these are respected.
 }
 \author{
 Jon Clayden <code@clayden.org>
 }
-

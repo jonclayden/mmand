@@ -16,11 +16,10 @@ A morphed array with the same dimensions as the original array.
 \description{
 This function binarises an array, setting all nonzero elements to unity.
 }
-\author{
-Jon Clayden <code@clayden.org>
-}
 \seealso{
 \code{\link{morph}} for the function underlying this operation, and
   \code{\link{erode}} for mathematical morphology functions.
 }
-
+\author{
+Jon Clayden <code@clayden.org>
+}

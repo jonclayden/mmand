@@ -20,4 +20,3 @@ the unreversed equivalent.
 \author{
 Jon Clayden <code@clayden.org>
 }
-

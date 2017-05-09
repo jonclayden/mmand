@@ -26,13 +26,12 @@ kernel for speed when working in multiple dimensions. It is therefore
 equivalent to, but much faster than, directly applying a multidimensional
 kernel.
 }
-\author{
-Jon Clayden <code@clayden.org>
-}
 \seealso{
 \code{\link{morph}} for the function underlying this operation,
   \code{\link{gaussianKernel}} for generating Gaussian kernels (which is
   also used by this function), and \code{\link{erode}} for mathematical
   morphology functions.
 }
-
+\author{
+Jon Clayden <code@clayden.org>
+}

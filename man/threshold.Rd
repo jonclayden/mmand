@@ -29,10 +29,9 @@ x <- c(0.1, 0.05, 0.95, 0.85, 0.15, 0.9)
 threshold(x, method="kmeans")
 threshold(x, 0.5)
 }
-\author{
-Jon Clayden <code@clayden.org>
-}
 \seealso{
 \code{\link{binarise}}
 }
-
+\author{
+Jon Clayden <code@clayden.org>
+}

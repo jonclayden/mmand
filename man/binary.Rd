@@ -12,7 +12,7 @@ binary(x)
 \value{
 A logical value indicating whether the array is binary or not.
   Binary in this case means that the array contains only one unique nonzero
-  value.
+  value, which is stored with the return value in an attribute.
 }
 \description{
 This function checks whether a numeric array is binary, with only one unique
@@ -21,4 +21,3 @@ nonzero value, or not.
 \author{
 Jon Clayden <code@clayden.org>
 }
-

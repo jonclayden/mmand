@@ -22,6 +22,8 @@ not have to be isotropic in size. The kernel's dimensionality may be less
 than that of the target array, \code{x}. See \code{\link{kernels}} for
 kernel-generating functions.}
 
+\item{\dots}{Additional arguments to methods.}
+
 \item{operator}{The operator applied elementwise within the kernel, as a
 function of the original image value and the kernel value. Arithmetic
 operators are as usual; \code{"i"} is the identity operator, where every
@@ -46,8 +48,6 @@ where the kernel will be applied. Takes priority over
 \item{nNeighboursNot}{An optional numeric vector giving nonallowable numbers
 of nonzero neighbours (including diagonal neighbours) for array elements
 where the kernel will be applied.}
-
-\item{\dots}{Additional arguments to methods.}
 }
 \value{
 A morphed array with the same dimensions as the original array.
@@ -58,9 +58,6 @@ applying the kernel to a particular array element can be made conditional on
 its value, or the number of nonzero immediate neighbours that it has. The
 \code{morph} function is (S3) generic.
 }
-\author{
-Jon Clayden <code@clayden.org>
-}
 \seealso{
 \code{\link{kernels}} for kernel-generating functions, and
   \code{\link{morphology}} for more specific mathematical morphology
@@ -69,4 +66,6 @@ Jon Clayden <code@clayden.org>
   automaton. See also the \code{kernel} and \code{kernapply} functions in
   the \code{stats} package, particularly if you want to smooth time series.
 }
-
+\author{
+Jon Clayden <code@clayden.org>
+}

@@ -31,11 +31,10 @@ A morphed array with the same dimensions as the original array.
 \description{
 These functions apply mean, median or Sobel filters to an array.
 }
-\author{
-Jon Clayden <code@clayden.org>
-}
 \seealso{
 \code{\link{morph}} for the function underlying these operations,
   and \code{\link{kernels}} for kernel-generating functions.
 }
-
+\author{
+Jon Clayden <code@clayden.org>
+}
