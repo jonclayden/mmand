@@ -113,6 +113,7 @@ binary <- function (x)
 #' @author Jon Clayden <code@@clayden.org>
 #' @seealso \code{\link{morph}} for the function underlying this operation, and
 #'   \code{\link{erode}} for mathematical morphology functions.
+#' @aliases binarize
 #' @export binarise binarize
 binarise <- binarize <- function (x)
 {
@@ -425,14 +426,14 @@ closing <- function (x, kernel)
 #' S. Beucher (1994). Digital skeletons in Euclidean and geodesic spaces.
 #' Signal Processing 38(1):127-141.
 #' \url{https://doi.org/10.1016/0165-1684(94)90061-2}.
-#' 
+#' @aliases skeletonize
 #' @export skeletonise skeletonize
 skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul","beucher","hitormiss"))
 {
     method <- match.arg(method)
     isBinary <- binary(x)
     x <- result <- as.array(x)
-    nDims <- length(dim(x))
+    nDims <- sum(dim(x) > 1)
     
     if (method == "lantuejoul")
     {
@@ -467,8 +468,9 @@ skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul
         if (nDims != 2)
             stop("The hit-or-miss transform skeletonisation method is only implemented in 2D")
         
-        k1 <- matrix(c(0,NA,1,0,1,1,0,NA,1) * attr(isBinary,"value"), 3, 3)
-        k2 <- matrix(c(NA,1,NA,0,1,1,0,0,NA) * attr(isBinary,"value"), 3, 3)
+        x <- x / attr(isBinary, "value")
+        k1 <- matrix(c(0,NA,1,0,1,1,0,NA,1), 3, 3)
+        k2 <- matrix(c(NA,1,NA,0,1,1,0,0,NA), 3, 3)
         rotateKernel <- function(k) t(apply(k, 2, rev))
         hitOrMiss <- function(x,k) morph(x, k, operator="==", merge="all", value=1)
     

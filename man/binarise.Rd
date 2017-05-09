@@ -2,6 +2,7 @@
 % Please edit documentation in R/morph.R
 \name{binarise}
 \alias{binarise}
+\alias{binarize}
 \title{Binarise a numeric array}
 \usage{
 binarise(x)

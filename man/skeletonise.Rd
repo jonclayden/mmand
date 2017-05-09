@@ -2,6 +2,7 @@
 % Please edit documentation in R/morph.R
 \name{skeletonise}
 \alias{skeletonise}
+\alias{skeletonize}
 \title{Skeletonise a numeric array}
 \usage{
 skeletonise(x, kernel = NULL, method = c("lantuejoul", "beucher",
