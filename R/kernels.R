@@ -138,7 +138,7 @@ isKernelFunction <- function (object)
 sampleKernelFunction <- function (kernel, values)
 {
     if (!isKernelFunction(kernel))
-        report(OL$Error, "Specified kernel is not a valid kernel function")
+        stop("Specified kernel is not a valid kernel function")
     
     return (.Call(C_sample_kernel, kernel, as.numeric(values)))
 }
@@ -178,12 +178,12 @@ kernelArray <- function (values)
     if (isKernelArray(values))
         return (values)
     else if (isKernelFunction(values))
-        report(OL$Error, "Kernel function cannot be converted to a kernel array")
+        stop("Kernel function cannot be converted to a kernel array")
     else
     {
         values <- as.array(values)
         if (!is.numeric(values) && !is.logical(values))
-            report(OL$Error, "Kernel must be numeric")
+            stop("Kernel must be numeric")
         storage.mode(values) <- "double"
         return (structure(values, class=c("kernelArray","kernel")))
     }
@@ -271,7 +271,7 @@ gaussianKernel <- function (sigma, dim = length(sigma), size = 6*sigma, normalis
 sobelKernel <- function (dim, axis = 1)
 {
     if (!(axis %in% 0:dim))
-        report(OL$Error, "The axis should be between 0 and #{dim}")
+        stop("The axis should be between 0 and #{dim}")
     
     parts <- rep(list(c(1,2,1) / 4), dim)
     if (axis > 0)
@@ -290,9 +290,9 @@ kernelFunction <- function (name = c("box","triangle","mitchell-netravali","lanc
     else if (isKernelFunction(name))
         return (name)
     else if (isKernelArray(name))
-        report(OL$Error, "Kernel array cannot be converted to a kernel function")
+        stop("Kernel array cannot be converted to a kernel function")
     else
-        report(OL$Error, "Kernel function specification is not valid")
+        stop("Kernel function specification is not valid")
     
     return (structure(list(name=name, ...), class=c("kernelFunction","kernel")))
 }

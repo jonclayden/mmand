@@ -38,7 +38,7 @@ resample.default <- function (x, points, kernel, pointType = c("auto","general",
 {
     x <- as.array(x)
     if (!is.numeric(x) && !is.logical(x))
-        report(OL$Error, "Target array must be numeric")
+        stop("Target array must be numeric")
     
     if (!isKernelFunction(kernel))
         kernel <- kernelFunction(kernel, ...)
@@ -50,9 +50,9 @@ resample.default <- function (x, points, kernel, pointType = c("auto","general",
     
     pointType <- match.arg(pointType)
     if (pointType == "general" && (!is.matrix(points) || ncol(points) != nDims))
-        report(OL$Error, "Points must be specified as a matrix with #{nDims} columns")
+        stop("Points must be specified as a matrix with #{nDims} columns")
     else if (pointType == "grid" && (!is.list(points) || length(points) != nDims))
-        report(OL$Error, "Points must be specified as a list of length #{nDims}")
+        stop("Points must be specified as a list of length #{nDims}")
     else if (pointType == "auto")
     {
         if (is.matrix(points) && ncol(points) == nDims)
@@ -60,7 +60,7 @@ resample.default <- function (x, points, kernel, pointType = c("auto","general",
         else if (is.list(points) && length(points) == nDims)
             pointType <- "grid"
         else
-            report(OL$Error, "Point specification is not valid")
+            stop("Point specification is not valid")
     }
     
     if (is.matrix(points))
@@ -125,7 +125,7 @@ neighbourhood <- function (x, width)
     if (length(width) < nDims)
         width <- rep(width, length.out=nDims)
     if (any(width > dim(x)))
-        report(OL$Error, "Requested neighbourhood is larger than the data")
+        stop("Requested neighbourhood is larger than the data")
     
     return (.Call(C_get_neighbourhood, x, as.integer(width)))
 }

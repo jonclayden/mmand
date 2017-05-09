@@ -53,18 +53,18 @@ morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0","==")
 {
     x <- as.array(x)
     if (!is.numeric(x) && !is.logical(x))
-        report(OL$Error, "Target array must be numeric")
+        stop("Target array must be numeric")
     
     if (!isKernelArray(kernel))
         kernel <- kernelArray(kernel)
     
     if (any(dim(kernel) %% 2 != 1))
-        report(OL$Error, "Kernel must have odd width in all dimensions")
+        stop("Kernel must have odd width in all dimensions")
     
     if (length(dim(kernel)) < length(dim(x)))
         dim(kernel) <- c(dim(kernel), rep(1,length(dim(x))-length(dim(kernel))))
     else if (length(dim(kernel)) > length(dim(x)))
-        report(OL$Error, "Kernel has greater dimensionality than the target array")
+        stop("Kernel has greater dimensionality than the target array")
     
     operator <- match.arg(operator)
     merge <- match.arg(merge)
@@ -97,7 +97,7 @@ binary <- function (x)
 {
     x <- as.array(x)
     if (!is.numeric(x) && !is.logical(x))
-        report(OL$Error, "Array must be numeric")
+        stop("Array must be numeric")
     
     return (.Call(C_is_binary, x))
 }
@@ -145,7 +145,7 @@ threshold <- function (x, level, method = c("literal","kmeans"), binarise = TRUE
 {
     method <- match.arg(method)
     if (missing(level) && method == "literal")
-        report(OL$Error, "A literal threshold level is required")
+        stop("A literal threshold level is required")
     
     if (method == "literal")
     {
@@ -246,7 +246,7 @@ sobelFilter <- function (x, dim, axis = 0)
         dim <- length(base::dim(x))
     
     if (axis < 0 || axis > dim)
-        report(OL$Error, "The axis should be between 0 and the dimensionality of the kernel")
+        stop("The axis should be between 0 and the dimensionality of the kernel")
     
     if (axis == 0)
     {
@@ -450,7 +450,7 @@ skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul
     else if (method == "beucher")
     {
         if (!isBinary)
-            flag(OL$Warning, "The Beucher skeletonisation method will not preserve a greyscale")
+            warning("The Beucher skeletonisation method will not preserve a greyscale")
         
         repeat
         {
@@ -463,9 +463,9 @@ skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul
     else
     {
         if (!isBinary)
-            report(OL$Error, "The hit-or-miss transform skeletonisation method only works with binary images")
+            stop("The hit-or-miss transform skeletonisation method only works with binary images")
         if (nDims != 2)
-            report(OL$Error, "The hit-or-miss transform skeletonisation method is only implemented in 2D")
+            stop("The hit-or-miss transform skeletonisation method is only implemented in 2D")
         
         k1 <- matrix(c(0,NA,1,0,1,1,0,NA,1) * attr(isBinary,"value"), 3, 3)
         k2 <- matrix(c(NA,1,NA,0,1,1,0,0,NA) * attr(isBinary,"value"), 3, 3)

@@ -58,7 +58,7 @@ gameOfLife <- function (init, size, density = 0.3, steps = 200, viz = FALSE, tic
     state <- NULL
     
     if (missing(init) && missing(size))
-        report(OL$Error, "At least one of \"init\" and \"size\" must be specified")
+        stop("At least one of \"init\" and \"size\" must be specified")
     else if (missing(init))
     {
         state <- ifelse(runif(prod(size)) < density, 1L, 0L)
@@ -69,15 +69,15 @@ gameOfLife <- function (init, size, density = 0.3, steps = 200, viz = FALSE, tic
     else
     {
         if (length(size) != 2)
-            report(OL$Error, "The size of the initial matrix should have length 2")
+            stop("The size of the initial matrix should have length 2")
         if (!is.matrix(init))
-            report(OL$Error, "Initial state should be specified as a matrix")
+            stop("Initial state should be specified as a matrix")
         state <- matrix(0L, nrow=size[1], ncol=size[2])
         state[1:nrow(init),1:ncol(init)] <- init
     }
     
     if (!is.matrix(state) || length(dim(state)) != 2)
-        report(OL$Error, "Initial state is not a 2D matrix")
+        stop("Initial state is not a 2D matrix")
     
     stateWithBorder <- matrix(0L, nrow=nrow(state)+4, ncol=ncol(state)+4)
     stateWithBorder[(1:nrow(state))+2,(1:ncol(state))+2] <- state
@@ -101,7 +101,7 @@ gameOfLife <- function (init, size, density = 0.3, steps = 200, viz = FALSE, tic
         
         if (isTRUE(all.equal(prevState, state)))
         {
-            report(OL$Info, "State is stable after ", i-1, " steps")
+            message("State is stable after ", i-1, " steps")
             break
         }
         

@@ -13,7 +13,7 @@ symmetric <- function (x)
 {
     x <- as.array(x)
     if (!is.numeric(x) && !is.logical(x))
-        report(OL$Error, "Array must be numeric")
+        stop("Array must be numeric")
     
     return (.Call(C_is_symmetric, x))
 }
@@ -55,21 +55,21 @@ components.default <- function (x, kernel, ...)
 {
     x <- as.array(x)
     if (!is.numeric(x) && !is.logical(x))
-        report(OL$Error, "Target array must be numeric")
+        stop("Target array must be numeric")
     
     if (!isKernelArray(kernel))
         kernel <- kernelArray(kernel)
     
     if (any(dim(kernel) %% 2 != 1))
-        report(OL$Error, "Kernel must have odd width in all dimensions")
+        stop("Kernel must have odd width in all dimensions")
     
     if (!symmetric(kernel))
-        report(OL$Error, "Kernel must be symmetric")
+        stop("Kernel must be symmetric")
     
     if (length(dim(kernel)) < length(dim(x)))
         dim(kernel) <- c(dim(kernel), rep(1,length(dim(x))-length(dim(kernel))))
     else if (length(dim(kernel)) > length(dim(x)))
-        report(OL$Error, "Kernel has greater dimensionality than the target array")
+        stop("Kernel has greater dimensionality than the target array")
     
     storage.mode(x) <- "double"
     
