@@ -385,7 +385,7 @@ closing <- function (x, kernel)
     return (erode(dilate(x, kernel), kernel))
 }
 
-#' Skeletonise an array
+#' Skeletonise a numeric array
 #' 
 #' Skeletonisation is the process of thinning a shape to a medial line or
 #' surface, and can be achieved using elementary mathematical morphology
