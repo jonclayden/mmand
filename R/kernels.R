@@ -35,7 +35,7 @@
 #' artefacts, but other well-known special cases include B=1, C=0 (the cubic
 #' B-spline) and B=0, C=0.5 (the Catmull-Rom spline). \code{mnKernel} is a
 #' shorter alias for \code{mitchellNetravaliKernel}. Finally, the Lanczos
-#' kernel is a three-lobe windowed sinc function.
+#' kernel is a five-lobe windowed sinc function.
 #' 
 #' @param object Any object.
 #' @param values A numeric vector or array, containing the values of the kernel
@@ -129,7 +129,6 @@ isKernelFunction <- function (object)
 #'   side-effects.
 #' 
 #' @examples
-#' 
 #' sampleKernelFunction(mnKernel(), -2:2)
 #' plot(mnKernel())
 #' @author Jon Clayden <code@@clayden.org>

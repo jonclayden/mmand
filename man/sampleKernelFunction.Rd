@@ -42,7 +42,6 @@ For \code{sampleKernelFunction} a vector of kernel values at the
 These functions can be used to sample and plot kernel profiles.
 }
 \examples{
-
 sampleKernelFunction(mnKernel(), -2:2)
 plot(mnKernel())
 }
