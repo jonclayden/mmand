@@ -158,3 +158,68 @@ display.array <- function (x, max = NULL, ...)
         display.default(indices, col=uniqueCols, ...)
     }
 }
+
+#' Show an ASCII art representation of a 2D image or matrix
+#' 
+#' This function prints a rough, text-only representation of an image argument
+#' to the R terminal, mapping image intensities to a 10-level pseudo-greyscale.
+#' The image is first rescaled to fit into the terminal or other specified
+#' width, and downsampled in the row direction to correct for nonsquare
+#' character shapes.
+#' 
+#' The result is a compact representation of a matrix that can be used for
+#' visualising kernel arrays, sparse matrices and other non-images.
+#' 
+#' @note If the terminal does not used a fixed-width font, the result is
+#'   unlikely to be useful.
+#' 
+#' @param x An object that can be coerced to a numeric matrix or array. 3D
+#'   arrays with third dimension no greater than 4 will be taken as
+#'   multichannel 2D images, and their channels averaged before display.
+#'   Plain vectors and 1D arrays will be treated as single-row matrices.
+#' @param invert By default the mapping uses heavier type for brighter areas.
+#'   If this option is \code{TRUE}, the sense of the scale will be reversed.
+#' @param width The width of sketch to draw, in characters.
+#' @param squash The factor by which to scale the row direction of the image.
+#'   Generally this should be markedly less than one, to preserve the aspect
+#'   ratio of the image, since most fixed-width font characters are taller than
+#'   they are wide.
+#' @return This function is called for the side-effect of printing an ASCII
+#'   representation of its argument.
+#' 
+#' @examples
+#' sketch(shapeKernel(c(9,15), type="diamond"))
+#' sketch(shapeKernel(c(9,15), type="diamond"), squash=1)
+#' @author Jon Clayden <code@@clayden.org>
+#' @seealso \code{\link{display}}
+#' @export
+sketch <- function (x, invert = FALSE, width = getOption("width"), squash = 0.5)
+{
+    # Ref: http://paulbourke.net/dataformats/asciiart/
+    scale <- unlist(strsplit(" .:-=+*#%@", "", fixed=TRUE))
+    if (invert)
+        scale <- rev(scale)
+    n <- length(scale)
+    
+    attribs <- .checkAttribs(x, range=range(x[is.finite(x)]))
+    
+    x <- drop(as.array(x))
+    if (length(dim(x)) == 1)
+        dim(x) <- c(1, length(x))
+    else if (length(dim(x)) == 3 && dim(x)[3] < 5)
+        x <- apply(x, 1:2, mean)
+    else if (length(dim(x)) > 3)
+        stop("Only 2D single-channel or multichannel images may be sketched")
+    
+    scaleFactors <- c(squash, 1)
+    if (ncol(x) > width)
+        scaleFactors <- scaleFactors * width / ncol(x)
+    x <- rescale(x, scaleFactors, triangleKernel())
+    
+    indices <- round((x - min(attribs$range)) * (n-1) / (max(attribs$range) - min(attribs$range))) + 1
+    chars <- structure(scale[indices], dim=dim(x))
+    
+    apply(chars, 1, function(line) cat(paste0(paste(line,collapse=""),"\n")))
+    
+    invisible(NULL)
+}
