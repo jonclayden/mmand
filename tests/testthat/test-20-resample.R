@@ -12,6 +12,7 @@ test_that("image resampling operations work", {
     expect_that(resample(data,point,boxKernel()), equals(4))
     expect_that(resample(data,point,triangleKernel()), equals(6))
     expect_that(resample(data,point,mitchellNetravaliKernel()), equals(6))
+    expect_that(resample(data,point,lanczosKernel()), equals(5.527249,tol=0.001))
     
     points <- point %x% matrix(1,4,1)
     expect_that(resample(data,points,mitchellNetravaliKernel()), equals(c(6,6,6,6)))
