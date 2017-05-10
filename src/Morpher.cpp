@@ -34,7 +34,7 @@ bool Morpher::meetsRestrictions (const size_t n)
         const std::vector<int> &dims = original->getDimensions();
         
         int nNeighbours = 0;
-        int neighbourhoodCentre = (immediateNeighbourhood.size - 1) / 2;
+        size_t neighbourhoodCentre = (immediateNeighbourhood.size - 1) / 2;
         for (size_t k=0; k<immediateNeighbourhood.size; k++)
         {
             if (k == neighbourhoodCentre)

@@ -78,11 +78,11 @@ public:
     
     double operator() (ptrdiff_t i) const
     {
-        if (i > -1 && i < len)
+        if (i > -1 && i < ptrdiff_t(len))
             return *(start + i);
         else if (i == -1)
             return prestart;
-        else if (i == len)
+        else if (i == ptrdiff_t(len))
             return postend;
         else
             return 0.0;
