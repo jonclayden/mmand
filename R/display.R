@@ -78,14 +78,14 @@ display <- function (x, ...)
 #' @export
 display.default <- function (x, transpose = TRUE, useRaster = TRUE, add = FALSE, col = grey(0:255/255), ...)
 {
-    x <- as.matrix(x)
-    if (transpose)
-        x <- t(x)
-    
     dpiDevice <- .checkDpi()
     attribs <- .checkAttribs(x, background="grey70", range=range(x[is.finite(x)]), asp=ncol(x)/nrow(x), dpi=dpiDevice)
     if (is.null(attr(x,"asp")) && !is.null(attr(x,"dpi")))
         attribs$asp <- (ncol(x) * attribs$dpi[1]) / (nrow(x) * attribs$dpi[2])
+    
+    x <- as.matrix(x)
+    if (transpose)
+        x <- t(x)
     
     if (add)
     {
