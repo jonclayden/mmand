@@ -85,7 +85,10 @@ display.default <- function (x, transpose = TRUE, useRaster = TRUE, add = FALSE,
     
     x <- as.matrix(x)
     if (transpose)
+    {
         x <- t(x)
+        attribs$asp <- 1 / attribs$asp
+    }
     
     if (add)
     {
