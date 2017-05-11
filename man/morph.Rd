@@ -10,7 +10,7 @@ morph(x, kernel, ...)
 \method{morph}{default}(x, kernel, operator = c("+", "-", "*", "i", "1", "0",
   "=="), merge = c("sum", "min", "max", "mean", "median", "all", "any"),
   value = NULL, valueNot = NULL, nNeighbours = NULL,
-  nNeighboursNot = NULL, ...)
+  nNeighboursNot = NULL, renormalise = TRUE, ...)
 }
 \arguments{
 \item{x}{Any object. For the default method, this must be coercible to an
@@ -27,8 +27,10 @@ kernel-generating functions.}
 \item{operator}{The operator applied elementwise within the kernel, as a
 function of the original image value and the kernel value. Arithmetic
 operators are as usual; \code{"i"} is the identity operator, where every
-value within the kernel will be included as-is; and \code{1} and \code{0}
-include a 1 or 0 for each element within the kernel's nonzero region.}
+value within the kernel will be included as-is; \code{"1"} and \code{"0"}
+include a 1 or 0 for each element within the kernel's nonzero region;
+\code{"=="} produces a 1 where the image matches the kernel, and 0
+elsewhere.}
 
 \item{merge}{The operator applied to combine the elements into a final value
 for the centre pixel. All have their usual meanings.}
@@ -48,6 +50,11 @@ where the kernel will be applied. Takes priority over
 \item{nNeighboursNot}{An optional numeric vector giving nonallowable numbers
 of nonzero neighbours (including diagonal neighbours) for array elements
 where the kernel will be applied.}
+
+\item{renormalise}{If \code{TRUE}, the default, and \code{merge} is
+\code{"sum"}, the sum will be renormalised relative to the sum over the
+visited part of the kernel. This avoids low-intensity bands around the
+edges of a morphed image.}
 }
 \value{
 A morphed array with the same dimensions as the original array.

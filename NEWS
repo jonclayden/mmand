@@ -2,6 +2,33 @@ Significant changes to the mmand package are laid out below for each release.
 
 ===============================================================================
 
+VERSION 1.5.0
+
+- The five-lobe Lanczos windowed sinc kernel function is now available through
+  the lanczosKernel() function, and may be used for resampling.
+- The new sketch() function can be used to show a compact ASCII representation
+  of a 2D greyscale image or other matrix.
+- Experimental support for image skeletonisation has been added through the
+  skeletonise() function and its alias, skeletonize(). Three different
+  algorithms are available, with different limitations. Please see the README
+  or ?skeletonise for details.
+- Logical data is now accepted by package functions, in addition to integer
+  and double-valued data.
+- The display() function now handles 2D objects of class "array", and respects
+  image attributes set by the "loder" package.
+- The morph() function gains a renormalise option, and some new operators.
+- Infinite, NaN and NA values are now ignored by threshold() when using the
+  k-means method (since kmeans() itself does not handle them gracefully).
+  Elements with any of these values are replaced with NAs in the result.
+- The binary() function now returns the unique value in an attribute, if
+  applicable.
+- The binarise() function may now also be spelled binarize().
+- A new binary test image, of an upper-case B, has been added.
+- The "loder" package is now used instead of "png" for reading PNG images.
+- The package no longer depends on "reportr".
+
+===============================================================================
+
 VERSION 1.4.1
 
 - A buffer overflow picked up by valgrind has been corrected.
