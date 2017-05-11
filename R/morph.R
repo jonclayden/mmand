@@ -160,12 +160,14 @@ threshold <- function (x, level, method = c("literal","kmeans"), binarise = TRUE
         # Drop dims so that the clustering is done by intensity only
         dims <- dim(x)
         dim(x) <- NULL
+        valid <- is.finite(x)
         
-        kmeansResult <- kmeans(x, 2)
+        kmeansResult <- kmeans(x[valid], 2)
         if (binarise)
-            x <- ifelse(kmeansResult$cluster == which.min(kmeansResult$centers), 0L, 1L)
+            x[valid] <- ifelse(kmeansResult$cluster == which.min(kmeansResult$centers), 0L, 1L)
         else
-            x <- ifelse(kmeansResult$cluster == which.min(kmeansResult$centers), 0L, x)
+            x[valid] <- ifelse(kmeansResult$cluster == which.min(kmeansResult$centers), 0L, x[valid])
+        x[!valid] <- NA
         
         dim(x) <- dims
     }
