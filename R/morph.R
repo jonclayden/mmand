@@ -15,8 +15,10 @@
 #' @param operator The operator applied elementwise within the kernel, as a
 #'   function of the original image value and the kernel value. Arithmetic
 #'   operators are as usual; \code{"i"} is the identity operator, where every
-#'   value within the kernel will be included as-is; and \code{1} and \code{0}
-#'   include a 1 or 0 for each element within the kernel's nonzero region.
+#'   value within the kernel will be included as-is; \code{"1"} and \code{"0"}
+#'   include a 1 or 0 for each element within the kernel's nonzero region;
+#'   \code{"=="} produces a 1 where the image matches the kernel, and 0
+#'   elsewhere.
 #' @param merge The operator applied to combine the elements into a final value
 #'   for the centre pixel. All have their usual meanings.
 #' @param value An optional vector of values in the target array for which to
@@ -31,6 +33,10 @@
 #' @param nNeighboursNot An optional numeric vector giving nonallowable numbers
 #'   of nonzero neighbours (including diagonal neighbours) for array elements
 #'   where the kernel will be applied.
+#' @param renormalise If \code{TRUE}, the default, and \code{merge} is
+#'   \code{"sum"}, the sum will be renormalised relative to the sum over the
+#'   visited part of the kernel. This avoids low-intensity bands around the
+#'   edges of a morphed image.
 #' @param \dots Additional arguments to methods.
 #' @return A morphed array with the same dimensions as the original array.
 #' 
@@ -49,7 +55,7 @@ morph <- function (x, kernel, ...)
 
 #' @rdname morph
 #' @export
-morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0","=="), merge = c("sum","min","max","mean","median","all","any"), value = NULL, valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, ...)
+morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0","=="), merge = c("sum","min","max","mean","median","all","any"), value = NULL, valueNot = NULL, nNeighbours = NULL, nNeighboursNot = NULL, renormalise = TRUE, ...)
 {
     x <- as.array(x)
     if (!is.numeric(x) && !is.logical(x))
@@ -73,7 +79,7 @@ morph.default <- function (x, kernel, operator = c("+","-","*","i","1","0","==")
     
     restrictions <- list(value=as.double(value), valueNot=as.double(valueNot), nNeighbours=as.integer(nNeighbours), nNeighboursNot=as.integer(nNeighboursNot))
     
-    returnValue <- .Call(C_morph, x, kernel, operator, merge, restrictions)
+    returnValue <- .Call(C_morph, x, kernel, operator, merge, restrictions, renormalise)
     
     if (length(dim(x)) > 1)
         dim(returnValue) <- dim(x)

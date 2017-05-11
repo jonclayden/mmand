@@ -152,7 +152,7 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP morph (SEXP data_, SEXP kernel_, SEXP elementOp_, SEXP mergeOp_, SEXP restrictions_)
+RcppExport SEXP morph (SEXP data_, SEXP kernel_, SEXP elementOp_, SEXP mergeOp_, SEXP restrictions_, SEXP renormalise_)
 {
 BEGIN_RCPP
     Array<double> *array = arrayFromData(data_);
@@ -203,6 +203,7 @@ BEGIN_RCPP
     List restrictions(restrictions_);
     morpher.setValidNeighbourhoods(as<int_vector>(restrictions["nNeighbours"]), as<int_vector>(restrictions["nNeighboursNot"]));
     morpher.setValidValues(as<dbl_vector>(restrictions["value"]), as<dbl_vector>(restrictions["valueNot"]));
+    morpher.shouldRenormalise(as<bool>(renormalise_));
     vector<double> &samples = morpher.run();
     return wrap(samples);
 END_RCPP
@@ -228,7 +229,7 @@ static R_CallMethodDef callMethods[] = {
     { "get_neighbourhood",      (DL_FUNC) &get_neighbourhood,       2 },
     { "sample_kernel",          (DL_FUNC) &sample_kernel,           2 },
     { "resample",               (DL_FUNC) &resample,                3 },
-    { "morph",                  (DL_FUNC) &morph,                   5 },
+    { "morph",                  (DL_FUNC) &morph,                   6 },
     { "connected_components",   (DL_FUNC) &connected_components,    2 },
     { NULL, NULL, 0 }
 };

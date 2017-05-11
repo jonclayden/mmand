@@ -167,7 +167,7 @@ std::vector<double> & Morpher::run ()
     double kernelSum = 0.0;
     double visitedKernelSum;
     
-    if (mergeOp == SumOp)
+    if (renormalise && mergeOp == SumOp)
     {
         for (size_t k=0; k<neighbourhoodSize; k++)
             kernelSum += kernelArray->at(k);
@@ -232,14 +232,14 @@ std::vector<double> & Morpher::run ()
                     break;
                 }
                 
-                if (mergeOp == SumOp)
+                if (renormalise && mergeOp == SumOp)
                     visitedKernelSum += kernelArray->at(k);
             }
         }
         
         samples[i] = mergeValues();
         
-        if (mergeOp == SumOp)
+        if (renormalise && mergeOp == SumOp)
         {
             if (kernelSum != 0.0)
                 samples[i] *= kernelSum;

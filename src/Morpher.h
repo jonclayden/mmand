@@ -25,6 +25,8 @@ private:
     dbl_vector includedValues, excludedValues;
     int_vector includedNeighbourhoods, excludedNeighbourhoods;
     
+    bool renormalise;
+    
     dbl_vector values;
     dbl_vector samples;
     
@@ -36,7 +38,7 @@ private:
     
 public:
     Morpher (Array<double> * const original, DiscreteKernel * const kernel, const ElementOp elementOp, const MergeOp mergeOp)
-        : original(original), kernel(kernel), elementOp(elementOp), mergeOp(mergeOp)
+        : original(original), kernel(kernel), elementOp(elementOp), mergeOp(mergeOp), renormalise(true)
     {
         this->immediateNeighbourhood = original->getNeighbourhood(3);
     }
@@ -57,6 +59,11 @@ public:
     {
         this->includedValues = include;
         this->excludedValues = exclude;
+    }
+    
+    void shouldRenormalise (const bool renormalise)
+    {
+        this->renormalise = renormalise;
     }
     
     dbl_vector & run ();
