@@ -2,6 +2,13 @@ Significant changes to the mmand package are laid out below for each release.
 
 ===============================================================================
 
+VERSION 1.5.1
+
+- The connected components algorithm will no longer erroneously wrap around
+  image boundaries. (Reported by Steffen Ehrmann.)
+
+===============================================================================
+
 VERSION 1.5.0
 
 - The five-lobe Lanczos windowed sinc kernel function is now available through
