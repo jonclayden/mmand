@@ -14,8 +14,11 @@ std::vector<int> & Componenter::run ()
     const Neighbourhood &sourceNeighbourhood = original->getNeighbourhood(kernelArray->getDimensions());
     const size_t neighbourhoodSize = kernelNeighbourhood.size;
     
+    const std::vector<int> &dims = original->getDimensions();
+    const int nDims = original->getDimensionality();
     const size_t nLabels = original->size();
     labels.resize(nLabels, NA_INTEGER);
+    currentLoc.resize(nDims);
     
     connections.clear();
     SmartGraph::NodeMap<size_t> indexMap(connections);
@@ -35,14 +38,24 @@ std::vector<int> & Componenter::run ()
             nodes[i] = node;
         }
         
+        original->expandIndex(i, currentLoc);
+        
         // We assume the kernel is symmetric (the R code checks this), so we
         // only need to look at half of it
         for (size_t k=(neighbourhoodSize/2)+1; k<neighbourhoodSize; k++)
         {
             const ptrdiff_t loc = i + sourceNeighbourhood.offsets[k];
             
-            // Out of bounds
-            if (loc < 0 || loc >= ptrdiff_t(nLabels))
+            // Check if we're out of bounds in any dimension
+            bool validLoc = true;
+            for (int j=0; j<nDims; j++)
+            {
+                const int currentDimIndex = currentLoc[j] + sourceNeighbourhood.locs(k,j);
+                if (currentDimIndex < 0 || currentDimIndex >= dims[j])
+                    validLoc = false;
+            }
+            
+            if (!validLoc)
                 continue;
             
             const double &neighbourValue = original->at(loc);

@@ -12,6 +12,8 @@ private:
     Array<double> *original;
     DiscreteKernel *kernel;
     
+    std::vector<int> currentLoc;
+    
     lemon::SmartGraph connections;
     std::vector<int> labels;
     
