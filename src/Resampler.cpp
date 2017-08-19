@@ -51,7 +51,7 @@ void Resampler::presharpen ()
 template <class InputIterator>
 double Resampler::interpolate (const UncachedInterpolant<InputIterator> data, const double &loc)
 {
-    const int base = static_cast<int>(floor(loc)) - baseOffset;
+    const int base = (kernelWidth < 2 ? 0 : (static_cast<int>(floor(loc)) - baseOffset));
     double value = 0.0;
     for (ptrdiff_t k=base; k<base+kernelWidth; k++)
         value += data(k) * kernel->evaluate(static_cast<double>(k) - loc);
@@ -65,7 +65,7 @@ void Resampler::interpolate (const CachedInterpolant data, const std::vector<dou
 {
     for (size_t j=0; j<locs.size(); j++, ++result)
     {
-        const int base = static_cast<int>(floor(locs[j])) - baseOffset;
+        const int base = static_cast<int>(kernelWidth < 2 ? round(locs[j]) : floor(locs[j])) - baseOffset;
         double value = 0.0;
         for (ptrdiff_t k=base; k<base+kernelWidth; k++)
             value += data(k) * kernel->evaluate(static_cast<double>(k) - locs[j]);
@@ -127,7 +127,7 @@ const std::vector<double> & Resampler::run (const Rcpp::NumericMatrix &locations
         
         for (int i=0; i<nDims; i++)
         {
-            base[i] = static_cast<int>(floor(locations(k,i))) - baseOffset;
+            base[i] = static_cast<int>(kernelWidth < 2 ? round(locations(k,i)) : floor(locations(k,i))) - baseOffset;
             offset[i] = locations(k,i) - static_cast<double>(base[i]);
             if (base[i] < 0)
             {
