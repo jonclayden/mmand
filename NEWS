@@ -2,6 +2,13 @@ Significant changes to the mmand package are laid out below for each release.
 
 ===============================================================================
 
+VERSION 1.5.2
+
+- Resampling with the box kernel should no longer produce an erroneous
+  "chequered" pattern. (Reported by Steffen Ehrmann.)
+
+===============================================================================
+
 VERSION 1.5.1
 
 - The connected components algorithm will no longer erroneously wrap around
