@@ -4,3 +4,5 @@ cache: packages
 os:
   - linux
   - osx
+before_install:
+  - echo "SHLIB_OPENMP_CXXFLAGS = " >>~/R/Makevars
