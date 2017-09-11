@@ -5,4 +5,4 @@ os:
   - linux
   - osx
 before_install:
-  - echo "SHLIB_OPENMP_CXXFLAGS = " >>~/R/Makevars
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then echo "SHLIB_OPENMP_CXXFLAGS = " >>~/.R/Makevars; fi
