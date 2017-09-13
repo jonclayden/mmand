@@ -4,5 +4,3 @@ cache: packages
 os:
   - linux
   - osx
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mkdir -p ~/.R && echo "SHLIB_OPENMP_CXXFLAGS = " >>~/.R/Makevars; fi
