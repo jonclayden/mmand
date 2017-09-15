@@ -2,6 +2,13 @@ Significant changes to the mmand package are laid out below for each release.
 
 ===============================================================================
 
+VERSION 1.5.3
+
+- A configure script is now used to check for OpenMP support on non-Windows
+  platforms. This can be helpful in certain build environments on macOS.
+
+===============================================================================
+
 VERSION 1.5.2
 
 - Resampling with the box kernel should no longer produce an erroneous
