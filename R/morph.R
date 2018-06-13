@@ -178,6 +178,10 @@ threshold <- function (x, level, method = c("literal","kmeans"), binarise = TRUE
         dim(x) <- dims
     }
     
+    # Update the range attribute, if it's present and the image has been binarised
+    if (binarise && !is.null(attr(x,"range")))
+        attr(x, "range") <- c(0, 1)
+    
     return (x)
 }
 
