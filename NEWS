@@ -2,6 +2,14 @@ Significant changes to the mmand package are laid out below for each release.
 
 ===============================================================================
 
+VERSION 1.5.4
+
+- The range attribute is now properly updated when an image is binarised within
+  the threshold() function. (Reported by @GhostValk, issue #5.)
+- Compile-time tweaks to meet updated CRAN requirements.
+
+===============================================================================
+
 VERSION 1.5.3
 
 - A configure script is now used to check for OpenMP support on non-Windows
