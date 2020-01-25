@@ -46,7 +46,10 @@ protected:
         bool operator> (const IteratorType<ValueType> &other) const { return (ptr > other.ptr); }
         bool operator< (const IteratorType<ValueType> &other) const { return (ptr < other.ptr); }
         
-        ValueType & operator* () const { return *ptr; }
+        ValueType & operator* () { return *ptr; }
+        const ValueType & operator* () const { return *ptr; }
+        ValueType & operator[] (const size_t i) { return *(ptr + i*step); }
+        const ValueType & operator[] (const size_t i) const { return *(ptr + i*step); }
     };
     
     void calculateStrides ()
