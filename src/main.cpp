@@ -1,6 +1,7 @@
 #include <Rcpp.h>
 
 #include "Componenter.h"
+#include "Distancer.h"
 #include "Resampler.h"
 #include "Morpher.h"
 
@@ -223,6 +224,16 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP distance_transform (SEXP data_)
+{
+BEGIN_RCPP
+    Array<double> *array = arrayFromData(data_);
+    Distancer distancer(array);
+    const vector<double> &distances = distancer.run();
+    return wrap(distances);
+END_RCPP
+}
+
 static R_CallMethodDef callMethods[] = {
     { "is_binary",              (DL_FUNC) &is_binary,               1 },
     { "is_symmetric",           (DL_FUNC) &is_symmetric,            1 },
@@ -231,6 +242,7 @@ static R_CallMethodDef callMethods[] = {
     { "resample",               (DL_FUNC) &resample,                3 },
     { "morph",                  (DL_FUNC) &morph,                   6 },
     { "connected_components",   (DL_FUNC) &connected_components,    2 },
+    { "distance_transform",     (DL_FUNC) &distance_transform,      1 },
     { NULL, NULL, 0 }
 };
 
