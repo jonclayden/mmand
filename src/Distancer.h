@@ -14,6 +14,11 @@ public:
     Distancer (Array<double> * const original)
         : original(original) {}
     
+    ~Distancer ()
+    {
+        delete original;
+    }
+    
     const dbl_vector & run ();
 };
 

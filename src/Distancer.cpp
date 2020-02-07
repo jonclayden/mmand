@@ -12,18 +12,17 @@ const std::vector<double> & Distancer::run ()
     {
         for (size_t j=0; j<original->countLines(i); j++)
         {
-            std::vector<int> vertices;
-            std::vector<double> intersections;
+            std::vector<int> vertices(dims[i]);
+            std::vector<double> intersections(dims[i]);
             
-            vertices.push_back(0);
-            intersections.push_back(R_NegInf);
-            intersections.push_back(R_PosInf);
+            vertices[0] = 0;
+            intersections[0] = R_NegInf;
+            intersections[1] = R_PosInf;
             
             int k = 0;
             Array<double>::Iterator it = original->beginLine(j,i);
-            for (int l=0; l<dims[i]; l++)
+            for (int l=1; l<dims[i]; l++)
             {
-                intersections.push_back(R_PosInf);
                 double q = static_cast<double>(l);
                 int &p = vertices[k];
                 double s = ((it[l] + l*l) - (it[p] + p*p)) / (2 * (l - p));
@@ -34,7 +33,7 @@ const std::vector<double> & Distancer::run ()
                 }
                 vertices[++k] = l;
                 intersections[k] = s;
-                intersections.push_back(R_PosInf);
+                intersections[k+1] = R_PosInf;
             }
             
             k = 0;
