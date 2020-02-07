@@ -10,8 +10,7 @@ sampleKernelFunction(kernel, values)
 
 \method{plot}{kernelArray}(x, y, axis = 1, lwd = 2, col = "red", ...)
 
-\method{plot}{kernelFunction}(x, y, xlim = c(-2, 2), lwd = 2, col = "red",
-  ...)
+\method{plot}{kernelFunction}(x, y, xlim = c(-2, 2), lwd = 2, col = "red", ...)
 }
 \arguments{
 \item{kernel}{A kernel function object.}

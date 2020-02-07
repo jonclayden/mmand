@@ -5,8 +5,7 @@
 \alias{skeletonize}
 \title{Skeletonise a numeric array}
 \usage{
-skeletonise(x, kernel = NULL, method = c("lantuejoul", "beucher",
-  "hitormiss"))
+skeletonise(x, kernel = NULL, method = c("lantuejoul", "beucher", "hitormiss"))
 }
 \arguments{
 \item{x}{An object that can be coerced to an array, or for which a

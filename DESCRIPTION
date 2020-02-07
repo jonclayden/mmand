@@ -15,4 +15,5 @@ Encoding: UTF-8
 License: GPL-2
 URL: https://github.com/jonclayden/mmand
 BugReports: https://github.com/jonclayden/mmand/issues
-RoxygenNote: 6.0.1
+Roxygen: list(old_usage=TRUE)
+RoxygenNote: 7.0.2
