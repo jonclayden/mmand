@@ -4,6 +4,19 @@
 
 double initialTransform (const double &x) { return x == 0.0 ? R_PosInf : 0.0; }
 
+inline double intersectionPoint (Array<double>::Iterator &it, const int &loc, const int &vertex)
+{
+    if (!R_FINITE(it[loc]) || !R_FINITE(it[vertex]))
+        return R_PosInf;
+    else
+    {
+        // This is the solution (for x) to the equation
+        //   y_l + (x_l - x)^2 = y_v + (x_v - x)^2,
+        // where the iterator provides the mapping from x to y
+        return ((it[loc] + loc*loc) - (it[vertex] + vertex*vertex)) / (2 * (loc - vertex));
+    }
+}
+
 Array<double> * Distancer::run ()
 {
     // Transform the source array so that distances are zero within the region and infinite elsewhere
@@ -28,14 +41,9 @@ Array<double> * Distancer::run ()
             Array<double>::Iterator it = result->beginLine(j,i);
             for (int l=1; l<dims[i]; l++)
             {
-                double q = static_cast<double>(l);
-                int &p = vertices[k];
-                double s = ((it[l] + l*l) - (it[p] + p*p)) / (2 * (l - p));
+                double s = intersectionPoint(it, l, vertices[k]);
                 while (s <= intersections[k])
-                {
-                    p = vertices[--k];
-                    s = ((it[l] + l*l) - (it[p] + p*p)) / (2 * (l - p));
-                }
+                    s = intersectionPoint(it, l, vertices[--k]);
                 vertices[++k] = l;
                 intersections[k] = s;
                 intersections[k+1] = R_PosInf;
