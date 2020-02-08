@@ -229,8 +229,10 @@ RcppExport SEXP distance_transform (SEXP data_)
 BEGIN_RCPP
     Array<double> *array = arrayFromData(data_);
     Distancer distancer(array);
-    const vector<double> &distances = distancer.run();
-    return wrap(distances);
+    Array<double> *distances = distancer.run();
+    SEXP result = wrap(distances->getData());
+    delete distances;
+    return result;
 END_RCPP
 }
 

@@ -2,15 +2,20 @@
 
 #include "Distancer.h"
 
-const std::vector<double> & Distancer::run ()
+double initialTransform (const double &x) { return x == 0.0 ? R_PosInf : 0.0; }
+
+Array<double> * Distancer::run ()
 {
+    // Transform the source array so that distances are zero within the region and infinite elsewhere
+    Array<double> *result = new Array<double>(*original);
+    std::transform(original->begin(), original->end(), result->begin(), initialTransform);
+    
     const std::vector<int> &dims = original->getDimensions();
     int nDims = original->getDimensionality();
-    const size_t nSamples = original->size();
     
     for (int i=0; i<nDims; i++)
     {
-        for (size_t j=0; j<original->countLines(i); j++)
+        for (size_t j=0; j<result->countLines(i); j++)
         {
             std::vector<int> vertices(dims[i]);
             std::vector<double> intersections(dims[i]);
@@ -20,7 +25,7 @@ const std::vector<double> & Distancer::run ()
             intersections[1] = R_PosInf;
             
             int k = 0;
-            Array<double>::Iterator it = original->beginLine(j,i);
+            Array<double>::Iterator it = result->beginLine(j,i);
             for (int l=1; l<dims[i]; l++)
             {
                 double q = static_cast<double>(l);
@@ -48,5 +53,5 @@ const std::vector<double> & Distancer::run ()
         }
     }
     
-    return original->getData();
+    return result;
 }

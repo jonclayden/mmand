@@ -3,8 +3,6 @@
 
 #include "Array.h"
 
-typedef std::vector<double> dbl_vector;
-
 class Distancer
 {
 private:
@@ -19,7 +17,7 @@ public:
         delete original;
     }
     
-    const dbl_vector & run ();
+    Array<double> * run ();
 };
 
 #endif
