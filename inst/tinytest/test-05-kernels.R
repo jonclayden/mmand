@@ -24,3 +24,17 @@ expect_equal(mitchellNetravaliKernel(), readRDS("mn_function.rds"))
 expect_equal(sampleKernelFunction(boxKernel(),seq(-1,1,0.5)), c(0,1,1,1,0))
 expect_equal(sampleKernelFunction(triangleKernel(),seq(-1,1,0.5)), c(0,0.5,1,0.5,0))
 expect_equal(sampleKernelFunction(mitchellNetravaliKernel(0,1),seq(-1,1,0.5)), c(0,0.625,1,0.625,0))
+
+
+# Type testing
+expect_true(isKernel(boxKernel()))
+expect_true(isKernelFunction(boxKernel()))
+expect_false(isKernelArray(boxKernel()))
+expect_true(isKernel(shapeKernel(3)))
+expect_false(isKernelFunction(shapeKernel(3)))
+expect_true(isKernelArray(shapeKernel(3)))
+
+
+# Plotting
+plot(boxKernel())
+plot(shapeKernel(3))

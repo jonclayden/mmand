@@ -1,5 +1,4 @@
-library(loder)
-fan <- readPng(system.file("images", "fan-small.png", package="mmand"))
+fan <- loder::readPng(system.file("images", "fan-small.png", package="mmand"))
 
 # Binary mathematical morphology
 data <- c(0,0,1,0,0,0,1,1,1,0,0)
