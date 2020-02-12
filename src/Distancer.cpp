@@ -6,15 +6,10 @@ double initialTransform (const double &x) { return x == 0.0 ? R_PosInf : 0.0; }
 
 inline double intersectionPoint (Array<double>::Iterator &it, const int &loc, const int &vertex)
 {
-    if (!R_FINITE(it[loc]) || !R_FINITE(it[vertex]))
-        return R_PosInf;
-    else
-    {
-        // This is the solution (for x) to the equation
-        //   y_l + (x_l - x)^2 = y_v + (x_v - x)^2,
-        // where the iterator provides the mapping from x to y
-        return ((it[loc] + loc*loc) - (it[vertex] + vertex*vertex)) / (2 * (loc - vertex));
-    }
+    // This is the solution (for x) to the equation
+    //   y_l + (x_l - x)^2 = y_v + (x_v - x)^2,
+    // where the iterator provides the mapping from x to y
+    return ((it[loc] + loc*loc) - (it[vertex] + vertex*vertex)) / (2 * (loc - vertex));
 }
 
 Array<double> * Distancer::run ()
