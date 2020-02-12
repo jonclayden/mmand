@@ -7,10 +7,11 @@ class Distancer
 {
 private:
     Array<double> *original;
+    bool usePixdim;
     
 public:
-    Distancer (Array<double> * const original)
-        : original(original) {}
+    Distancer (Array<double> * const original, const bool usePixdim)
+        : original(original), usePixdim(usePixdim) {}
     
     ~Distancer ()
     {

@@ -3,6 +3,14 @@
 #include "Array.h"
 
 template <typename DataType>
+void Array<DataType>::setPixelDimensions (const std::vector<double> &newPixdims)
+{
+    this->pixdims.resize(nDims, 1.0);
+    for (size_t i=0; i<std::min(size_t(nDims),newPixdims.size()); i++)
+        this->pixdims[i] = newPixdims[i];
+}
+
+template <typename DataType>
 size_t Array<DataType>::countLines (const int dim) const
 {
     size_t n = 1;

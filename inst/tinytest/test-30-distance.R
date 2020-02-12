@@ -8,3 +8,7 @@ expect_equal(unsignedTransform[,1], sqrt(c(2,1,0,1,2)))
 
 signedTransform <- unsignedTransform - distanceTransform(1-kernel)
 expect_equal(signedTransform[3,3], -sqrt(5))
+
+# Set the pixdims so that distances are twice as large in the second dimension
+anisotropicTransform <- distanceTransform(kernel, c(1,2))
+expect_equal(anisotropicTransform[,1], c(2,1,0,1,2))

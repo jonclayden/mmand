@@ -16,6 +16,7 @@ template <typename DataType> class Array
 protected:
     std::vector<DataType> data;
     std::vector<int> dims;
+    std::vector<double> pixdims;
     int nDims;
     std::vector<size_t> strides;
     
@@ -72,6 +73,7 @@ public:
         : dims(dims)
     {
         nDims = dims.size();
+        pixdims = std::vector<double>(nDims, 1.0);
         calculateStrides();
         
         size_t length = 1;
@@ -85,11 +87,12 @@ public:
         : data(data), dims(dims)
     {
         nDims = dims.size();
+        pixdims = std::vector<double>(nDims, 1.0);
         calculateStrides();
     }
     
     Array (const Array<DataType> &other)
-        : data(other.data), dims(other.dims)
+        : data(other.data), dims(other.dims), pixdims(other.pixdims)
     {
         nDims = dims.size();
         calculateStrides();
@@ -139,6 +142,9 @@ public:
     const std::vector<DataType> & getData () const { return data; }
     const std::vector<int> & getDimensions () const { return dims; }
     int getDimensionality () const { return nDims; }
+    const std::vector<double> & getPixelDimensions () const { return pixdims; }
+    
+    void setPixelDimensions (const std::vector<double> &newPixdims);
     
     size_t countLines (const int dim) const;
     size_t lineOffset (const size_t n, const int dim) const;

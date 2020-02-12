@@ -4,12 +4,12 @@
 
 double initialTransform (const double &x) { return x == 0.0 ? R_PosInf : 0.0; }
 
-inline double intersectionPoint (Array<double>::Iterator &it, const int &loc, const int &vertex)
+inline double intersectionPoint (Array<double>::Iterator &it, const int &loc, const int &vertex, const double &sqPixdim)
 {
     // This is the solution (for x) to the equation
-    //   y_l + (x_l - x)^2 = y_v + (x_v - x)^2,
+    //   y_l + p^2 * (x_l - x)^2 = y_v + p^2 * (x_v - x)^2,
     // where the iterator provides the mapping from x to y
-    return ((it[loc] + loc*loc) - (it[vertex] + vertex*vertex)) / (2 * (loc - vertex));
+    return (it[loc] - it[vertex] + sqPixdim * (loc*loc - vertex*vertex)) / (2 * sqPixdim * (loc - vertex));
 }
 
 Array<double> * Distancer::run ()
@@ -20,11 +20,14 @@ Array<double> * Distancer::run ()
     std::transform(original->begin(), original->end(), result->begin(), initialTransform);
     
     const std::vector<int> &dims = original->getDimensions();
-    int nDims = original->getDimensionality();
+    const int nDims = original->getDimensionality();
+    const std::vector<double> &pixdims = original->getPixelDimensions();
     
     // This form is separable, so we apply it in one direction at a time
     for (int i=0; i<nDims; i++)
     {
+        const double sqPixdim = usePixdim ? pixdims[i] * pixdims[i] : 1.0;
+        
         for (size_t j=0; j<result->countLines(i); j++)
         {
             // The vertices are the minima of a series of parabolas. The
@@ -53,12 +56,12 @@ Array<double> * Distancer::run ()
                     // parabola is to the "left" of its intersection with its
                     // predecessor, the new one replaces the previous one
                     // (and so on, back through the chain)
-                    double s = intersectionPoint(it, l, vertices.back());
+                    double s = intersectionPoint(it, l, vertices.back(), sqPixdim);
                     while (s <= intersections.back())
                     {
                         vertices.pop_back();
                         intersections.pop_back();
-                        s = intersectionPoint(it, l, vertices.back());
+                        s = intersectionPoint(it, l, vertices.back(), sqPixdim);
                     }
                     intersections.push_back(s);
                 }
@@ -80,10 +83,12 @@ Array<double> * Distancer::run ()
             {
                 // The relevant parabola is the last one whose intersection
                 // point we haven't yet passed
-                double q = static_cast<double>(l);
+                const double q = static_cast<double>(l);
                 while (intersections[k+1] < q)
                     k++;
                 double dx = q - vertices[k];
+                if (usePixdim)
+                    dx *= pixdims[i];
                 it[l] = it[vertices[k]] + dx * dx;
             }
         }

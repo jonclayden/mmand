@@ -7,13 +7,21 @@
 \usage{
 distanceTransform(x, ...)
 
-\method{distanceTransform}{default}(x, ...)
+\method{distanceTransform}{default}(x, pixdim = TRUE, ...)
 }
 \arguments{
 \item{x}{Any object. For the default method, this must be coercible to an
 array.}
 
 \item{\dots}{Additional arguments to methods.}
+
+\item{pixdim}{An optional numeric vector or logical value. In the former
+case it will be taken as giving the physical size of the array elements of
+\code{x} along each dimension, and these will be incorporated into the
+distance calculation. If \code{TRUE}, the default, the \code{"pixdim"}
+attribute of \code{x} will be used for this purpose, if it is present. If
+\code{FALSE}, any such attribute will be ignored, and distances will
+always be counted in array elements, with all dimensions treated equally.}
 }
 \value{
 An array of the same dimension as the original, whose elements give
@@ -29,6 +37,7 @@ values treated as "on", and all zeroes as "off".
 \examples{
 x <- c(0,0,1,0,0,0,1,1,1,0,0)
 distanceTransform(x)
+distanceTransform(x, pixdim=2)
 }
 \author{
 Jon Clayden <code@clayden.org>
