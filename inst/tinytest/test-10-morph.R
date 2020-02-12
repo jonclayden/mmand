@@ -21,6 +21,12 @@ kernel <- shapeKernel(c(3,3), type="diamond")
 expect_equal(neighbourhood(data,3)$offsets, -4:4)
 expect_equal(dilate(data,kernel), readRDS("dilate_2d_bin.rds"))
 
+# Different skeletonisation methods (in 2D)
+data <- shapeKernel(c(5,5), type="diamond")
+kernel <- shapeKernel(c(3,3))
+expect_equal(skeletonise(data,kernel,method="lantuejoul")[,3], c(1,0,1,0,1))
+expect_equal(skeletonise(data,kernel,method="beucher")[,3], c(1,1,1,1,1))
+expect_equal(skeletonise(data,kernel,method="hitormiss")[,3], c(0,0,1,1,1))
 
 # Greyscale mathematical morphology
 data <- c(0,0,0.5,0,0,0,0.2,0.5,0.3,0,0)
