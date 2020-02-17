@@ -97,9 +97,10 @@ display.default <- function (x, transpose = TRUE, useRaster = TRUE, add = FALSE,
     }
     else
     {
-        if (attr(dpiDevice,"explicit") && attribs$dpi[1] == attribs$dpi[2])
+        newDevice <- getOption("mmand.display.newDevice", TRUE)
+        if (newDevice && attr(dpiDevice,"explicit") && attribs$dpi[1] == attribs$dpi[2])
             dev.new(width=nrow(x)/attribs$dpi[1], height=ncol(x)/attribs$dpi[2], dpi=attribs$dpi[1])
-        else
+        else if (newDevice)
             dev.new(width=nrow(x)/attribs$dpi[1], height=ncol(x)/attribs$dpi[2])
         
         oldPars <- par(mai=c(0,0,0,0), bg=attribs$background)
