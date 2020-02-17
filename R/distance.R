@@ -15,6 +15,10 @@
 #'   attribute of \code{x} will be used for this purpose, if it is present. If
 #'   \code{FALSE}, any such attribute will be ignored, and distances will
 #'   always be counted in array elements, with all dimensions treated equally.
+#' @param signed Logical value. If \code{TRUE}, the signed distance transform
+#'   is returned, such that distances from the region boundary are negative
+#'   within the region and positive outside. Otherwise, distances are zero
+#'   within the region.
 #' @return An array of the same dimension as the original, whose elements give
 #'   the Euclidean distance from that element to the nearest "on" element in
 #'   the original.
@@ -32,7 +36,7 @@ distanceTransform <- function (x, ...)
 
 #' @rdname distanceTransform
 #' @export
-distanceTransform.default <- function (x, pixdim = TRUE, ...)
+distanceTransform.default <- function (x, pixdim = TRUE, signed = FALSE, ...)
 {
     x <- as.array(x)
     if (!is.numeric(x) && !is.logical(x))
@@ -52,7 +56,20 @@ distanceTransform.default <- function (x, pixdim = TRUE, ...)
         }
     }
     
-    returnValue <- .Call(C_distance_transform, x, pixdim)
+    isBinary <- binary(x)
+    if (signed)
+    {
+        if (!isBinary)
+        {
+            x <- binarise(x)
+            value <- 1
+        }
+        else
+            value <- attr(isBinary, "value")
+        returnValue <- .Call(C_distance_transform, x, pixdim) - .Call(C_distance_transform, value-x, pixdim)
+    }
+    else
+        returnValue <- .Call(C_distance_transform, x, pixdim)
     
     if (length(dim(x)) > 1)
         dim(returnValue) <- dim(x)

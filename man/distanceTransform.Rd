@@ -7,7 +7,7 @@
 \usage{
 distanceTransform(x, ...)
 
-\method{distanceTransform}{default}(x, pixdim = TRUE, ...)
+\method{distanceTransform}{default}(x, pixdim = TRUE, signed = FALSE, ...)
 }
 \arguments{
 \item{x}{Any object. For the default method, this must be coercible to an
@@ -22,6 +22,11 @@ distance calculation. If \code{TRUE}, the default, the \code{"pixdim"}
 attribute of \code{x} will be used for this purpose, if it is present. If
 \code{FALSE}, any such attribute will be ignored, and distances will
 always be counted in array elements, with all dimensions treated equally.}
+
+\item{signed}{Logical value. If \code{TRUE}, the signed distance transform
+is returned, such that distances from the region boundary are negative
+within the region and positive outside. Otherwise, distances are zero
+within the region.}
 }
 \value{
 An array of the same dimension as the original, whose elements give
