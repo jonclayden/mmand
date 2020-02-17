@@ -20,6 +20,7 @@ and `resample()`.
 - [Skeletonisation](#skeletonisation)
 - [Smoothing](#smoothing)
 - [Connected components](#connected-components)
+- [The distance transform](#the-distance-transform)
 - [Resampling](#resampling)
 
 ## Test image
@@ -324,6 +325,32 @@ of the central hub.
 
 This is can be a useful tool for "segmentation", or dividing an image into
 coherent areas.
+
+## The distance transform
+
+A useful operation in certain contexts is the distance transform, which
+calculates the distance from each pixel to a region of interest. There are
+signed an unsigned variants, with the former also calculating the distance
+to the boundary within the region of interest itself. We can use the
+thresholded image from above to illustrate the point:
+
+
+```r
+display(distanceTransform(fan_thresholded))
+```
+
+![plot of chunk fan-distance](tools/figures/fan-distance-1.png)
+
+```r
+display(abs(distanceTransform(fan_thresholded, signed=TRUE)))
+```
+
+![plot of chunk fan-distance](tools/figures/fan-distance-2.png)
+
+We take the absolute value of the signed transform here for ease of visual
+interpretation. Notice how, in both cases, bright "ridges" in the transformed
+image correspond to midlines at maximal distance from the boundary between
+foreground and background.
 
 ## Resampling
 
