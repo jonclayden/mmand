@@ -1,5 +1,5 @@
 language: r
-sudo: false
+os: linux
 cache: packages
 
 after_success:
