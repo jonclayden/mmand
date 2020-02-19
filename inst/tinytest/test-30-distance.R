@@ -1,6 +1,8 @@
 # Distance transform
 expect_equal(distanceTransform(c(0,0,1,0,0,0,1,1,1,0,0)), c(2,1,0,1,2,1,0,0,0,1,2))
 expect_equal(distanceTransform(c(0,0,1,0,0,0,1,1,1,0,0),signed=TRUE), c(2,1,-1,1,2,1,-1,-2,-1,1,2))
+expect_equal(distanceTransform(c(0,0,1,0,0,0,2,3,4,0,0)), c(2,1,0,1,2,1,0,0,0,1,2))
+expect_equal(distanceTransform(c(0,0,1,0,0,0,2,3,4,0,0),signed=TRUE), c(2,1,-1,1,2,1,-1,-2,-1,1,2))
 
 kernel <- shapeKernel(c(5,5), type="diamond")
 unsignedTransform <- distanceTransform(kernel)
