@@ -28,6 +28,11 @@
 #' distanceTransform(x)
 #' distanceTransform(x, pixdim=2)
 #' @author Jon Clayden <code@@clayden.org>
+#' @references This implementation is based on the "marching parabolas"
+#'   algorithm described by Felzenszwalb and Huttenlocher in the paper below.
+#'   
+#'   P.F. Felzenszwalb & D.P. Huttenlocher (2012). Distance transforms of
+#'   sampled functions. Theory of Computing 8(19):415-428.
 #' @export
 distanceTransform <- function (x, ...)
 {
