@@ -2,6 +2,10 @@
 
 #include "Distancer.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 double initialTransform (const double &x) { return x == 0.0 ? R_PosInf : 0.0; }
 
 inline double intersectionPoint (Array<double>::Iterator &it, const int &loc, const int &vertex, const double &sqPixdim)
@@ -28,6 +32,10 @@ Array<double> * Distancer::run ()
     {
         const double sqPixdim = usePixdim ? pixdims[i] * pixdims[i] : 1.0;
         
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+        // Lines are independent, so can be processed in parallel
         for (size_t j=0; j<result->countLines(i); j++)
         {
             // The vertices are the minima of a series of parabolas. The
