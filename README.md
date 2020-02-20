@@ -1,5 +1,7 @@
 
 
+[![CRAN version](http://www.r-pkg.org/badges/version/mmand)](https://cran.r-project.org/package=mmand) [![Travis Build Status](https://travis-ci.org/jonclayden/mmand.svg?branch=master)](https://travis-ci.org/jonclayden/mmand) [![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/yp4nh0ubiq53n7gw?svg=true)](https://ci.appveyor.com/project/jonclayden/mmand) [![Coverage Status](https://coveralls.io/repos/github/jonclayden/mmand/badge.svg?branch=master)](https://coveralls.io/github/jonclayden/mmand?branch=master)
+
 # Mathematical Morphology in Any Number of Dimensions
 
 The `mmand` R package provides tools for performing mathematical morphology
@@ -350,7 +352,9 @@ display(abs(distanceTransform(fan_thresholded, signed=TRUE)))
 We take the absolute value of the signed transform here for ease of visual
 interpretation. Notice how, in both cases, bright "ridges" in the transformed
 image correspond to midlines at maximal distance from the boundary between
-foreground and background.
+foreground and background. Philip Rideout
+[provides a detailed explanation](https://prideout.net/blog/distance_fields/)
+of the algorithm and its uses.
 
 ## Resampling
 
