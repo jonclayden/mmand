@@ -2,6 +2,20 @@ Significant changes to the mmand package are laid out below for each release.
 
 ===============================================================================
 
+VERSION 1.6.0
+
+- A separable distance transform is now available through the new
+  distanceTransform() function. This maps the distances from each array element
+  to the nearest boundary between foreground and background, and can be useful
+  for estimating the width of image features. (Hat-tip to Chris Rorden and
+  Philip Rideout.)
+- It is now possible to suppress the creation of a new device by display(), by
+  setting the "mmand.display.newDevice" option to FALSE.
+- Tests have been migrated from the "testthat" framework to "tinytest", and
+  coverage has been improved.
+
+===============================================================================
+
 VERSION 1.5.4
 
 - The range attribute is now properly updated when an image is binarised within
