@@ -13,8 +13,8 @@ expect_equal(components(data,kernel), c(NA,NA,2,NA,NA,NA,1,1,1,NA,NA))
 data <- matrix(c(1,1,0,1,0,1,0,1,1), 3, 3)
 boxKernel <- shapeKernel(c(3,3), type="box")
 diamondKernel <- shapeKernel(c(3,3), type="diamond")
-expect_equal(components(data,boxKernel), readRDS("fan_components_box.rds"))
-expect_equal(components(data,diamondKernel), readRDS("fan_components_diamond.rds"))
+expect_equal_to_reference(components(data,boxKernel), "fan_components_box.rds")
+expect_equal_to_reference(components(data,diamondKernel), "fan_components_diamond.rds")
 
 # 0 1 1
 # 0 0 0
