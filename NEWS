@@ -2,6 +2,15 @@ Significant changes to the mmand package are laid out below for each release.
 
 ===============================================================================
 
+VERSION 1.6.1
+
+- display() tests are now run from the R temporary directory, to avoid
+  cluttering up the package directory.
+- Distance transform tests are now skipped on Solaris, due to irreproducible
+  failures on CRAN.
+
+===============================================================================
+
 VERSION 1.6.0
 
 - A separable distance transform is now available through the new
