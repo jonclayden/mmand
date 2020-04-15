@@ -40,9 +40,7 @@ jobs:
       run: R CMD build .
     
     - name: Check package
-      run: |
-        R CMD check *tar.gz
-        mv *.Rcheck Rcheck
+      run: R CMD check *tar.gz || { mv *.Rcheck Rcheck; false; }
     
     # Upload the check directory as an artefact on failure
     - name: Upload check results
