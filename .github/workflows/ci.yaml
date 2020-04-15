@@ -22,6 +22,11 @@ jobs:
     # Install and set up R
     - uses: r-lib/actions/setup-r@v1
     
+    # The curl package (upon which covr depends) requires libcurl
+    - name: Install upstream system dependencies
+      if: runner.os == 'Linux'
+      run: sudo apt-get install -y libcurl4-openssl-dev
+    
     - name: Parse and install dependencies
       run: |
         deps <- read.dcf("DESCRIPTION", c("Depends","Imports","LinkingTo","Suggests","Enhances"))
