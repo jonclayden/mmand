@@ -19,9 +19,8 @@ jobs:
     # Check out the repository under $GITHUB_WORKSPACE
     - uses: actions/checkout@v2
     
-    # Install and set up R and TinyTeX
+    # Install and set up R
     - uses: r-lib/actions/setup-r@v1
-    - uses: r-lib/actions/setup-pandoc@v1
     
     # The curl package (upon which covr depends) requires libcurl
     - name: Install upstream system dependencies
@@ -40,7 +39,7 @@ jobs:
       run: R CMD build .
     
     - name: Check package
-      run: R CMD check *tar.gz || { mv *.Rcheck Rcheck; false; }
+      run: R CMD check --no-manual *tar.gz || { mv *.Rcheck Rcheck; false; }
     
     # Upload the check directory as an artefact on failure
     - name: Upload check results
