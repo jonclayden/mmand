@@ -14,6 +14,9 @@ All of these operations are underpinned by three powerful functions, which
 perform different types of kernel-based operations: `morph()`, `components()`
 and `resample()`.
 
+An additional function provides a multidimensional
+[distance transform](#the-distance-transform) operation.
+
 ## Contents
 
 - [Test image](#test-image)
@@ -27,7 +30,7 @@ and `resample()`.
 
 ## Test image
 
-A test image of a jet engine fan is available within the package, and will be 
+A test image of a jet engine fan is available within the package, and will be
 used for demonstration below. It can be read in and displayed using the code
 
 
@@ -41,7 +44,8 @@ display(fan)
 
 ![plot of chunk fan](tools/figures/fan-1.png)
 
-Here we are using the [loder](https://github.com/jonclayden/loder) package to read the PNG file.
+Here we are using the [loder](https://github.com/jonclayden/loder) package to
+read the PNG file.
 
 ## Mathematical morphology
 
