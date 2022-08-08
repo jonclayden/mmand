@@ -8,12 +8,12 @@
 
 double initialTransform (const double &x) { return x == 0.0 ? R_PosInf : 0.0; }
 
-inline double intersectionPoint (Array<double>::Iterator &it, const int &loc, const int &vertex, const double &sqPixdim)
+inline double intersectionPoint (const std::vector<double> &vec, const int &loc, const int &vertex, const double &sqPixdim)
 {
     // This is the solution (for x) to the equation
     //   y_l + p^2 * (x_l - x)^2 = y_v + p^2 * (x_v - x)^2,
-    // where the iterator provides the mapping from x to y
-    return (it[loc] - it[vertex] + sqPixdim * (loc*loc - vertex*vertex)) / (2 * sqPixdim * (loc - vertex));
+    // where the first argument provides the mapping from x to y
+    return (vec[loc] - vec[vertex] + sqPixdim * (loc*loc - vertex*vertex)) / (2 * sqPixdim * (loc - vertex));
 }
 
 Array<double> * Distancer::run ()
@@ -48,12 +48,13 @@ Array<double> * Distancer::run ()
             // first value here is an "off the left end" extreme
             intersections.push_back(R_NegInf);
             
-            // Get an iterator to access the line of data
+            // Get an iterator to access the line of data, and take a copy
             Array<double>::Iterator it = result->beginLine(j,i);
+            const std::vector<double> line(result->beginLine(j,i), result->endLine(j,i));
             for (int l=0; l<dims[i]; l++)
             {
                 // Don't place a parabola if the transformed data is infinite
-                if (!R_FINITE(it[l]))
+                if (!R_FINITE(line[l]))
                     continue;
                 
                 // If at least one other parabola has been placed, find the
@@ -64,12 +65,12 @@ Array<double> * Distancer::run ()
                     // parabola is to the "left" of its intersection with its
                     // predecessor, the new one replaces the previous one
                     // (and so on, back through the chain)
-                    double s = intersectionPoint(it, l, vertices.back(), sqPixdim);
+                    double s = intersectionPoint(line, l, vertices.back(), sqPixdim);
                     while (s <= intersections.back())
                     {
                         vertices.pop_back();
                         intersections.pop_back();
-                        s = intersectionPoint(it, l, vertices.back(), sqPixdim);
+                        s = intersectionPoint(line, l, vertices.back(), sqPixdim);
                     }
                     intersections.push_back(s);
                 }
@@ -97,7 +98,7 @@ Array<double> * Distancer::run ()
                 double dx = q - vertices[k];
                 if (usePixdim)
                     dx *= pixdims[i];
-                it[l] = it[vertices[k]] + dx * dx;
+                it[l] = line[vertices[k]] + dx * dx;
             }
         }
     }
