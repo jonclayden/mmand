@@ -23,7 +23,7 @@ if (tolower(Sys.info()[["sysname"]]) != "sunos") {
     anisotropicTransform <- distanceTransform(kernel, c(1,2))
     expect_equal(anisotropicTransform[,1], c(2,1,0,1,2))
     
-    # The 2D distance transform should be symmetrical
+    # The 2D distance transform of a diagonal matrix should be symmetrical
     transform2D <- distanceTransform(diag(5))
     expect_equal(transform2D, t(transform2D))
 }
