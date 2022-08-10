@@ -6,7 +6,7 @@
     {
         .Cache$dpiDevice <- getOption("device")
         deviceFunction <- try(match.fun(.Cache$dpiDevice), silent=TRUE)
-        if ((class(deviceFunction) == "function") && ("dpi" %in% names(formals(deviceFunction))))
+        if (is.function(deviceFunction) && ("dpi" %in% names(formals(deviceFunction))))
             .Cache$dpi <- structure(c(72,72), explicit=TRUE)
         else
         {

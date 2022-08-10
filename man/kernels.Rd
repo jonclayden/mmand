@@ -28,7 +28,8 @@ kernelArray(values)
 shapeKernel(width, dim = length(width), type = c("box", "disc", "diamond"),
   binary = TRUE, normalised = FALSE)
 
-gaussianKernel(sigma, dim = length(sigma), size = 6 * sigma, normalised = TRUE)
+gaussianKernel(sigma, dim = length(sigma), size = 6 * sigma,
+  normalised = TRUE)
 
 sobelKernel(dim, axis = 1)
 

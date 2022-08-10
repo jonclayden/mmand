@@ -8,7 +8,8 @@
 \usage{
 resample(x, points, kernel, ...)
 
-\method{resample}{default}(x, points, kernel, pointType = c("auto", "general", "grid"), ...)
+\method{resample}{default}(x, points, kernel, pointType = c("auto",
+  "general", "grid"), ...)
 
 rescale(x, factor, kernel, ...)
 }

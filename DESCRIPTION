@@ -1,6 +1,6 @@
 Package: mmand
 Version: 1.6.2
-Date: 2022-08-08
+Date: 2022-08-10
 Title: Mathematical Morphology in Any Number of Dimensions
 Author: Jon Clayden
 Maintainer: Jon Clayden <code@clayden.org>
@@ -16,4 +16,4 @@ License: GPL-2
 URL: https://github.com/jonclayden/mmand
 BugReports: https://github.com/jonclayden/mmand/issues
 Roxygen: list(old_usage=TRUE)
-RoxygenNote: 7.0.2
+RoxygenNote: 7.2.1

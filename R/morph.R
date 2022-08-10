@@ -436,8 +436,7 @@ closing <- function (x, kernel)
 #' report, Centre de Morphologie Mathématique, Fontainebleau, France.
 #' 
 #' S. Beucher (1994). Digital skeletons in Euclidean and geodesic spaces.
-#' Signal Processing 38(1):127-141.
-#' \url{https://doi.org/10.1016/0165-1684(94)90061-2}.
+#' Signal Processing 38(1):127-141. \doi{10.1016/0165-1684(94)90061-2}.
 #' @aliases skeletonize
 #' @export skeletonise skeletonize
 skeletonise <- skeletonize <- function (x, kernel = NULL, method = c("lantuejoul","beucher","hitormiss"))

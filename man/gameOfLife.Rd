@@ -5,7 +5,8 @@
 \alias{gosperGliderGun}
 \title{Conway's Game of Life}
 \usage{
-gameOfLife(init, size, density = 0.3, steps = 200, viz = FALSE, tick = 0.5)
+gameOfLife(init, size, density = 0.3, steps = 200, viz = FALSE,
+  tick = 0.5)
 
 gosperGliderGun()
 }
