@@ -2,6 +2,14 @@ Significant changes to the mmand package are laid out below for each release.
 
 ===============================================================================
 
+VERSION 1.6.2
+
+- Too-eager updating of data in-place could lead to errors in some elements of
+  a multidimensional distance transform. This has been corrected. (Reported by
+  Fabio Boschetti.)
+
+===============================================================================
+
 VERSION 1.6.1
 
 - display() tests are now run from the R temporary directory, to avoid
@@ -43,14 +51,14 @@ VERSION 1.5.3
 VERSION 1.5.2
 
 - Resampling with the box kernel should no longer produce an erroneous
-  "chequered" pattern. (Reported by Steffen Ehrmann.)
+  "chequered" pattern. (Reported by Steffen Ehrmann, issue #3.)
 
 ===============================================================================
 
 VERSION 1.5.1
 
 - The connected components algorithm will no longer erroneously wrap around
-  image boundaries. (Reported by Steffen Ehrmann.)
+  image boundaries. (Reported by Steffen Ehrmann, issue #2.)
 
 ===============================================================================
 
