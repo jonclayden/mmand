@@ -21,13 +21,19 @@ protected:
     std::vector<size_t> strides;
     
     template <typename ValueType>
-    class IteratorType : public std::iterator<std::forward_iterator_tag, ValueType>
+    class IteratorType
     {
     private:
         ValueType *ptr;
         size_t step;
         
     public:
+        typedef std::forward_iterator_tag iterator_category;
+        typedef ValueType value_type;
+        typedef std::ptrdiff_t difference_type;
+        typedef ValueType* pointer;
+        typedef ValueType& reference;
+        
         IteratorType ()
             : ptr(NULL), step(0) {}
         IteratorType (ValueType *p, const size_t step = 1)
