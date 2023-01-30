@@ -3,3 +3,4 @@
 ^README\.Rmd$
 ^appveyor\.yml$
 ^\.github$
+^compile_commands.json$

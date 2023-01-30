@@ -4,3 +4,4 @@
 .DS_Store
 /config.*
 /src/Makevars
+compile_commands.json
