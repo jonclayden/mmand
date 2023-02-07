@@ -1,6 +1,6 @@
 
 
-[![CRAN version](http://www.r-pkg.org/badges/version/mmand)](https://cran.r-project.org/package=mmand) [![Travis Build Status](https://travis-ci.org/jonclayden/mmand.svg?branch=master)](https://travis-ci.org/jonclayden/mmand) [![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/yp4nh0ubiq53n7gw?svg=true)](https://ci.appveyor.com/project/jonclayden/mmand) [![Coverage Status](https://coveralls.io/repos/github/jonclayden/mmand/badge.svg?branch=master)](https://coveralls.io/github/jonclayden/mmand?branch=master)
+[![CRAN version](http://www.r-pkg.org/badges/version/mmand)](https://cran.r-project.org/package=mmand) [![CI](https://github.com/jonclayden/mmand/actions/workflows/ci.yaml/badge.svg)](https://github.com/jonclayden/mmand/actions/workflows/ci.yaml) [![Coverage Status](https://coveralls.io/repos/github/jonclayden/mmand/badge.svg?branch=master)](https://coveralls.io/github/jonclayden/mmand?branch=master) [![status](https://tinyverse.netlify.com/badge/mmand)](https://tinyverse.netlify.app)
 
 # Mathematical Morphology in Any Number of Dimensions
 

@@ -2,6 +2,12 @@ Significant changes to the mmand package are laid out below for each release.
 
 ===============================================================================
 
+VERSION 1.6.3
+
+- The package now avoids using std::iterator, which is deprecated in C++17.
+
+===============================================================================
+
 VERSION 1.6.2
 
 - Too-eager updating of data in-place could lead to errors in some elements of
