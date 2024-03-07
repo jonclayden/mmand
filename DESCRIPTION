@@ -16,4 +16,4 @@ License: GPL-2
 URL: https://github.com/jonclayden/mmand
 BugReports: https://github.com/jonclayden/mmand/issues
 Roxygen: list(old_usage=TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3

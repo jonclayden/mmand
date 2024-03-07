@@ -19,6 +19,8 @@
 #'   is returned, such that distances from the region boundary are negative
 #'   within the region and positive outside. Otherwise, distances are zero
 #'   within the region.
+#' @param threads If a positive integer, and the package is compiled with
+#'   OpenMP support, the number of threads to use during the calculation.
 #' @return An array of the same dimension as the original, whose elements give
 #'   the Euclidean distance from that element to the nearest "on" element in
 #'   the original.
@@ -41,7 +43,7 @@ distanceTransform <- function (x, ...)
 
 #' @rdname distanceTransform
 #' @export
-distanceTransform.default <- function (x, pixdim = TRUE, signed = FALSE, ...)
+distanceTransform.default <- function (x, pixdim = TRUE, signed = FALSE, threads = getOption("mmand.threads"), ...)
 {
     x <- as.array(x)
     if (!is.numeric(x) && !is.logical(x))
@@ -71,10 +73,10 @@ distanceTransform.default <- function (x, pixdim = TRUE, signed = FALSE, ...)
         }
         else
             value <- attr(isBinary, "value")
-        returnValue <- .Call(C_distance_transform, x, pixdim) - .Call(C_distance_transform, value-x, pixdim)
+        returnValue <- .Call(C_distance_transform, x, pixdim, threads) - .Call(C_distance_transform, value-x, pixdim, threads)
     }
     else
-        returnValue <- .Call(C_distance_transform, x, pixdim)
+        returnValue <- .Call(C_distance_transform, x, pixdim, threads)
     
     if (length(dim(x)) > 1)
         dim(returnValue) <- dim(x)

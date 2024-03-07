@@ -7,7 +7,8 @@
 \usage{
 distanceTransform(x, ...)
 
-\method{distanceTransform}{default}(x, pixdim = TRUE, signed = FALSE, ...)
+\method{distanceTransform}{default}(x, pixdim = TRUE, signed = FALSE,
+  threads = getOption("mmand.threads"), ...)
 }
 \arguments{
 \item{x}{Any object. For the default method, this must be coercible to an
@@ -27,6 +28,9 @@ always be counted in array elements, with all dimensions treated equally.}
 is returned, such that distances from the region boundary are negative
 within the region and positive outside. Otherwise, distances are zero
 within the region.}
+
+\item{threads}{If a positive integer, and the package is compiled with
+OpenMP support, the number of threads to use during the calculation.}
 }
 \value{
 An array of the same dimension as the original, whose elements give

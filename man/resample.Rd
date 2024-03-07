@@ -9,7 +9,7 @@
 resample(x, points, kernel, ...)
 
 \method{resample}{default}(x, points, kernel, pointType = c("auto",
-  "general", "grid"), ...)
+  "general", "grid"), threads = getOption("mmand.threads"), ...)
 
 rescale(x, factor, kernel, ...)
 }
@@ -27,6 +27,9 @@ each resampled value, or the name of one.}
 
 \item{pointType}{A string giving the type of the point specification being
 used. Usually can be left as \code{"auto"}.}
+
+\item{threads}{If a positive integer, and the package is compiled with
+OpenMP support, the number of threads to use during the calculation.}
 
 \item{factor}{A vector of scale factors, which will be recycled to the
 dimensionality of \code{x}.}

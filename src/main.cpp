@@ -5,6 +5,10 @@
 #include "Resampler.h"
 #include "Morpher.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 using namespace Rcpp;
 using namespace std;
 
@@ -127,7 +131,7 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP resample (SEXP data_, SEXP kernel_, SEXP samplingScheme_)
+RcppExport SEXP resample (SEXP data_, SEXP kernel_, SEXP samplingScheme_, SEXP threads_)
 {
 BEGIN_RCPP
     Array<double> *array = arrayFromData(data_);
@@ -136,6 +140,11 @@ BEGIN_RCPP
 
     List samplingScheme(samplingScheme_);
     string schemeType = as<string>(samplingScheme["type"]);
+    
+#ifdef _OPENMP
+    if (!Rf_isNull(threads_) && as<int>(threads_) > 0)
+        omp_set_num_threads(as<int>(threads_));
+#endif
     
     if (schemeType.compare("general") == 0)
     {
@@ -228,11 +237,15 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP distance_transform (SEXP data_, SEXP _usePixdim)
+RcppExport SEXP distance_transform (SEXP data_, SEXP usePixdim_, SEXP threads_)
 {
 BEGIN_RCPP
     Array<double> *array = arrayFromData(data_);
-    Distancer distancer(array, as<bool>(_usePixdim));
+#ifdef _OPENMP
+    if (!Rf_isNull(threads_) && as<int>(threads_) > 0)
+        omp_set_num_threads(as<int>(threads_));
+#endif
+    Distancer distancer(array, as<bool>(usePixdim_));
     Array<double> *distances = distancer.run();
     SEXP result = wrap(distances->getData());
     delete distances;
@@ -245,10 +258,10 @@ static R_CallMethodDef callMethods[] = {
     { "is_symmetric",           (DL_FUNC) &is_symmetric,            1 },
     { "get_neighbourhood",      (DL_FUNC) &get_neighbourhood,       2 },
     { "sample_kernel",          (DL_FUNC) &sample_kernel,           2 },
-    { "resample",               (DL_FUNC) &resample,                3 },
+    { "resample",               (DL_FUNC) &resample,                4 },
     { "morph",                  (DL_FUNC) &morph,                   6 },
     { "connected_components",   (DL_FUNC) &connected_components,    2 },
-    { "distance_transform",     (DL_FUNC) &distance_transform,      2 },
+    { "distance_transform",     (DL_FUNC) &distance_transform,      3 },
     { NULL, NULL, 0 }
 };
 

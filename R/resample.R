@@ -14,6 +14,8 @@
 #'   each resampled value, or the name of one.
 #' @param pointType A string giving the type of the point specification being
 #'   used. Usually can be left as \code{"auto"}.
+#' @param threads If a positive integer, and the package is compiled with
+#'   OpenMP support, the number of threads to use during the calculation.
 #' @param factor A vector of scale factors, which will be recycled to the
 #'   dimensionality of \code{x}.
 #' @param \dots Additional options, such as kernel parameters.
@@ -34,7 +36,7 @@ resample <- function (x, points, kernel, ...)
 
 #' @rdname resample
 #' @export
-resample.default <- function (x, points, kernel, pointType = c("auto","general","grid"), ...)
+resample.default <- function (x, points, kernel, pointType = c("auto","general","grid"), threads = getOption("mmand.threads"), ...)
 {
     x <- as.array(x)
     if (!is.numeric(x) && !is.logical(x))
@@ -68,7 +70,7 @@ resample.default <- function (x, points, kernel, pointType = c("auto","general",
     else if (is.list(points))
         points <- lapply(points, "-", 1)
     
-    result <- .Call(C_resample, x, kernel, list(type=pointType,points=points))
+    result <- .Call(C_resample, x, kernel, list(type=pointType,points=points), threads)
     
     if (is.list(points) && nDims > 1)
         dim(result) <- sapply(points, length)
