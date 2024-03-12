@@ -24,8 +24,11 @@ AC_PROG_CXX
 # Checks for OpenMP.
 m4_include([tools/m4/ax_openmp.m4])
 AX_OPENMP
-
 AC_SUBST(OPENMP_CXXFLAGS)
+
+m4_include([tools/m4/jc_dispatch.m4])
+JC_DISPATCH
+AC_SUBST(LIBDISPATCH_CPPFLAGS)
 
 AC_CONFIG_FILES([src/Makevars])
 AC_OUTPUT
