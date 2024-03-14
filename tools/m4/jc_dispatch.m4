@@ -33,20 +33,21 @@ int main ()
 
 
 AC_MSG_CHECKING([compiler flag for block support])
-orig_[]_AC_LANG_PREFIX[]_FLAGS=$[]_AC_LANG_PREFIX[]_FLAGS
+orig_[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([[int main() { return ^{return 0;}(); }]])], [
     LIBDISPATCH_CPPFLAGS="$LIBDISPATCH_CPPFLAGS -DHAVE_BLOCKS"
     AC_MSG_RESULT([none required])
 ], [
-    []_AC_LANG_PREFIX[]_FLAGS="$orig_[]_AC_LANG_PREFIX[]_FLAGS -fblocks"
+    []_AC_LANG_PREFIX[]FLAGS="$orig_[]_AC_LANG_PREFIX[]FLAGS -fblocks"
     AC_COMPILE_IFELSE([AC_LANG_SOURCE([[int main() { return ^{return 0;}(); }]])], [
         LIBDISPATCH_CPPFLAGS="$LIBDISPATCH_CPPFLAGS -DHAVE_BLOCKS"
+        LIBDISPATCH_[]_AC_LANG_PREFIX[]FLAGS="-fblocks"
         AC_MSG_RESULT([-fblocks])
     ], [
         AC_MSG_RESULT([none])
     ])
 ])
-[]_AC_LANG_PREFIX[]_FLAGS=$orig_[]_AC_LANG_PREFIX[]_FLAGS
+[]_AC_LANG_PREFIX[]FLAGS=$orig_[]_AC_LANG_PREFIX[]FLAGS
 
 AC_SEARCH_LIBS([_Block_copy], [BlocksRuntime])
 AC_CHECK_HEADER([Block.h])
