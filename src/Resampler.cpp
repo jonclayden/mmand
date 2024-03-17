@@ -1,10 +1,7 @@
 #include <Rcpp.h>
 
+#include "Parallel.h"
 #include "Resampler.h"
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 // Presharpen data (i.e., calculate spline coefficients) along a single line
 // This function is slightly inscrutable but aims to be fast and general
@@ -117,11 +114,7 @@ const std::vector<double> & Resampler::run (const Rcpp::NumericMatrix &locations
     
     samples.resize(nSamples);
     
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-    for (int k=0; k<nSamples; k++)
-    {
+    PARALLEL_LOOP_START(k, nSamples)
         int_vector base(nDims);
         dbl_vector offset(nDims);
         
@@ -141,7 +134,7 @@ const std::vector<double> & Resampler::run (const Rcpp::NumericMatrix &locations
             }
         }
         samples[k] = samplePoint(base, offset, nDims-1);
-    }
+    PARALLEL_LOOP_END
     
     return samples;
 }
@@ -159,15 +152,11 @@ const std::vector<double> & Resampler::run (const std::vector<dbl_vector> &locat
         dims[i] = locations[i].size();
         Array<double> *result = new Array<double>(dims, NA_REAL);
         
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-        for (int j=0; j<int(working->countLines(i)); j++)
-        {
+        PARALLEL_LOOP_START(j, working->countLines(i))
             CachedInterpolant interpolant(working->beginLine(j,i), working->endLine(j,i));
             interpolate(interpolant, locations[i], result->beginLine(j,i));
-        }
-
+        PARALLEL_LOOP_END
+        
         delete working;
         working = result;
     }

@@ -1,10 +1,8 @@
 #include <Rcpp.h>
 
+#include "Parallel.h"
 #include "Distancer.h"
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 double initialTransform (const double &x) { return x == 0.0 ? R_PosInf : 0.0; }
 
@@ -32,12 +30,8 @@ Array<double> * Distancer::run ()
     {
         const double sqPixdim = usePixdim ? pixdims[i] * pixdims[i] : 1.0;
         
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
         // Lines are independent, so can be processed in parallel
-        for (size_t j=0; j<result->countLines(i); j++)
-        {
+        PARALLEL_LOOP_START(j, result->countLines(i))
             // The vertices are the minima of a series of parabolas. The
             // intersections are the locations where they cross
             std::vector<int> vertices;
@@ -100,7 +94,7 @@ Array<double> * Distancer::run ()
                     dx *= pixdims[i];
                 it[l] = line[vertices[k]] + dx * dx;
             }
-        }
+        PARALLEL_LOOP_END
     }
     
     // Take the square-root of each value to get Euclidean distance. The
