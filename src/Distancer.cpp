@@ -78,7 +78,7 @@ Array<double> * Distancer::run ()
             
             // If no parabolas have been placed, there's nothing else to do
             if (vertices.empty())
-                continue;
+                PARALLEL_LOOP_CONTINUE
             
             // Step back over the data, replacing each element with the value
             // of the lowest parabola at that location

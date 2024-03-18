@@ -7,21 +7,24 @@
 
 #define PARALLEL_LOOP_START(i,n) \
     dispatch_apply(size_t(n), DISPATCH_APPLY_AUTO, ^(size_t i) {
+#define PARALLEL_LOOP_CONTINUE return;
 #define PARALLEL_LOOP_END });
 
-#elif _OPENMP
+#elif defined(_OPENMP)
 
 #include <omp.h>
 
 #define PARALLEL_LOOP_START(i,n) \
     _Pragma("omp parallel for")  \
     for (size_t i=0; i<size_t(n); i++) {
+#define PARALLEL_LOOP_CONTINUE continue;
 #define PARALLEL_LOOP_END }
 
 #else
 
 #define PARALLEL_LOOP_START(i,n) \
     for (size_t i=0; i<size_t(n); i++) {
+#define PARALLEL_LOOP_CONTINUE continue;
 #define PARALLEL_LOOP_END }
 
 #endif
