@@ -2,6 +2,7 @@
 /src-x86_64
 /src-ppc
 .DS_Store
+/.cache
 /config.*
 /src/Makevars
 compile_commands.json
