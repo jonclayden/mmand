@@ -1,5 +1,7 @@
 # Distance transform
 
+options(mmand.threads=2L)
+
 # Several of these tests fail on CRAN Solaris for unknown reasons
 # It looks like the square-root is taken twice in the first few - no idea why
 # Not reproducible within Vagrant box

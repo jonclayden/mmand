@@ -1,4 +1,6 @@
 # Image resampling and rescaling
+options(mmand.threads=2L)
+
 expect_equal(resample(c(0,0,1,0,0),seq(0.75,5.25,0.5),boxKernel()), c(0,0,0,0,1,1,0,0,0,0))
 expect_equal(resample(c(0,0,1,0,0),seq(0.75,5.25,0.5),triangleKernel()), c(0,0,0,0.25,0.75,0.75,0.25,0,0,0))
 
