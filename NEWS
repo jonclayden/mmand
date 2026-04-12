@@ -2,6 +2,20 @@ Significant changes to the mmand package are laid out below for each release.
 
 ===============================================================================
 
+VERSION 1.7.0
+
+- There is now support for libdispatch (aka Grand Central Dispatch) as an
+  alternative to OpenMP for parallelisation on supported platforms
+  (particularly macOS, but also Linux). The configure script now checks for
+  the necessary library and syntax support.
+- The distanceTransform() and resample() functions gain a "threads" argument to
+  set the number of threads to use (for OpenMP only).
+- Use by the included LEMON library of C++ allocator methods deprecated in
+  C++17 and removed in C++20 has been patched out for compatibility with
+  upcoming R releases.
+
+===============================================================================
+
 VERSION 1.6.3
 
 - The package now avoids using std::iterator, which is deprecated in C++17.
